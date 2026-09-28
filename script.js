@@ -1,3 +1,1 @@
-function preview(){alert("Chapter 1: I was only 10 when my parents died...");}
-function buy(){alert("Demo purchase. M-Pesa comes later.");}
-function signup(){const n=document.getElementById("name").value;document.getElementById("msg").innerText="Welcome "+n+"!";}
+function preview(){alert('Chapter 1: I was only 10 when my parents died...');}function preview2(){alert('She believed marriage would heal her childhood...');}function buy(){alert('Demo purchase. M-Pesa integration comes next.');}function signup(){let n=document.getElementById('name').value||'Reader';document.getElementById('msg').innerText='Welcome '+n+'!';}
