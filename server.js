@@ -11,9 +11,9 @@ const PORT = process.env.PORT || 3000;
 app.set("trust proxy", 1);
 
 
-/* =========================
+/* =========================================================
    SETTINGS
-========================= */
+========================================================= */
 
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
@@ -23,9 +23,9 @@ const ADMIN_PASSWORD =
   process.env.ADMIN_PASSWORD || "";
 
 
-/* =========================
+/* =========================================================
    OPTIONAL OLD PASSWORD SUPPORT
-========================= */
+========================================================= */
 
 let bcrypt = null;
 
@@ -38,9 +38,9 @@ try {
 }
 
 
-/* =========================
+/* =========================================================
    DATABASE
-========================= */
+========================================================= */
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -52,9 +52,9 @@ const pool = new Pool({
 });
 
 
-/* =========================
+/* =========================================================
    MIDDLEWARE
-========================= */
+========================================================= */
 
 app.use(express.json());
 
@@ -91,9 +91,9 @@ app.use(
 );
 
 
-/* =========================
+/* =========================================================
    DATABASE SETUP
-========================= */
+========================================================= */
 
 async function setupDatabase() {
 
@@ -139,14 +139,16 @@ async function setupDatabase() {
   `);
 
 
-  console.log("Database tables are ready.");
+  console.log(
+    "Database tables are ready."
+  );
 
 }
 
 
-/* =========================
+/* =========================================================
    HELPERS
-========================= */
+========================================================= */
 
 function hashPassword(password) {
 
@@ -167,14 +169,6 @@ function cleanEmail(email) {
 }
 
 
-/*
-  Check reader password.
-
-  Supports:
-  - SHA-256 passwords
-  - older bcrypt passwords
-*/
-
 async function verifyReaderPassword(
   password,
   storedPassword
@@ -183,10 +177,6 @@ async function verifyReaderPassword(
   const sha256Password =
     hashPassword(password);
 
-
-  /*
-    Current password format
-  */
 
   if (
     storedPassword ===
@@ -200,10 +190,6 @@ async function verifyReaderPassword(
 
   }
 
-
-  /*
-    Older bcrypt format
-  */
 
   if (
     bcrypt &&
@@ -249,10 +235,6 @@ async function verifyReaderPassword(
 }
 
 
-/*
-  Get currently logged-in reader.
-*/
-
 async function getCurrentUser(req) {
 
   if (!req.session.userEmail) {
@@ -284,9 +266,9 @@ async function getCurrentUser(req) {
 }
 
 
-/* =========================
+/* =========================================================
    READER SIGN UP
-========================= */
+========================================================= */
 
 app.post(
   "/api/signup",
@@ -430,9 +412,9 @@ app.post(
 );
 
 
-/* =========================
+/* =========================================================
    READER LOGIN
-========================= */
+========================================================= */
 
 app.post(
   "/api/login",
@@ -503,11 +485,6 @@ app.post(
       }
 
 
-      /*
-        Upgrade an old bcrypt password
-        to the current SHA-256 format.
-      */
-
       if (
         passwordCheck.format ===
         "bcrypt"
@@ -538,10 +515,6 @@ app.post(
 
       }
 
-
-      /*
-        Create reader session.
-      */
 
       req.session.userEmail =
         user.email;
@@ -599,9 +572,9 @@ app.post(
 );
 
 
-/* =========================
+/* =========================================================
    CURRENT READER
-========================= */
+========================================================= */
 
 app.get(
   "/api/me",
@@ -650,9 +623,9 @@ app.get(
 );
 
 
-/* =========================
+/* =========================================================
    READER LOGOUT
-========================= */
+========================================================= */
 
 app.post(
   "/api/logout",
@@ -675,9 +648,9 @@ app.post(
 );
 
 
-/* =========================
+/* =========================================================
    SAVED STORIES
-========================= */
+========================================================= */
 
 app.get(
   "/api/saved-stories",
@@ -740,9 +713,9 @@ app.get(
 );
 
 
-/* =========================
+/* =========================================================
    SAVE STORY
-========================= */
+========================================================= */
 
 app.post(
   "/api/saved-stories/:storyId",
@@ -841,9 +814,9 @@ app.post(
 );
 
 
-/* =========================
+/* =========================================================
    REMOVE SAVED STORY
-========================= */
+========================================================= */
 
 app.delete(
   "/api/saved-stories/:storyId",
@@ -904,9 +877,9 @@ app.delete(
 );
 
 
-/* =========================
+/* =========================================================
    ADMIN LOGIN
-========================= */
+========================================================= */
 
 app.post(
   "/api/admin/login",
@@ -973,9 +946,9 @@ app.post(
 );
 
 
-/* =========================
+/* =========================================================
    CHECK ADMIN
-========================= */
+========================================================= */
 
 app.get(
   "/api/admin/me",
@@ -1003,9 +976,9 @@ app.get(
 );
 
 
-/* =========================
+/* =========================================================
    ADMIN LOGOUT
-========================= */
+========================================================= */
 
 app.post(
   "/api/admin/logout",
@@ -1028,9 +1001,9 @@ app.post(
 );
 
 
-/* =========================
+/* =========================================================
    ADMIN PAGE
-========================= */
+========================================================= */
 
 app.get(
   "/admin",
@@ -1059,7 +1032,7 @@ content="width=device-width, initial-scale=1.0">
 body {
   margin:0;
   padding:30px 15px;
-  font-family:Arial;
+  font-family:Arial,sans-serif;
   background:#fff8fb;
 }
 
@@ -1206,6 +1179,8 @@ async function login() {
 
   } catch (error) {
 
+    console.error(error);
+
     message.textContent =
       "Could not connect to the server.";
 
@@ -1235,9 +1210,9 @@ async function login() {
 );
 
 
-/* =========================
+/* =========================================================
    GET STORIES
-========================= */
+========================================================= */
 
 app.get(
   "/api/stories",
@@ -1280,9 +1255,9 @@ app.get(
 );
 
 
-/* =========================
+/* =========================================================
    ADD STORY
-========================= */
+========================================================= */
 
 app.post(
   "/api/admin/stories",
@@ -1391,9 +1366,146 @@ app.post(
 );
 
 
-/* =========================
+/* =========================================================
+   EDIT STORY
+========================================================= */
+
+app.put(
+  "/api/admin/stories/:id",
+  async (req, res) => {
+
+    try {
+
+      if (!req.session.isAdmin) {
+
+        return res.status(401).json({
+          message:
+            "Admin login required."
+        });
+
+      }
+
+
+      const id =
+        Number(req.params.id);
+
+
+      if (!Number.isInteger(id)) {
+
+        return res.status(400).json({
+          message:
+            "Invalid story ID."
+        });
+
+      }
+
+
+      const title =
+        String(
+          req.body.title || ""
+        ).trim();
+
+
+      const category =
+        String(
+          req.body.category || ""
+        ).trim();
+
+
+      const description =
+        String(
+          req.body.description || ""
+        ).trim();
+
+
+      const content =
+        String(
+          req.body.content || ""
+        ).trim();
+
+
+      if (!title || !content) {
+
+        return res.status(400).json({
+          message:
+            "Story title and story content are required."
+        });
+
+      }
+
+
+      const result =
+        await pool.query(
+          `
+          UPDATE stories
+
+          SET
+            title = $1,
+            category = $2,
+            description = $3,
+            content = $4
+
+          WHERE id = $5
+
+          RETURNING
+            id,
+            title,
+            category,
+            description,
+            content,
+            created_at AS "createdAt"
+          `,
+          [
+            title,
+            category || "STORY",
+            description,
+            content,
+            id
+          ]
+        );
+
+
+      if (!result.rows.length) {
+
+        return res.status(404).json({
+          message:
+            "Story not found."
+        });
+
+      }
+
+
+      res.json({
+
+        message:
+          "Story updated successfully!",
+
+        story:
+          result.rows[0]
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Edit story error:",
+        error
+      );
+
+      res.status(500).json({
+        message:
+          "Could not update the story."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
    DELETE STORY
-========================= */
+========================================================= */
 
 app.delete(
   "/api/admin/stories/:id",
@@ -1466,18 +1578,18 @@ app.delete(
 );
 
 
-/* =========================
-   WEBSITE
-========================= */
+/* =========================================================
+   STATIC WEBSITE
+========================================================= */
 
 app.use(
   express.static(".")
 );
 
 
-/* =========================
-   START
-========================= */
+/* =========================================================
+   START SERVER
+========================================================= */
 
 async function startServer() {
 
