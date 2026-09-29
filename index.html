@@ -1,311 +1,365 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Epshitah Stories</title>
+<title>Epshitah Stories</title>
 
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="topbar">
-    <div class="logo">Epshitah <span>Stories</span></div>
+<header class="topbar">
 
-    <div class="header-buttons">
-      <button class="login-btn" onclick="openAuth('login')">Log In</button>
-      <button class="signup-btn" onclick="openAuth('signup')">Sign Up</button>
-    </div>
-  </header>
-
-
-  <!-- HERO -->
-  <section class="hero">
-
-    <div class="hero-content">
-
-      <p class="small-title">WELCOME TO EPSHITAH STORIES</p>
-
-      <h1>
-        Stories That<br>
-        <span>Touch the Heart.</span>
-      </h1>
-
-      <p class="hero-text">
-        Discover emotional stories of love, heartbreak, family,
-        mystery, survival and life.
-      </p>
-
-      <button class="main-button" onclick="scrollToStories()">
-        Explore Stories
-      </button>
-
-    </div>
-
-    <div class="hero-book">
-      📖
-    </div>
-
-  </section>
-
-
-  <!-- GENRES -->
-  <section class="section">
-
-    <div class="section-heading">
-      <div>
-        <p class="section-small">EXPLORE</p>
-        <h2>What do you want to read?</h2>
-      </div>
-    </div>
-
-    <div class="genres">
-
-      <button class="genre-card" onclick="showGenre('Romance')">
-        <span>❤️</span>
-        <strong>Romance</strong>
-        <small>Love stories</small>
-      </button>
-
-      <button class="genre-card" onclick="showGenre('Drama')">
-        <span>🎭</span>
-        <strong>Drama</strong>
-        <small>Deep emotions</small>
-      </button>
-
-      <button class="genre-card" onclick="showGenre('Heartbreak')">
-        <span>💔</span>
-        <strong>Heartbreak</strong>
-        <small>Stories of pain</small>
-      </button>
-
-      <button class="genre-card" onclick="showGenre('Thriller')">
-        <span>🔥</span>
-        <strong>Thriller</strong>
-        <small>Can't stop reading</small>
-      </button>
-
-      <button class="genre-card" onclick="showGenre('Mystery')">
-        <span>🔎</span>
-        <strong>Mystery</strong>
-        <small>Secrets & questions</small>
-      </button>
-
-      <button class="genre-card" onclick="showGenre('Life Stories')">
-        <span>🌿</span>
-        <strong>Life Stories</strong>
-        <small>Real emotions</small>
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- FEATURED -->
-  <section class="section stories-section" id="stories">
-
-    <div class="section-heading">
-
-      <div>
-        <p class="section-small">DISCOVER</p>
-        <h2>Featured Stories</h2>
-      </div>
-
-      <button class="see-all" onclick="showAllStories()">
-        See All →
-      </button>
-
-    </div>
-
-    <div id="featuredStories" class="story-grid">
-
-      <div class="loading">
-        Loading stories...
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- DYNAMIC GENRES -->
-  <div id="genreSections"></div>
-
-
-  <!-- JOIN -->
-  <section class="join-section">
+  <div class="brand">
+    <div class="logo">E</div>
 
     <div>
+      <h1>Epshitah Stories</h1>
+      <p>Stories That Touch the Heart.</p>
+    </div>
+  </div>
 
-      <p class="section-small">BECOME A READER</p>
+  <div class="top-actions">
+    <button id="libraryBtn" class="header-btn hidden">
+      ❤️ My Library
+    </button>
 
-      <h2>Never miss a story.</h2>
+    <button id="accountBtn" class="header-btn">
+      👤 Log In
+    </button>
+  </div>
 
-      <p>
-        Create your free reader account and discover
-        stories that stay with you.
-      </p>
+</header>
 
-      <button class="main-button" onclick="openAuth('signup')">
-        Create Free Account
+
+<main>
+
+<section class="hero">
+
+  <div class="hero-content">
+
+    <span class="hero-label">WELCOME TO EPSHITAH STORIES</span>
+
+    <h2>Stories that stay<br>with you.</h2>
+
+    <p>
+      Discover emotional stories filled with love,
+      heartbreak, mystery, drama and unforgettable moments.
+    </p>
+
+    <button id="browseBtn" class="primary-btn">
+      📖 Start Reading
+    </button>
+
+  </div>
+
+</section>
+
+
+<section class="search-section">
+
+  <div class="search-box">
+
+    <span>🔎</span>
+
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="Search stories..."
+      autocomplete="off"
+    >
+
+  </div>
+
+</section>
+
+
+<section class="section">
+
+  <div class="section-title">
+    <h2>Choose Your Genre</h2>
+    <p>What kind of story are you in the mood for?</p>
+  </div>
+
+  <div class="genres">
+
+    <button class="genre-card" data-genre="Romance">
+      <span>❤️</span>
+      <strong>Romance</strong>
+      <small>Love & relationships</small>
+    </button>
+
+    <button class="genre-card" data-genre="Drama">
+      <span>🎭</span>
+      <strong>Drama</strong>
+      <small>Emotional stories</small>
+    </button>
+
+    <button class="genre-card" data-genre="Heartbreak">
+      <span>💔</span>
+      <strong>Heartbreak</strong>
+      <small>Stories of pain</small>
+    </button>
+
+    <button class="genre-card" data-genre="Thriller">
+      <span>🔥</span>
+      <strong>Thriller</strong>
+      <small>Suspense & danger</small>
+    </button>
+
+    <button class="genre-card" data-genre="Mystery">
+      <span>🔮</span>
+      <strong>Mystery</strong>
+      <small>Secrets & questions</small>
+    </button>
+
+    <button class="genre-card" data-genre="Life Stories">
+      <span>🌹</span>
+      <strong>Life Stories</strong>
+      <small>Real emotions</small>
+    </button>
+
+  </div>
+
+</section>
+
+
+<section id="featuredSection" class="section">
+
+  <div class="section-title">
+    <h2>✨ Featured Stories</h2>
+    <p>Stories waiting for you.</p>
+  </div>
+
+  <div id="featuredStories" class="story-grid">
+    <div class="loading">Loading stories...</div>
+  </div>
+
+</section>
+
+
+<section id="genreSections"></section>
+
+
+<section id="searchResultsSection" class="section hidden">
+
+  <div class="section-title">
+
+    <h2>🔎 Search Results</h2>
+
+    <p id="searchResultText"></p>
+
+  </div>
+
+  <div id="searchResults" class="story-grid"></div>
+
+</section>
+
+
+<section class="account-promo">
+
+  <div>
+
+    <span>❤️</span>
+
+    <h2>Keep your favourite stories close.</h2>
+
+    <p>
+      Create a free reader account and save stories
+      to your personal library.
+    </p>
+
+  </div>
+
+  <button id="promoAccountBtn" class="primary-btn">
+    Create Free Account
+  </button>
+
+</section>
+
+</main>
+
+
+<footer>
+
+  <h2>Epshitah Stories</h2>
+
+  <p>Stories That Touch the Heart.</p>
+
+  <small>© 2026 Epshitah Stories</small>
+
+</footer>
+
+
+<!-- AUTH MODAL -->
+
+<div id="authModal" class="modal hidden">
+
+  <div class="modal-card">
+
+    <button class="close-btn" data-close="authModal">×</button>
+
+    <div id="authTabs" class="auth-tabs">
+
+      <button id="loginTab" class="active">
+        Log In
+      </button>
+
+      <button id="signupTab">
+        Sign Up
       </button>
 
     </div>
 
-  </section>
+
+    <div id="loginForm">
+
+      <h2>Welcome back ❤️</h2>
+
+      <p>Log in to continue reading.</p>
+
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="Email address"
+      >
+
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Password"
+      >
+
+      <button id="loginSubmit" class="primary-btn full">
+        Log In
+      </button>
+
+      <div id="loginMessage" class="form-message"></div>
+
+    </div>
 
 
-  <!-- FOOTER -->
-  <footer>
+    <div id="signupForm" class="hidden">
 
-    <div class="logo">Epshitah <span>Stories</span></div>
+      <h2>Join Epshitah Stories ❤️</h2>
 
-    <p>
-      Emotional stories that touch the heart.
-    </p>
+      <p>Create your free reader account.</p>
 
-    <p class="copyright">
-      © 2026 Epshitah Stories
-    </p>
+      <input
+        id="signupName"
+        type="text"
+        placeholder="Your name"
+      >
 
-  </footer>
+      <input
+        id="signupEmail"
+        type="email"
+        placeholder="Email address"
+      >
 
+      <input
+        id="signupPassword"
+        type="password"
+        placeholder="Create password"
+      >
 
-  <!-- AUTH MODAL -->
-  <div id="authModal" class="modal">
+      <button id="signupSubmit" class="primary-btn full">
+        Create Account
+      </button>
 
-    <div class="modal-box">
+      <div id="signupMessage" class="form-message"></div>
 
-      <button class="close" onclick="closeAuth()">×</button>
-
-      <!-- LOGIN -->
-      <div id="loginForm">
-
-        <h2>Welcome Back</h2>
-
-        <p class="modal-subtitle">
-          Log in to continue reading.
-        </p>
-
-        <form onsubmit="login(event)">
-
-          <label>Email</label>
-
-          <input
-            type="email"
-            id="loginEmail"
-            placeholder="Enter your email"
-            required
-          >
-
-          <label>Password</label>
-
-          <input
-            type="password"
-            id="loginPassword"
-            placeholder="Enter your password"
-            required
-          >
-
-          <button type="submit" class="form-button">
-            Log In
-          </button>
-
-        </form>
-
-        <p class="switch-text">
-          Don't have an account?
-          <button onclick="openAuth('signup')">
-            Sign Up
-          </button>
-        </p>
-
-      </div>
+    </div>
 
 
-      <!-- SIGNUP -->
-      <div id="signupForm" style="display:none;">
+    <div id="loggedAccount" class="hidden">
 
-        <h2>Create Account</h2>
+      <div class="account-avatar">❤️</div>
 
-        <p class="modal-subtitle">
-          Join Epshitah Stories for free.
-        </p>
+      <h2>Hello, <span id="accountName"></span>!</h2>
 
-        <form onsubmit="signup(event)">
+      <p id="accountEmail"></p>
 
-          <label>Name</label>
+      <button id="accountLibraryBtn" class="primary-btn full">
+        📚 My Library
+      </button>
 
-          <input
-            type="text"
-            id="signupName"
-            placeholder="Your name"
-            required
-          >
+      <button id="logoutBtn" class="secondary-btn full">
+        Log Out
+      </button>
 
-          <label>Email</label>
+    </div>
 
-          <input
-            type="email"
-            id="signupEmail"
-            placeholder="Your email"
-            required
-          >
+  </div>
 
-          <label>Password</label>
+</div>
 
-          <input
-            type="password"
-            id="signupPassword"
-            placeholder="Create a password"
-            required
-          >
 
-          <button type="submit" class="form-button">
-            Create Account
-          </button>
+<!-- READER MODAL -->
 
-        </form>
+<div id="readerModal" class="reader-modal hidden">
 
-        <p class="switch-text">
-          Already have an account?
-          <button onclick="openAuth('login')">
-            Log In
-          </button>
-        </p>
+  <div class="reader-header">
 
-      </div>
+    <button id="closeReader" class="reader-close">
+      ← Back
+    </button>
+
+    <div class="reader-controls">
+
+      <button id="fontDown">A−</button>
+
+      <button id="fontUp">A+</button>
+
+      <button id="saveReaderBtn">
+        ♡ Save
+      </button>
 
     </div>
 
   </div>
 
 
-  <!-- STORY READER MODAL -->
-  <div id="storyModal" class="modal">
+  <article class="reader-page">
 
-    <div class="story-reader">
+    <span id="readerCategory" class="reader-category"></span>
 
-      <button class="close" onclick="closeStory()">×</button>
+    <h1 id="readerTitle"></h1>
 
-      <span id="readerCategory" class="story-category"></span>
+    <p id="readerDescription" class="reader-description"></p>
 
-      <h2 id="readerTitle"></h2>
+    <div class="reader-divider"></div>
 
-      <p id="readerDescription" class="reader-description"></p>
+    <div id="readerContent" class="reader-content"></div>
 
-      <div id="readerContent" class="reader-content"></div>
+  </article>
 
-    </div>
+</div>
+
+
+<!-- LIBRARY MODAL -->
+
+<div id="libraryModal" class="modal hidden">
+
+  <div class="modal-card library-card">
+
+    <button class="close-btn" data-close="libraryModal">×</button>
+
+    <h2>❤️ My Library</h2>
+
+    <p>Stories you have saved.</p>
+
+    <div id="libraryStories"></div>
 
   </div>
 
+</div>
 
-  <script src="script.js"></script>
+
+<script src="script.js"></script>
 
 </body>
 </html>
