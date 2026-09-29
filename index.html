@@ -1,677 +1,903 @@
 <!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Epshitah Stories</title><meta name="description" content="Epshitah Stories — Emotional stories that touch the heart."><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Epshitah Stories</title><meta name="description"
+content="Epshitah Stories — Emotional stories that touch the heart.">
+
+<style>
+
 :root{
-  --purple:#7b174d;
-  --purple-dark:#4d1032;
-  --purple-light:#b62d72;
-  --pink:#f8e4ee;
-  --soft:#fcf8fb;
-  --white:#fff;
-  --text:#241a20;
-  --muted:#777;
-  --border:#eadfe5;
-  --shadow:0 10px 30px rgba(75,16,50,.10);
+--purple:#7b174d;
+--purple-dark:#4d1032;
+--purple-light:#b62d72;
+--pink:#f8e4ee;
+--soft:#fcf8fb;
+--white:#fff;
+--text:#241a20;
+--muted:#777;
+--border:#eadfe5;
+--shadow:0 10px 30px rgba(75,16,50,.10);
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
-html{scroll-behavior:smooth}
+html{
+scroll-behavior:smooth;
+}
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--soft);
-  color:var(--text);
-  line-height:1.6;
+font-family:Arial,Helvetica,sans-serif;
+background:var(--soft);
+color:var(--text);
+line-height:1.6;
 }
 
+/* HEADER */
+
 .header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:rgba(255,255,255,.97);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--border);
+position:sticky;
+top:0;
+z-index:1000;
+background:rgba(255,255,255,.97);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
 }
 
 .nav{
-  max-width:1200px;
-  margin:auto;
-  height:70px;
-  padding:0 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+max-width:1200px;
+margin:auto;
+height:70px;
+padding:0 20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
 }
 
 .logo{
-  text-decoration:none;
-  color:var(--purple);
-  font-size:23px;
-  font-weight:800;
+text-decoration:none;
+color:var(--purple);
+font-size:23px;
+font-weight:800;
 }
 
-.logo span{color:var(--purple-light)}
+.logo span{
+color:var(--purple-light);
+}
 
 .nav-links{
-  display:flex;
-  align-items:center;
-  gap:9px;
+display:flex;
+align-items:center;
+gap:8px;
 }
 
 .nav-links a,
 .nav-links button{
-  border:0;
-  background:transparent;
-  text-decoration:none;
-  color:var(--text);
-  padding:9px 12px;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
+border:0;
+background:transparent;
+text-decoration:none;
+color:var(--text);
+padding:9px 12px;
+border-radius:8px;
+font-weight:600;
+cursor:pointer;
 }
 
 .nav-links a:hover,
 .nav-links button:hover{
-  background:var(--pink);
-  color:var(--purple);
+background:var(--pink);
+color:var(--purple);
 }
 
 .login-btn{
-  background:var(--purple)!important;
-  color:#fff!important;
-  padding:10px 17px!important;
+background:var(--purple)!important;
+color:#fff!important;
+padding:10px 17px!important;
 }
 
-.login-btn:hover{
-  background:var(--purple-dark)!important;
+.user-area{
+display:none;
+align-items:center;
+gap:7px;
+}
+
+.user-area.show{
+display:flex;
+}
+
+.user-name{
+color:var(--purple);
+font-size:13px;
+font-weight:700;
+}
+
+.profile-btn{
+background:var(--pink)!important;
+color:var(--purple)!important;
+}
+
+.logout-btn{
+border:1px solid var(--border)!important;
+background:#fff!important;
+color:var(--purple)!important;
 }
 
 /* HERO */
 
 .hero{
-  max-width:1200px;
-  margin:25px auto 0;
-  padding:0 20px;
+max-width:1200px;
+margin:25px auto 0;
+padding:0 20px;
 }
 
 .hero-inner{
-  min-height:440px;
-  border-radius:25px;
-  overflow:hidden;
-  position:relative;
-  display:flex;
-  align-items:center;
-  background:
-    radial-gradient(circle at 80% 20%,rgba(255,255,255,.16),transparent 30%),
-    linear-gradient(135deg,var(--purple-dark),var(--purple),var(--purple-light));
-  box-shadow:var(--shadow);
+min-height:440px;
+border-radius:25px;
+overflow:hidden;
+position:relative;
+display:flex;
+align-items:center;
+background:
+radial-gradient(circle at 80% 20%,rgba(255,255,255,.16),transparent 30%),
+linear-gradient(135deg,var(--purple-dark),var(--purple),var(--purple-light));
+box-shadow:var(--shadow);
 }
 
 .hero-decoration{
-  position:absolute;
-  width:340px;
-  height:340px;
-  border-radius:50%;
-  right:-110px;
-  bottom:-130px;
-  background:rgba(255,255,255,.09);
+position:absolute;
+width:340px;
+height:340px;
+border-radius:50%;
+right:-110px;
+bottom:-130px;
+background:rgba(255,255,255,.09);
 }
 
 .hero-decoration.two{
-  width:210px;
-  height:210px;
-  right:120px;
-  top:-120px;
+width:210px;
+height:210px;
+right:120px;
+top:-120px;
 }
 
 .hero-content{
-  position:relative;
-  z-index:2;
-  color:#fff;
-  max-width:700px;
-  padding:60px;
+position:relative;
+z-index:2;
+color:#fff;
+max-width:700px;
+padding:60px;
 }
 
 .hero-kicker{
-  display:inline-block;
-  padding:7px 12px;
-  border-radius:20px;
-  background:rgba(255,255,255,.14);
-  font-size:12px;
-  font-weight:700;
-  margin-bottom:18px;
+display:inline-block;
+padding:7px 12px;
+border-radius:20px;
+background:rgba(255,255,255,.14);
+font-size:12px;
+font-weight:700;
+margin-bottom:18px;
 }
 
 .hero h1{
-  font-size:48px;
-  line-height:1.08;
-  letter-spacing:-1.5px;
-  margin-bottom:18px;
+font-size:48px;
+line-height:1.08;
+letter-spacing:-1.5px;
+margin-bottom:18px;
 }
 
 .hero p{
-  font-size:17px;
-  max-width:580px;
-  color:rgba(255,255,255,.9);
-  margin-bottom:25px;
+font-size:17px;
+max-width:580px;
+color:rgba(255,255,255,.9);
+margin-bottom:25px;
 }
 
 .hero-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
 }
 
 .hero-primary,
 .hero-secondary{
-  padding:13px 20px;
-  border-radius:10px;
-  font-weight:800;
-  cursor:pointer;
+padding:13px 20px;
+border-radius:10px;
+font-weight:800;
+cursor:pointer;
 }
 
 .hero-primary{
-  border:0;
-  background:#fff;
-  color:var(--purple);
+border:0;
+background:#fff;
+color:var(--purple);
 }
 
 .hero-secondary{
-  border:1px solid rgba(255,255,255,.35);
-  background:rgba(255,255,255,.08);
-  color:#fff;
+border:1px solid rgba(255,255,255,.35);
+background:rgba(255,255,255,.08);
+color:#fff;
 }
 
 /* MAIN */
 
 .container{
-  max-width:1200px;
-  margin:auto;
-  padding:45px 20px;
+max-width:1200px;
+margin:auto;
+padding:45px 20px;
 }
 
-.section{margin-bottom:50px}
+.section{
+margin-bottom:50px;
+}
 
 .section-heading{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  margin-bottom:20px;
+display:flex;
+align-items:end;
+justify-content:space-between;
+margin-bottom:20px;
 }
 
 .section-heading h2{
-  font-size:26px;
-  color:var(--purple-dark);
+font-size:26px;
+color:var(--purple-dark);
 }
 
 .section-heading p{
-  color:var(--muted);
-  font-size:14px;
+color:var(--muted);
+font-size:14px;
 }
 
 /* SEARCH */
 
 .search-area{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:18px;
-  box-shadow:var(--shadow);
+background:#fff;
+border:1px solid var(--border);
+border-radius:17px;
+padding:18px;
+box-shadow:var(--shadow);
 }
 
 .search-wrap{
-  display:flex;
-  gap:10px;
+display:flex;
+gap:10px;
 }
 
 .search-wrap input{
-  flex:1;
-  min-width:0;
-  padding:14px 16px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  outline:none;
-  font-size:15px;
+flex:1;
+min-width:0;
+padding:14px 16px;
+border:1px solid var(--border);
+border-radius:10px;
+outline:none;
+font-size:15px;
 }
 
 .search-wrap button{
-  border:0;
-  background:var(--purple);
-  color:#fff;
-  border-radius:10px;
-  padding:0 20px;
-  font-weight:700;
+border:0;
+background:var(--purple);
+color:#fff;
+border-radius:10px;
+padding:0 20px;
+font-weight:700;
 }
 
 .genre-list{
-  display:flex;
-  gap:9px;
-  flex-wrap:wrap;
-  margin-top:15px;
+display:flex;
+gap:9px;
+flex-wrap:wrap;
+margin-top:15px;
 }
 
 .genre-btn{
-  border:1px solid var(--border);
-  background:#fff;
-  color:var(--purple);
-  padding:8px 13px;
-  border-radius:20px;
-  cursor:pointer;
-  font-size:13px;
-  font-weight:600;
+border:1px solid var(--border);
+background:#fff;
+color:var(--purple);
+padding:8px 13px;
+border-radius:20px;
+cursor:pointer;
+font-size:13px;
+font-weight:600;
 }
 
 .genre-btn.active{
-  background:var(--purple);
-  color:#fff;
+background:var(--purple);
+color:#fff;
 }
 
 /* STORIES */
 
 .story-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
 }
 
 .story-card{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:17px;
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  transition:.2s;
+background:#fff;
+border:1px solid var(--border);
+border-radius:17px;
+overflow:hidden;
+box-shadow:var(--shadow);
+transition:.2s;
 }
 
-.story-card:hover{transform:translateY(-3px)}
+.story-card:hover{
+transform:translateY(-3px);
+}
 
 .cover{
-  height:230px;
-  background:linear-gradient(135deg,var(--purple),var(--purple-light));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  padding:25px;
-  text-align:center;
+height:230px;
+background:linear-gradient(135deg,var(--purple),var(--purple-light));
+display:flex;
+align-items:center;
+justify-content:center;
+color:#fff;
+padding:25px;
+text-align:center;
 }
 
 .cover-placeholder{
-  font-size:42px;
-  opacity:.9;
+font-size:42px;
+opacity:.9;
 }
 
 .cover-title{
-  font-size:22px;
-  font-weight:800;
-  line-height:1.2;
+font-size:22px;
+font-weight:800;
+line-height:1.2;
 }
 
-.story-info{padding:18px}
+.story-info{
+padding:18px;
+}
 
 .genre-tag{
-  display:inline-block;
-  background:var(--pink);
-  color:var(--purple);
-  border-radius:20px;
-  padding:5px 9px;
-  font-size:11px;
-  font-weight:700;
-  margin-bottom:9px;
+display:inline-block;
+background:var(--pink);
+color:var(--purple);
+border-radius:20px;
+padding:5px 9px;
+font-size:11px;
+font-weight:700;
+margin-bottom:9px;
 }
 
 .story-info h3{
-  font-size:19px;
-  margin-bottom:7px;
+font-size:19px;
+margin-bottom:7px;
 }
 
 .story-info p{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.55;
-  display:-webkit-box;
-  -webkit-line-clamp:3;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
+color:var(--muted);
+font-size:13px;
+line-height:1.55;
+display:-webkit-box;
+-webkit-line-clamp:3;
+-webkit-box-orient:vertical;
+overflow:hidden;
 }
 
 .read-btn{
-  width:100%;
-  margin-top:15px;
-  border:0;
-  background:var(--purple);
-  color:#fff;
-  padding:11px;
-  border-radius:9px;
-  font-weight:700;
-  cursor:pointer;
+width:100%;
+margin-top:15px;
+border:0;
+background:var(--purple);
+color:white;
+padding:11px;
+border-radius:9px;
+font-weight:700;
+cursor:pointer;
 }
 
 .empty{
-  grid-column:1/-1;
-  text-align:center;
-  padding:55px 20px;
-  background:#fff;
-  border:1px dashed var(--border);
-  border-radius:15px;
-  color:var(--muted);
+grid-column:1/-1;
+text-align:center;
+padding:55px 20px;
+background:#fff;
+border:1px dashed var(--border);
+border-radius:15px;
+color:var(--muted);
 }
 
 .empty strong{
-  display:block;
-  color:var(--purple);
-  font-size:19px;
-  margin-bottom:6px;
+display:block;
+color:var(--purple);
+font-size:19px;
+margin-bottom:6px;
 }
 
 /* VIDEO */
 
 .video-section{
-  background:linear-gradient(135deg,#fff,#f9edf4);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:28px;
+background:linear-gradient(135deg,#fff,#f9edf4);
+border:1px solid var(--border);
+border-radius:20px;
+padding:28px;
 }
 
 .video-empty{
-  text-align:center;
-  padding:35px 15px;
-  color:var(--muted);
+text-align:center;
+padding:35px 15px;
+color:var(--muted);
 }
 
 .video-icon{
-  font-size:40px;
-  margin-bottom:8px;
+font-size:40px;
+margin-bottom:8px;
 }
 
 /* ABOUT */
 
 .about{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:25px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
 }
 
 .about-card{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:28px;
-  box-shadow:var(--shadow);
+background:#fff;
+border:1px solid var(--border);
+border-radius:17px;
+padding:28px;
+box-shadow:var(--shadow);
 }
 
 .about-card h3{
-  color:var(--purple);
-  margin-bottom:10px;
+color:var(--purple);
+margin-bottom:10px;
 }
 
-.about-card p{color:var(--muted)}
+.about-card p{
+color:var(--muted);
+}
 
 /* FOOTER */
 
 .footer{
-  background:var(--purple-dark);
-  color:#fff;
-  margin-top:20px;
+background:var(--purple-dark);
+color:#fff;
+margin-top:20px;
 }
 
 .footer-inner{
-  max-width:1200px;
-  margin:auto;
-  padding:35px 20px;
-  display:flex;
-  justify-content:space-between;
-  gap:20px;
-  flex-wrap:wrap;
+max-width:1200px;
+margin:auto;
+padding:35px 20px;
+display:flex;
+justify-content:space-between;
+gap:20px;
+flex-wrap:wrap;
 }
 
 .footer-brand{
-  font-size:21px;
-  font-weight:800;
+font-size:21px;
+font-weight:800;
 }
 
 .footer p{
-  color:rgba(255,255,255,.7);
-  font-size:13px;
-  margin-top:5px;
+color:rgba(255,255,255,.7);
+font-size:13px;
+margin-top:5px;
 }
 
 /* MODALS */
 
 .modal,
 .auth-panel{
-  position:fixed;
-  inset:0;
-  background:rgba(20,10,16,.72);
-  z-index:3000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
+position:fixed;
+inset:0;
+background:rgba(20,10,16,.72);
+z-index:3000;
+display:none;
+align-items:center;
+justify-content:center;
+padding:15px;
 }
 
 .modal.show,
-.auth-panel.show{display:flex}
+.auth-panel.show{
+display:flex;
+}
 
 .modal-box,
-.auth-box{
-  background:#fff;
-  width:100%;
-  max-width:760px;
-  max-height:92vh;
-  overflow:auto;
-  border-radius:20px;
-  position:relative;
+.auth-box,
+.profile-box{
+background:#fff;
+width:100%;
+max-width:760px;
+max-height:92vh;
+overflow:auto;
+border-radius:20px;
+position:relative;
 }
 
 .auth-box{
-  max-width:430px;
-  padding:28px;
+max-width:430px;
+padding:28px;
+}
+
+.profile-box{
+max-width:500px;
+padding:30px;
+}
+
+.close{
+position:absolute;
+top:15px;
+right:15px;
+width:35px;
+height:35px;
+border:0;
+border-radius:50%;
+background:var(--pink);
+color:var(--purple);
+font-size:22px;
+cursor:pointer;
+z-index:5;
 }
 
 .modal-head{
-  padding:24px 25px 18px;
-  border-bottom:1px solid var(--border);
-}
-
-.modal-body{padding:25px}
-
-.close{
-  position:absolute;
-  top:15px;
-  right:15px;
-  width:35px;
-  height:35px;
-  border:0;
-  border-radius:50%;
-  background:var(--pink);
-  color:var(--purple);
-  font-size:22px;
-  cursor:pointer;
-  z-index:5;
+padding:24px 25px 18px;
+border-bottom:1px solid var(--border);
 }
 
 .modal-head h2{
-  color:var(--purple-dark);
-  padding-right:40px;
+color:var(--purple-dark);
+padding-right:40px;
+}
+
+.modal-body{
+padding:25px;
 }
 
 .modal-description{
-  color:var(--muted);
-  margin-bottom:20px;
+color:var(--muted);
+margin-bottom:20px;
 }
 
 .full-story{
-  white-space:pre-wrap;
-  line-height:1.9;
-  font-size:16px;
+white-space:pre-wrap;
+line-height:1.9;
+font-size:16px;
 }
 
 /* AUTH */
 
-.auth-box h2{
-  color:var(--purple);
-  margin-bottom:6px;
+.auth-box h2,
+.profile-box h2{
+color:var(--purple);
+margin-bottom:6px;
 }
 
 .auth-subtitle{
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:20px;
+color:var(--muted);
+font-size:13px;
+margin-bottom:20px;
 }
 
 .auth-box label{
-  display:block;
-  font-weight:700;
-  font-size:13px;
-  margin:13px 0 7px;
+display:block;
+font-weight:700;
+font-size:13px;
+margin:13px 0 7px;
 }
 
 .auth-box input{
-  width:100%;
-  padding:12px;
-  border:1px solid var(--border);
-  border-radius:9px;
-  outline:none;
-  font-size:15px;
-}
-
-.auth-box input:focus{
-  border-color:var(--purple-light);
+width:100%;
+padding:12px;
+border:1px solid var(--border);
+border-radius:9px;
+outline:none;
+font-size:15px;
 }
 
 .auth-submit{
-  width:100%;
-  border:0;
-  background:var(--purple);
-  color:#fff;
-  padding:13px;
-  border-radius:9px;
-  font-weight:700;
-  margin-top:18px;
-  cursor:pointer;
+width:100%;
+border:0;
+background:var(--purple);
+color:#fff;
+padding:13px;
+border-radius:9px;
+font-weight:700;
+margin-top:18px;
+cursor:pointer;
 }
 
 .auth-message{
-  display:none;
-  margin-top:12px;
-  padding:10px;
-  border-radius:8px;
-  font-size:13px;
-  background:#fdebec;
-  color:#9b1c2e;
+display:none;
+margin-top:12px;
+padding:10px;
+border-radius:8px;
+font-size:13px;
+background:#fdebec;
+color:#9b1c2e;
 }
 
-.auth-message.show{display:block}
+.auth-message.show{
+display:block;
+}
 
 .auth-switch{
-  margin-top:17px;
-  text-align:center;
-  color:var(--muted);
-  font-size:13px;
+margin-top:17px;
+text-align:center;
+color:var(--muted);
+font-size:13px;
 }
 
 .auth-switch button{
-  border:0;
-  background:none;
-  color:var(--purple);
-  font-weight:700;
-  cursor:pointer;
+border:0;
+background:none;
+color:var(--purple);
+font-weight:700;
+cursor:pointer;
 }
 
-/* USER STATE */
+/* PROFILE */
 
-.user-area{
-  display:none;
-  align-items:center;
-  gap:8px;
+.profile-header{
+text-align:center;
+padding:10px 0 25px;
+border-bottom:1px solid var(--border);
 }
 
-.user-area.show{display:flex}
-
-.user-name{
-  color:var(--purple);
-  font-size:13px;
-  font-weight:700;
+.profile-avatar{
+width:75px;
+height:75px;
+margin:0 auto 12px;
+border-radius:50%;
+background:linear-gradient(135deg,var(--purple),var(--purple-light));
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+font-weight:800;
 }
 
-.logout-btn{
-  border:1px solid var(--border)!important;
-  background:#fff!important;
-  color:var(--purple)!important;
+.profile-name{
+font-size:22px;
+font-weight:800;
+color:var(--purple-dark);
+}
+
+.profile-email{
+color:var(--muted);
+font-size:14px;
+}
+
+.profile-section{
+margin-top:25px;
+}
+
+.profile-section h3{
+color:var(--purple-dark);
+margin-bottom:12px;
+}
+
+.profile-info{
+background:var(--soft);
+border:1px solid var(--border);
+border-radius:12px;
+padding:15px;
+}
+
+.profile-row{
+display:flex;
+justify-content:space-between;
+gap:15px;
+padding:9px 0;
+border-bottom:1px solid var(--border);
+}
+
+.profile-row:last-child{
+border-bottom:0;
+}
+
+.profile-row span:first-child{
+color:var(--muted);
+font-size:13px;
+}
+
+.profile-row span:last-child{
+font-weight:700;
+color:var(--text);
+text-align:right;
+}
+
+.saved-list{
+display:grid;
+gap:10px;
+}
+
+.saved-item{
+border:1px solid var(--border);
+border-radius:12px;
+padding:14px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+background:#fff;
+}
+
+.saved-item-title{
+font-weight:700;
+color:var(--purple-dark);
+}
+
+.saved-item-category{
+font-size:12px;
+color:var(--muted);
+}
+
+.saved-read{
+border:0;
+background:var(--purple);
+color:#fff;
+padding:8px 12px;
+border-radius:8px;
+font-weight:700;
+cursor:pointer;
+}
+
+.profile-empty{
+text-align:center;
+padding:20px;
+background:var(--soft);
+border-radius:12px;
+color:var(--muted);
+font-size:14px;
 }
 
 /* RESPONSIVE */
 
 @media(max-width:900px){
-  .story-grid{grid-template-columns:repeat(2,1fr)}
-  .hero h1{font-size:40px}
+
+.story-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.hero h1{
+font-size:40px;
+}
+
 }
 
 @media(max-width:650px){
-  .nav{height:62px}
-  .logo{font-size:20px}
 
-  .nav-links a:not(.login-btn){
-    display:none;
-  }
-
-  .hero{
-    margin-top:15px;
-    padding:0 12px;
-  }
-
-  .hero-inner{
-    min-height:430px;
-    border-radius:19px;
-  }
-
-  .hero-content{
-    padding:35px 25px;
-  }
-
-  .hero h1{font-size:34px}
-  .hero p{font-size:15px}
-
-  .container{padding:32px 14px}
-
-  .section-heading{display:block}
-
-  .section-heading h2{font-size:23px}
-
-  .story-grid{grid-template-columns:1fr}
-
-  .about{grid-template-columns:1fr}
-
-  .search-wrap{flex-direction:column}
-
-  .search-wrap button{padding:12px}
-
-  .cover{height:250px}
-
-  .footer-inner{display:block}
-
-  .footer-inner>div{margin-bottom:15px}
-
-  .user-name{display:none}
+.nav{
+height:62px;
 }
-</style></head><body><header class="header">
-<nav class="nav"><a href="#" class="logo" onclick="goHome();return false;">
+
+.logo{
+font-size:20px;
+}
+
+.nav-links a{
+display:none;
+}
+
+.user-name{
+display:none;
+}
+
+.hero{
+margin-top:15px;
+padding:0 12px;
+}
+
+.hero-inner{
+min-height:430px;
+border-radius:19px;
+}
+
+.hero-content{
+padding:35px 25px;
+}
+
+.hero h1{
+font-size:34px;
+}
+
+.hero p{
+font-size:15px;
+}
+
+.container{
+padding:32px 14px;
+}
+
+.section-heading{
+display:block;
+}
+
+.section-heading h2{
+font-size:23px;
+}
+
+.story-grid{
+grid-template-columns:1fr;
+}
+
+.about{
+grid-template-columns:1fr;
+}
+
+.search-wrap{
+flex-direction:column;
+}
+
+.search-wrap button{
+padding:12px;
+}
+
+.cover{
+height:250px;
+}
+
+.footer-inner{
+display:block;
+}
+
+.footer-inner>div{
+margin-bottom:15px;
+}
+
+.profile-box{
+padding:22px;
+}
+
+.profile-row{
+display:block;
+}
+
+.profile-row span:last-child{
+display:block;
+text-align:left;
+margin-top:3px;
+}
+
+.saved-item{
+align-items:flex-start;
+flex-direction:column;
+}
+
+.saved-read{
+width:100%;
+}
+}
+
+</style></head><body><header class="header"><nav class="nav"><a href="#" class="logo"
+onclick="goHome();return false;">
 Epshitah <span>Stories</span>
-</a><div class="nav-links"><a href="#stories">Stories</a>
+</a>
+
+<div class="nav-links"><a href="#stories">Stories</a>
 <a href="#about">About</a>
 
-<div class="user-area" id="userArea">
-<span class="user-name" id="userName"></span>
-<button class="logout-btn" onclick="logout()">Log Out</button>
-</div><button class="login-btn" id="loginButton" onclick="openLogin()">
+<div class="user-area" id="userArea"><span class="user-name" id="userName"></span>
+
+<button class="profile-btn"
+onclick="openProfile()">
+Profile
+</button>
+
+<button class="logout-btn"
+onclick="logout()">
+Log Out
+</button>
+
+</div><button
+class="login-btn"
+id="loginButton"
+onclick="openLogin()">
 Sign In
-</button></div>
-</nav>
-</header><section class="hero"><div class="hero-inner"><div class="hero-decoration"></div>
+</button>
+
+</div></nav></header><section class="hero"><div class="hero-inner"><div class="hero-decoration"></div>
 <div class="hero-decoration two"></div><div class="hero-content"><span class="hero-kicker">
 EMOTIONAL STORIES THAT TOUCH THE HEART
 </span><h1>
@@ -693,8 +919,7 @@ onclick="document.getElementById('about').scrollIntoView()">
 About Epshitah
 </button>
 
-</div>
-</div>
+</div></div>
 </div>
 </section><main class="container"><section class="section"><div class="search-area"><div class="search-wrap"><input
 id="searchInput"
@@ -702,30 +927,35 @@ type="search"
 placeholder="Search stories..."
 oninput="filterStories()">
 
-<button onclick="filterStories()">Search</button>
+<button onclick="filterStories()">
+Search
+</button></div><div
+class="genre-list"
+id="genreList">
+</div></div></section><section
+class="section"
+id="stories"><div class="section-heading"><div><h2>Latest Stories</h2><p>
+Discover stories written to make you feel.
+</p></div></div><div
+class="story-grid"
+id="storyGrid"><div class="empty"><strong>
+Loading stories...
+</strong>Please wait while we bring the stories to you.
 
-</div><div class="genre-list" id="genreList"></div></div>
-</section><section class="section" id="stories"><div class="section-heading"><div>
-<h2>Latest Stories</h2>
-<p>Discover stories written to make you feel.</p>
-</div></div><div class="story-grid" id="storyGrid"><div class="empty">
-<strong>Loading stories...</strong>
-Please wait while we bring the stories to you.
-</div></div>
-</section><section class="section"><div class="section-heading"><div>
-<h2>Story Videos</h2>
-<p>Watch stories come alive.</p>
-</div></div><div class="video-section"><div class="video-empty"><div class="video-icon">🎬</div><strong>Story videos are coming soon.</strong>
-
-<p>
+</div></div></section><section class="section"><div class="section-heading"><div><h2>Story Videos</h2><p>
+Watch stories come alive.
+</p></div></div><div class="video-section"><div class="video-empty"><div class="video-icon">
+🎬
+</div><strong>
+Story videos are coming soon.
+</strong><p>
 Videos will appear here when they are added
 to Epshitah Stories.
-</p></div>
-</div>
-</section><section class="section" id="about"><div class="section-heading"><div>
-<h2>About Epshitah Stories</h2>
-<p>Stories with heart.</p>
-</div></div><div class="about"><div class="about-card"><h3>Our Stories</h3><p>
+</p></div></div></section><section
+class="section"
+id="about"><div class="section-heading"><div><h2>About Epshitah Stories</h2><p>
+Stories with heart.
+</p></div></div><div class="about"><div class="about-card"><h3>Our Stories</h3><p>
 Epshitah Stories is a home for emotional and
 meaningful stories. From romance and family
 to difficult experiences and inspiring journeys,
@@ -735,25 +965,45 @@ Sometimes a story helps someone realise they
 are not alone. Sometimes it gives someone hope.
 And sometimes it simply gives a voice to something
 that was difficult to say.
-</p></div></div>
-</section></main><footer class="footer"><div class="footer-inner"><div>
-<div class="footer-brand">Epshitah Stories</div>
-<p>Emotional stories that touch the heart.</p>
-</div><div>
-<p>
+</p></div></div></section></main><footer class="footer"><div class="footer-inner"><div><div class="footer-brand">
+Epshitah Stories
+</div><p>
+Emotional stories that touch the heart.
+</p></div><div><p>
 © <span id="year"></span>
 Epshitah Stories. All rights reserved.
-</p>
-</div></div>
-</footer><!-- STORY MODAL --><div class="modal" id="storyModal" onclick="closeStoryOutside(event)"><div class="modal-box"><button class="close" onclick="closeStory()">×</button>
+</p></div></div></footer><!-- STORY MODAL --><div
+class="modal"
+id="storyModal"
+onclick="closeStoryOutside(event)"><div class="modal-box"><button
+class="close"
+onclick="closeStory()">
+×
+</button>
 
-<div class="modal-head"><span class="genre-tag" id="modalGenre"></span>
+<div class="modal-head"><span
+class="genre-tag"
+id="modalGenre">
+</span>
 
-<h2 id="modalTitle"></h2></div><div class="modal-body"><p class="modal-description" id="modalDescription"></p><div class="full-story" id="modalStory"></div></div>
-</div>
-</div><!-- LOGIN MODAL --><div class="auth-panel" id="loginPanel" onclick="closeAuthOutside(event)"><div class="auth-box"><button class="close" onclick="closeLogin()">×</button>
+<h2 id="modalTitle"></h2></div><div class="modal-body"><p
+class="modal-description"
+id="modalDescription">
+</p><div
+class="full-story"
+id="modalStory">
+</div></div></div></div><!-- LOGIN --><div
+class="auth-panel"
+id="loginPanel"
+onclick="closeAuthOutside(event)"><div class="auth-box"><button
+class="close"
+onclick="closeLogin()">
+×
+</button>
 
-<h2>Welcome Back</h2><p class="auth-subtitle">
+<h2>
+Welcome Back
+</h2><p class="auth-subtitle">
 Sign in to continue reading and saving your stories.
 </p><form onsubmit="login(event)"><label>Email</label>
 
@@ -773,16 +1023,35 @@ required
 autocomplete="current-password"
 placeholder="Enter your password">
 
-<button class="auth-submit" type="submit">
+<button
+class="auth-submit"
+type="submit">
 Sign In
-</button></form><div class="auth-message" id="loginMessage"></div><div class="auth-switch">Don't have an account?
+</button>
 
-<button onclick="openSignup()">
+</form><div
+class="auth-message"
+id="loginMessage">
+</div><div class="auth-switch">Don't have an account?
+
+<button
+type="button"
+onclick="openSignup()">
 Create one
-</button></div></div>
-</div><!-- SIGN UP MODAL --><div class="auth-panel" id="signupPanel" onclick="closeAuthOutside(event)"><div class="auth-box"><button class="close" onclick="closeSignup()">×</button>
+</button>
 
-<h2>Create Your Account</h2><p class="auth-subtitle">
+</div></div></div><!-- SIGN UP --><div
+class="auth-panel"
+id="signupPanel"
+onclick="closeAuthOutside(event)"><div class="auth-box"><button
+class="close"
+onclick="closeSignup()">
+×
+</button>
+
+<h2>
+Create Your Account
+</h2><p class="auth-subtitle">
 Join Epshitah Stories and start reading.
 </p><form onsubmit="signup(event)"><label>Name</label>
 
@@ -811,20 +1080,65 @@ required
 autocomplete="new-password"
 placeholder="Create a password">
 
-<button class="auth-submit" type="submit">
+<button
+class="auth-submit"
+type="submit">
 Create Account
-</button></form><div class="auth-message" id="signupMessage"></div><div class="auth-switch">Already have an account?
+</button>
 
-<button onclick="openLogin()">
+</form><div
+class="auth-message"
+id="signupMessage">
+</div><div class="auth-switch">Already have an account?
+
+<button
+type="button"
+onclick="openLogin()">
 Sign In
-</button></div></div>
-</div><script>
+</button>
 
-let allStories = [];
-let selectedGenre = '';
+</div></div></div><!-- PROFILE --><div
+class="auth-panel"
+id="profilePanel"
+onclick="closeAuthOutside(event)"><div class="profile-box"><button
+class="close"
+onclick="closeProfile()">
+×
+</button>
+
+<div class="profile-header"><div
+class="profile-avatar"
+id="profileAvatar">
+E
+</div><div
+class="profile-name"
+id="profileName">
+Reader
+</div><div
+class="profile-email"
+id="profileEmail">
+</div></div><div class="profile-section"><h3>
+My Account
+</h3><div class="profile-info"><div class="profile-row"><span>
+Name
+</span><span id="profileNameRow">
+</span></div><div class="profile-row"><span>
+Email
+</span><span id="profileEmailRow">
+</span></div></div></div><div class="profile-section"><h3>
+My Saved Stories
+</h3><div
+class="saved-list"
+id="savedList"><div class="profile-empty">
+Loading saved stories...
+</div></div></div></div></div><script>
+
+let allStories=[];
+let selectedGenre='';
+let currentReader=null;
 
 
-/* ================= STORIES ================= */
+/* STORIES */
 
 async function loadStories(){
 
@@ -855,6 +1169,7 @@ Please refresh the page and try again.
 `;
 
 }
+
 }
 
 
@@ -913,7 +1228,9 @@ container.appendChild(button);
 
 function updateGenreButtons(){
 
-document.querySelectorAll('.genre-btn').forEach(button=>{
+document
+.querySelectorAll('.genre-btn')
+.forEach(button=>{
 
 button.classList.remove('active');
 
@@ -983,6 +1300,7 @@ Try another search or genre.
 `;
 
 return;
+
 }
 
 grid.innerHTML=stories.map(story=>{
@@ -1008,7 +1326,9 @@ return`
 
 <div>
 
-<div class="cover-placeholder">♡</div>
+<div class="cover-placeholder">
+♡
+</div>
 
 <div class="cover-title">
 ${safeTitle}
@@ -1024,9 +1344,13 @@ ${safeTitle}
 ${safeCategory}
 </span>
 
-<h3>${safeTitle}</h3>
+<h3>
+${safeTitle}
+</h3>
 
-<p>${safeDescription}</p>
+<p>
+${safeDescription}
+</p>
 
 <button
 class="read-btn"
@@ -1044,6 +1368,8 @@ Read Story
 
 }
 
+
+/* STORY READER */
 
 function openStory(id){
 
@@ -1065,7 +1391,8 @@ story.description||'';
 document.getElementById('modalStory').textContent=
 story.content||'';
 
-document.getElementById('storyModal')
+document
+.getElementById('storyModal')
 .classList.add('show');
 
 document.body.style.overflow='hidden';
@@ -1075,7 +1402,8 @@ document.body.style.overflow='hidden';
 
 function closeStory(){
 
-document.getElementById('storyModal')
+document
+.getElementById('storyModal')
 .classList.remove('show');
 
 document.body.style.overflow='';
@@ -1092,14 +1420,20 @@ closeStory();
 }
 
 
-/* ================= LOGIN ================= */
+/* LOGIN */
 
 function openLogin(){
 
-document.getElementById('signupPanel')
+document
+.getElementById('signupPanel')
 .classList.remove('show');
 
-document.getElementById('loginPanel')
+document
+.getElementById('profilePanel')
+.classList.remove('show');
+
+document
+.getElementById('loginPanel')
 .classList.add('show');
 
 document.body.style.overflow='hidden';
@@ -1109,7 +1443,8 @@ document.body.style.overflow='hidden';
 
 function closeLogin(){
 
-document.getElementById('loginPanel')
+document
+.getElementById('loginPanel')
 .classList.remove('show');
 
 document.body.style.overflow='';
@@ -1123,7 +1458,8 @@ event.preventDefault();
 
 const email=document
 .getElementById('loginEmail')
-.value.trim();
+.value
+.trim();
 
 const password=document
 .getElementById('loginPassword')
@@ -1163,6 +1499,7 @@ data.error||
 message.classList.add('show');
 
 return;
+
 }
 
 closeLogin();
@@ -1185,14 +1522,20 @@ message.classList.add('show');
 }
 
 
-/* ================= SIGN UP ================= */
+/* SIGNUP */
 
 function openSignup(){
 
-document.getElementById('loginPanel')
+document
+.getElementById('loginPanel')
 .classList.remove('show');
 
-document.getElementById('signupPanel')
+document
+.getElementById('profilePanel')
+.classList.remove('show');
+
+document
+.getElementById('signupPanel')
 .classList.add('show');
 
 document.body.style.overflow='hidden';
@@ -1202,7 +1545,8 @@ document.body.style.overflow='hidden';
 
 function closeSignup(){
 
-document.getElementById('signupPanel')
+document
+.getElementById('signupPanel')
 .classList.remove('show');
 
 document.body.style.overflow='';
@@ -1216,11 +1560,13 @@ event.preventDefault();
 
 const name=document
 .getElementById('signupName')
-.value.trim();
+.value
+.trim();
 
 const email=document
 .getElementById('signupEmail')
-.value.trim();
+.value
+.trim();
 
 const password=document
 .getElementById('signupPassword')
@@ -1261,13 +1607,8 @@ data.error||
 message.classList.add('show');
 
 return;
+
 }
-
-
-/*
-  Some server versions automatically log the reader in
-  after signup. If yours does, the session is preserved.
-*/
 
 closeSignup();
 
@@ -1289,7 +1630,7 @@ message.classList.add('show');
 }
 
 
-/* ================= READER SESSION ================= */
+/* READER SESSION */
 
 async function checkReader(){
 
@@ -1307,24 +1648,30 @@ return null;
 const data=await response.json();
 
 const user=
-data.user ||
-data.reader ||
+data.user||
+data.reader||
 data;
 
-if(user && (user.name || user.email)){
+if(user && (user.name||user.email)){
+
+currentReader=user;
 
 showLoggedIn(user);
+
 return user;
 
 }
 
 showLoggedOut();
+
 return null;
 
 }catch(error){
 
 console.error(error);
+
 showLoggedOut();
+
 return null;
 
 }
@@ -1334,14 +1681,16 @@ return null;
 
 function showLoggedIn(user){
 
-document.getElementById('loginButton')
+document
+.getElementById('loginButton')
 .style.display='none';
 
-const area=document.getElementById('userArea');
+document
+.getElementById('userArea')
+.classList.add('show');
 
-area.classList.add('show');
-
-document.getElementById('userName')
+document
+.getElementById('userName')
 .textContent=
 'Hi, '+(user.name||user.email);
 
@@ -1350,14 +1699,187 @@ document.getElementById('userName')
 
 function showLoggedOut(){
 
-document.getElementById('loginButton')
+currentReader=null;
+
+document
+.getElementById('loginButton')
 .style.display='block';
 
-document.getElementById('userArea')
+document
+.getElementById('userArea')
 .classList.remove('show');
 
 }
 
+
+/* PROFILE */
+
+async function openProfile(){
+
+if(!currentReader){
+
+const user=await checkReader();
+
+if(!user){
+
+openLogin();
+return;
+
+}
+
+}
+
+fillProfile(currentReader);
+
+document
+.getElementById('profilePanel')
+.classList.add('show');
+
+document.body.style.overflow='hidden';
+
+loadSavedStories();
+
+}
+
+
+function closeProfile(){
+
+document
+.getElementById('profilePanel')
+.classList.remove('show');
+
+document.body.style.overflow='';
+
+}
+
+
+function fillProfile(user){
+
+const name=user.name||'Reader';
+const email=user.email||'';
+
+document
+.getElementById('profileName')
+.textContent=name;
+
+document
+.getElementById('profileEmail')
+.textContent=email;
+
+document
+.getElementById('profileNameRow')
+.textContent=name;
+
+document
+.getElementById('profileEmailRow')
+.textContent=email;
+
+document
+.getElementById('profileAvatar')
+.textContent=
+name.charAt(0).toUpperCase();
+
+}
+
+
+/* SAVED STORIES */
+
+async function loadSavedStories(){
+
+const container=
+document.getElementById('savedList');
+
+container.innerHTML=`
+<div class="profile-empty">
+Loading saved stories...
+</div>
+`;
+
+try{
+
+const response=
+await fetch('/api/saved');
+
+if(!response.ok){
+
+container.innerHTML=`
+<div class="profile-empty">
+You have no saved stories yet.
+</div>
+`;
+
+return;
+
+}
+
+const saved=await response.json();
+
+if(!Array.isArray(saved)||!saved.length){
+
+container.innerHTML=`
+<div class="profile-empty">
+You have no saved stories yet.
+</div>
+`;
+
+return;
+
+}
+
+container.innerHTML=saved.map(item=>{
+
+const story=item.story||item;
+
+const title=
+escapeHtml(story.title||'Saved Story');
+
+const category=
+escapeHtml(story.category||'Story');
+
+return`
+
+<div class="saved-item">
+
+<div>
+
+<div class="saved-item-title">
+${title}
+</div>
+
+<div class="saved-item-category">
+${category}
+</div>
+
+</div>
+
+<button
+class="saved-read"
+onclick="closeProfile();openStory(${story.id})">
+Read
+</button>
+
+</div>
+
+`;
+
+}).join('');
+
+}catch(error){
+
+console.error(error);
+
+container.innerHTML=`
+<div class="profile-empty">
+Your saved stories will appear here.
+</div>
+`;
+
+}
+
+}
+
+
+/* LOGOUT */
 
 async function logout(){
 
@@ -1380,7 +1902,7 @@ window.location.reload();
 }
 
 
-/* ================= AUTH OUTSIDE CLICK ================= */
+/* AUTH OUTSIDE CLICK */
 
 function closeAuthOutside(event){
 
@@ -1392,10 +1914,14 @@ if(event.target.id==='signupPanel'){
 closeSignup();
 }
 
+if(event.target.id==='profilePanel'){
+closeProfile();
+}
+
 }
 
 
-/* ================= HOME ================= */
+/* HOME */
 
 function goHome(){
 
@@ -1407,7 +1933,7 @@ behavior:'smooth'
 }
 
 
-/* ================= ESCAPE ================= */
+/* ESCAPE */
 
 function escapeHtml(value){
 
@@ -1421,13 +1947,13 @@ return String(value??'')
 }
 
 
-/* ================= YEAR ================= */
+/* YEAR */
 
 document.getElementById('year').textContent=
 new Date().getFullYear();
 
 
-/* ================= START ================= */
+/* START */
 
 loadStories();
 checkReader();
