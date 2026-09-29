@@ -6,13 +6,14 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Important for Render HTTPS/proxy
 app.set("trust proxy", 1);
 
 const ADMIN_EMAIL =
-  process.env.ADMIN_EMAIL || "ralejoemolebatsi189@gmail.com";
+  process.env.ADMIN_EMAIL ||
+  "ralejoemolebatsi189@gmail.com";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD || "";
 
 const users = new Map();
 
@@ -40,52 +41,27 @@ app.use(
 
 
 function hashPassword(password) {
+
   return crypto
     .createHash("sha256")
     .update(password)
     .digest("hex");
+
 }
 
 
 function cleanEmail(email) {
+
   return String(email || "")
     .trim()
     .toLowerCase();
+
 }
 
 
-// =========================
-// READER ACCOUNTS
-// =========================
-
-app.get("/api/me", (req, res) => {
-
-  if (!req.session.userEmail) {
-    return res.json({
-      loggedIn: false
-    });
-  }
-
-  const user =
-    users.get(req.session.userEmail);
-
-  if (!user) {
-    return res.json({
-      loggedIn: false
-    });
-  }
-
-  res.json({
-    loggedIn: true,
-
-    user: {
-      name: user.name,
-      email: user.email
-    }
-  });
-
-});
-
+// ========================
+// READER SIGN UP
+// ========================
 
 app.post("/api/signup", (req, res) => {
 
@@ -129,8 +105,8 @@ app.post("/api/signup", (req, res) => {
 
 
   const user = {
-    name: name,
-    email: email,
+    name,
+    email,
     password: hashPassword(password)
   };
 
@@ -141,6 +117,7 @@ app.post("/api/signup", (req, res) => {
 
 
   res.json({
+
     message:
       "Account created successfully!",
 
@@ -148,10 +125,15 @@ app.post("/api/signup", (req, res) => {
       name: user.name,
       email: user.email
     }
+
   });
 
 });
 
+
+// ========================
+// READER LOGIN
+// ========================
 
 app.post("/api/login", (req, res) => {
 
@@ -192,6 +174,7 @@ app.post("/api/login", (req, res) => {
 
 
   res.json({
+
     message:
       "Logged in successfully!",
 
@@ -199,10 +182,57 @@ app.post("/api/login", (req, res) => {
       name: user.name,
       email: user.email
     }
+
   });
 
 });
 
+
+// ========================
+// READER CURRENT USER
+// ========================
+
+app.get("/api/me", (req, res) => {
+
+  if (!req.session.userEmail) {
+
+    return res.json({
+      loggedIn: false
+    });
+
+  }
+
+
+  const user =
+    users.get(req.session.userEmail);
+
+
+  if (!user) {
+
+    return res.json({
+      loggedIn: false
+    });
+
+  }
+
+
+  res.json({
+
+    loggedIn: true,
+
+    user: {
+      name: user.name,
+      email: user.email
+    }
+
+  });
+
+});
+
+
+// ========================
+// READER LOGOUT
+// ========================
 
 app.post("/api/logout", (req, res) => {
 
@@ -220,9 +250,9 @@ app.post("/api/logout", (req, res) => {
 });
 
 
-// =========================
+// ========================
 // ADMIN LOGIN
-// =========================
+// ========================
 
 app.post("/api/admin/login", (req, res) => {
 
@@ -236,8 +266,10 @@ app.post("/api/admin/login", (req, res) => {
   if (!ADMIN_PASSWORD) {
 
     return res.status(500).json({
+
       message:
         "Admin password has not been configured on the server."
+
     });
 
   }
@@ -249,8 +281,10 @@ app.post("/api/admin/login", (req, res) => {
   ) {
 
     return res.status(401).json({
+
       message:
         "Admin email or password is incorrect."
+
     });
 
   }
@@ -266,22 +300,23 @@ app.post("/api/admin/login", (req, res) => {
 
     if (error) {
 
-      console.error(
-        "Admin session error:",
-        error
-      );
+      console.error(error);
 
       return res.status(500).json({
+
         message:
-          "Login worked, but the admin session could not be saved."
+          "Admin login worked, but the session could not be saved."
+
       });
 
     }
 
 
     res.json({
+
       message:
         "Admin login successful."
+
     });
 
   });
@@ -289,9 +324,9 @@ app.post("/api/admin/login", (req, res) => {
 });
 
 
-// =========================
+// ========================
 // CHECK ADMIN
-// =========================
+// ========================
 
 app.get("/api/admin/me", (req, res) => {
 
@@ -305,16 +340,20 @@ app.get("/api/admin/me", (req, res) => {
 
 
   res.json({
+
     loggedIn: true,
-    email: req.session.adminEmail
+
+    email:
+      req.session.adminEmail
+
   });
 
 });
 
 
-// =========================
+// ========================
 // ADMIN LOGOUT
-// =========================
+// ========================
 
 app.post("/api/admin/logout", (req, res) => {
 
@@ -323,8 +362,10 @@ app.post("/api/admin/logout", (req, res) => {
     res.clearCookie("connect.sid");
 
     res.json({
+
       message:
         "Admin logged out."
+
     });
 
   });
@@ -332,9 +373,9 @@ app.post("/api/admin/logout", (req, res) => {
 });
 
 
-// =========================
+// ========================
 // ADMIN PAGE
-// =========================
+// ========================
 
 app.get("/admin", (req, res) => {
 
@@ -417,7 +458,6 @@ a {
 
 </head>
 
-
 <body>
 
 <div class="box">
@@ -474,55 +514,41 @@ async function login() {
     "Logging in...";
 
 
-  try {
+  const response =
+    await fetch("/api/admin/login", {
 
-    const response =
-      await fetch(
-        "/api/admin/login",
-        {
-          method: "POST",
+      method: "POST",
 
-          credentials: "same-origin",
+      credentials: "same-origin",
 
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
 
-          body: JSON.stringify({
-            email: email,
-            password: password
-          })
-        }
-      );
+      body: JSON.stringify({
 
+        email: email,
 
-    const data =
-      await response.json();
+        password: password
+
+      })
+
+    });
 
 
-    message.textContent =
-      data.message;
+  const data =
+    await response.json();
 
 
-    if (response.ok) {
+  message.textContent =
+    data.message;
 
-      setTimeout(
-        function() {
 
-          window.location.href =
-            "/admin";
+  if (response.ok) {
 
-        },
-        500
-      );
-
-    }
-
-  } catch (error) {
-
-    message.textContent =
-      "Something went wrong. Please try again.";
+    window.location.href =
+      "/admin";
 
   }
 
@@ -539,10 +565,13 @@ async function login() {
   }
 
 
+  // IMPORTANT:
+  // Your file is admin.html
+  // It is in the same folder as server.js.
+
   res.sendFile(
     path.join(
       __dirname,
-      "private",
       "admin.html"
     )
   );
@@ -550,31 +579,13 @@ async function login() {
 });
 
 
-// Protect private folder
-app.use((req, res, next) => {
+// ========================
+// PUBLIC WEBSITE
+// ========================
 
-  if (
-    req.path.startsWith("/private/")
-  ) {
-
-    return res
-      .status(404)
-      .send("Not found");
-
-  }
-
-  next();
-
-});
+app.use(express.static("."));
 
 
-// Public website
-app.use(
-  express.static(".")
-);
-
-
-// Start server
 app.listen(PORT, () => {
 
   console.log(
