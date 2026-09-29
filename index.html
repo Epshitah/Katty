@@ -1,40 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Epshitah Stories</title>
-
-<meta
-  name="description"
-  content="Epshitah Stories — Emotional stories that touch the heart."
->
-
-<style>
-
+<title>Epshitah Stories</title><meta name="description" content="Epshitah Stories — Emotional stories that touch the heart."><style>
 :root{
   --purple:#7b174d;
   --purple-dark:#4d1032;
   --purple-light:#b62d72;
   --pink:#f8e4ee;
   --soft:#fcf8fb;
-  --white:#ffffff;
+  --white:#fff;
   --text:#241a20;
   --muted:#777;
   --border:#eadfe5;
   --shadow:0 10px 30px rgba(75,16,50,.10);
 }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
-html{
-  scroll-behavior:smooth;
-}
+html{scroll-behavior:smooth}
 
 body{
   font-family:Arial,Helvetica,sans-serif;
@@ -43,13 +27,11 @@ body{
   line-height:1.6;
 }
 
-/* ================= HEADER ================= */
-
 .header{
   position:sticky;
   top:0;
   z-index:1000;
-  background:rgba(255,255,255,.96);
+  background:rgba(255,255,255,.97);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--border);
 }
@@ -69,12 +51,9 @@ body{
   color:var(--purple);
   font-size:23px;
   font-weight:800;
-  letter-spacing:-.5px;
 }
 
-.logo span{
-  color:var(--purple-light);
-}
+.logo span{color:var(--purple-light)}
 
 .nav-links{
   display:flex;
@@ -82,8 +61,8 @@ body{
   gap:9px;
 }
 
-.nav-links button,
-.nav-links a{
+.nav-links a,
+.nav-links button{
   border:0;
   background:transparent;
   text-decoration:none;
@@ -94,15 +73,15 @@ body{
   cursor:pointer;
 }
 
-.nav-links button:hover,
-.nav-links a:hover{
+.nav-links a:hover,
+.nav-links button:hover{
   background:var(--pink);
   color:var(--purple);
 }
 
 .login-btn{
   background:var(--purple)!important;
-  color:white!important;
+  color:#fff!important;
   padding:10px 17px!important;
 }
 
@@ -110,7 +89,7 @@ body{
   background:var(--purple-dark)!important;
 }
 
-/* ================= HERO ================= */
+/* HERO */
 
 .hero{
   max-width:1200px;
@@ -151,7 +130,7 @@ body{
 .hero-content{
   position:relative;
   z-index:2;
-  color:white;
+  color:#fff;
   max-width:700px;
   padding:60px;
 }
@@ -186,27 +165,27 @@ body{
   gap:10px;
 }
 
-.hero-primary{
-  border:0;
-  background:white;
-  color:var(--purple);
+.hero-primary,
+.hero-secondary{
   padding:13px 20px;
   border-radius:10px;
   font-weight:800;
   cursor:pointer;
 }
 
+.hero-primary{
+  border:0;
+  background:#fff;
+  color:var(--purple);
+}
+
 .hero-secondary{
   border:1px solid rgba(255,255,255,.35);
   background:rgba(255,255,255,.08);
-  color:white;
-  padding:13px 20px;
-  border-radius:10px;
-  font-weight:700;
-  cursor:pointer;
+  color:#fff;
 }
 
-/* ================= MAIN ================= */
+/* MAIN */
 
 .container{
   max-width:1200px;
@@ -214,15 +193,12 @@ body{
   padding:45px 20px;
 }
 
-.section{
-  margin-bottom:50px;
-}
+.section{margin-bottom:50px}
 
 .section-heading{
   display:flex;
   align-items:end;
   justify-content:space-between;
-  gap:20px;
   margin-bottom:20px;
 }
 
@@ -236,15 +212,14 @@ body{
   font-size:14px;
 }
 
-/* ================= SEARCH ================= */
+/* SEARCH */
 
 .search-area{
-  background:white;
+  background:#fff;
   border:1px solid var(--border);
   border-radius:17px;
   padding:18px;
   box-shadow:var(--shadow);
-  margin-bottom:30px;
 }
 
 .search-wrap{
@@ -262,20 +237,14 @@ body{
   font-size:15px;
 }
 
-.search-wrap input:focus{
-  border-color:var(--purple-light);
-}
-
 .search-wrap button{
   border:0;
   background:var(--purple);
-  color:white;
+  color:#fff;
   border-radius:10px;
   padding:0 20px;
   font-weight:700;
 }
-
-/* ================= GENRES ================= */
 
 .genre-list{
   display:flex;
@@ -286,7 +255,7 @@ body{
 
 .genre-btn{
   border:1px solid var(--border);
-  background:white;
+  background:#fff;
   color:var(--purple);
   padding:8px 13px;
   border-radius:20px;
@@ -295,14 +264,12 @@ body{
   font-weight:600;
 }
 
-.genre-btn:hover,
 .genre-btn.active{
   background:var(--purple);
-  color:white;
-  border-color:var(--purple);
+  color:#fff;
 }
 
-/* ================= STORIES ================= */
+/* STORIES */
 
 .story-grid{
   display:grid;
@@ -311,7 +278,7 @@ body{
 }
 
 .story-card{
-  background:white;
+  background:#fff;
   border:1px solid var(--border);
   border-radius:17px;
   overflow:hidden;
@@ -319,21 +286,17 @@ body{
   transition:.2s;
 }
 
-.story-card:hover{
-  transform:translateY(-3px);
-}
+.story-card:hover{transform:translateY(-3px)}
 
 .cover{
   height:230px;
-  background:
-    linear-gradient(135deg,var(--purple),var(--purple-light));
+  background:linear-gradient(135deg,var(--purple),var(--purple-light));
   display:flex;
   align-items:center;
   justify-content:center;
-  color:white;
+  color:#fff;
   padding:25px;
   text-align:center;
-  position:relative;
 }
 
 .cover-placeholder{
@@ -347,9 +310,7 @@ body{
   line-height:1.2;
 }
 
-.story-info{
-  padding:18px;
-}
+.story-info{padding:18px}
 
 .genre-tag{
   display:inline-block;
@@ -382,22 +343,18 @@ body{
   margin-top:15px;
   border:0;
   background:var(--purple);
-  color:white;
+  color:#fff;
   padding:11px;
   border-radius:9px;
   font-weight:700;
   cursor:pointer;
 }
 
-.read-btn:hover{
-  background:var(--purple-dark);
-}
-
 .empty{
   grid-column:1/-1;
   text-align:center;
   padding:55px 20px;
-  background:white;
+  background:#fff;
   border:1px dashed var(--border);
   border-radius:15px;
   color:var(--muted);
@@ -410,7 +367,7 @@ body{
   margin-bottom:6px;
 }
 
-/* ================= VIDEO ================= */
+/* VIDEO */
 
 .video-section{
   background:linear-gradient(135deg,#fff,#f9edf4);
@@ -430,7 +387,7 @@ body{
   margin-bottom:8px;
 }
 
-/* ================= ABOUT ================= */
+/* ABOUT */
 
 .about{
   display:grid;
@@ -439,7 +396,7 @@ body{
 }
 
 .about-card{
-  background:white;
+  background:#fff;
   border:1px solid var(--border);
   border-radius:17px;
   padding:28px;
@@ -451,15 +408,13 @@ body{
   margin-bottom:10px;
 }
 
-.about-card p{
-  color:var(--muted);
-}
+.about-card p{color:var(--muted)}
 
-/* ================= FOOTER ================= */
+/* FOOTER */
 
 .footer{
   background:var(--purple-dark);
-  color:white;
+  color:#fff;
   margin-top:20px;
 }
 
@@ -484,9 +439,10 @@ body{
   margin-top:5px;
 }
 
-/* ================= MODAL ================= */
+/* MODALS */
 
-.modal{
+.modal,
+.auth-panel{
   position:fixed;
   inset:0;
   background:rgba(20,10,16,.72);
@@ -497,12 +453,12 @@ body{
   padding:15px;
 }
 
-.modal.show{
-  display:flex;
-}
+.modal.show,
+.auth-panel.show{display:flex}
 
-.modal-box{
-  background:white;
+.modal-box,
+.auth-box{
+  background:#fff;
   width:100%;
   max-width:760px;
   max-height:92vh;
@@ -511,10 +467,17 @@ body{
   position:relative;
 }
 
+.auth-box{
+  max-width:430px;
+  padding:28px;
+}
+
 .modal-head{
   padding:24px 25px 18px;
   border-bottom:1px solid var(--border);
 }
+
+.modal-body{padding:25px}
 
 .close{
   position:absolute;
@@ -528,15 +491,12 @@ body{
   color:var(--purple);
   font-size:22px;
   cursor:pointer;
+  z-index:5;
 }
 
 .modal-head h2{
   color:var(--purple-dark);
   padding-right:40px;
-}
-
-.modal-body{
-  padding:25px;
 }
 
 .modal-description{
@@ -550,70 +510,52 @@ body{
   font-size:16px;
 }
 
-/* ================= LOGIN ================= */
+/* AUTH */
 
-.login-panel{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(20,10,16,.72);
-  z-index:4000;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.login-panel.show{
-  display:flex;
-}
-
-.login-box{
-  width:100%;
-  max-width:430px;
-  background:white;
-  border-radius:20px;
-  padding:28px;
-  position:relative;
-}
-
-.login-box h2{
+.auth-box h2{
   color:var(--purple);
   margin-bottom:6px;
 }
 
-.login-box p{
+.auth-subtitle{
   color:var(--muted);
   font-size:13px;
   margin-bottom:20px;
 }
 
-.login-box label{
+.auth-box label{
   display:block;
   font-weight:700;
   font-size:13px;
   margin:13px 0 7px;
 }
 
-.login-box input{
+.auth-box input{
   width:100%;
   padding:12px;
   border:1px solid var(--border);
   border-radius:9px;
   outline:none;
+  font-size:15px;
 }
 
-.login-submit{
+.auth-box input:focus{
+  border-color:var(--purple-light);
+}
+
+.auth-submit{
   width:100%;
   border:0;
   background:var(--purple);
-  color:white;
+  color:#fff;
   padding:13px;
   border-radius:9px;
   font-weight:700;
   margin-top:18px;
+  cursor:pointer;
 }
 
-.login-message{
+.auth-message{
   display:none;
   margin-top:12px;
   padding:10px;
@@ -623,47 +565,55 @@ body{
   color:#9b1c2e;
 }
 
-.login-message.show{
-  display:block;
-}
+.auth-message.show{display:block}
 
-.signup-link{
-  margin-top:16px;
+.auth-switch{
+  margin-top:17px;
   text-align:center;
-  font-size:13px;
   color:var(--muted);
+  font-size:13px;
 }
 
-.signup-link button{
+.auth-switch button{
   border:0;
   background:none;
   color:var(--purple);
   font-weight:700;
+  cursor:pointer;
 }
 
-/* ================= RESPONSIVE ================= */
+/* USER STATE */
+
+.user-area{
+  display:none;
+  align-items:center;
+  gap:8px;
+}
+
+.user-area.show{display:flex}
+
+.user-name{
+  color:var(--purple);
+  font-size:13px;
+  font-weight:700;
+}
+
+.logout-btn{
+  border:1px solid var(--border)!important;
+  background:#fff!important;
+  color:var(--purple)!important;
+}
+
+/* RESPONSIVE */
 
 @media(max-width:900px){
-
-  .story-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .hero h1{
-    font-size:40px;
-  }
-
+  .story-grid{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:40px}
 }
 
 @media(max-width:650px){
-
-  .nav{
-    height:62px;
-  }
-
-  .logo{
-    font-size:20px;
-  }
+  .nav{height:62px}
+  .logo{font-size:20px}
 
   .nav-links a:not(.login-btn){
     display:none;
@@ -683,821 +633,461 @@ body{
     padding:35px 25px;
   }
 
-  .hero h1{
-    font-size:34px;
-  }
+  .hero h1{font-size:34px}
+  .hero p{font-size:15px}
 
-  .hero p{
-    font-size:15px;
-  }
+  .container{padding:32px 14px}
 
-  .container{
-    padding:32px 14px;
-  }
+  .section-heading{display:block}
 
-  .section-heading{
-    display:block;
-  }
+  .section-heading h2{font-size:23px}
 
-  .section-heading h2{
-    font-size:23px;
-  }
+  .story-grid{grid-template-columns:1fr}
 
-  .story-grid{
-    grid-template-columns:1fr;
-  }
+  .about{grid-template-columns:1fr}
 
-  .about{
-    grid-template-columns:1fr;
-  }
+  .search-wrap{flex-direction:column}
 
-  .search-wrap{
-    flex-direction:column;
-  }
+  .search-wrap button{padding:12px}
 
-  .search-wrap button{
-    padding:12px;
-  }
+  .cover{height:250px}
 
-  .cover{
-    height:250px;
-  }
+  .footer-inner{display:block}
 
-  .footer-inner{
-    display:block;
-  }
+  .footer-inner>div{margin-bottom:15px}
 
-  .footer-inner > div{
-    margin-bottom:15px;
-  }
-
+  .user-name{display:none}
 }
-
-</style>
-</head>
-
-
-<body>
-
-
-<!-- HEADER -->
-
-<header class="header">
-
-  <nav class="nav">
-
-    <a
-      href="#"
-      class="logo"
-      onclick="goHome()"
-    >
-      Epshitah <span>Stories</span>
-    </a>
-
-    <div class="nav-links">
-
-      <a href="#stories">
-        Stories
-      </a>
-
-      <a href="#about">
-        About
-      </a>
-
-      <button
-        class="login-btn"
-        onclick="openLogin()"
-      >
-        Sign In
-      </button>
-
-    </div>
-
-  </nav>
-
-</header>
-
-
-<!-- HERO -->
-
-<section class="hero">
-
-  <div class="hero-inner">
-
-    <div class="hero-decoration"></div>
-    <div class="hero-decoration two"></div>
-
-    <div class="hero-content">
-
-      <span class="hero-kicker">
-        EMOTIONAL STORIES THAT TOUCH THE HEART
-      </span>
-
-      <h1>
-        Every story deserves
-        to be heard.
-      </h1>
-
-      <p>
-        Welcome to Epshitah Stories — a place for stories
-        of love, pain, hope, family, heartbreak and life.
-        Read stories that stay with you long after the last page.
-      </p>
-
-      <div class="hero-actions">
-
-        <button
-          class="hero-primary"
-          onclick="document.getElementById('stories').scrollIntoView()"
-        >
-          Explore Stories
-        </button>
-
-        <button
-          class="hero-secondary"
-          onclick="document.getElementById('about').scrollIntoView()"
-        >
-          About Epshitah
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- MAIN -->
-
-<main class="container">
-
-
-  <!-- SEARCH -->
-
-  <section class="section">
-
-    <div class="search-area">
-
-      <div class="search-wrap">
-
-        <input
-          id="searchInput"
-          type="search"
-          placeholder="Search stories..."
-          oninput="filterStories()"
-        >
-
-        <button onclick="filterStories()">
-          Search
-        </button>
-
-      </div>
-
-      <div
-        class="genre-list"
-        id="genreList"
-      ></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- STORIES -->
-
-  <section
-    class="section"
-    id="stories"
-  >
-
-    <div class="section-heading">
-
-      <div>
-        <h2>Latest Stories</h2>
-        <p>
-          Discover stories written to make you feel.
-        </p>
-      </div>
-
-    </div>
-
-
-    <div
-      class="story-grid"
-      id="storyGrid"
-    >
-
-      <div class="empty">
-
-        <strong>Loading stories...</strong>
-
-        Please wait while we bring the stories to you.
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- VIDEO -->
-
-  <section class="section">
-
-    <div class="section-heading">
-
-      <div>
-        <h2>Story Videos</h2>
-        <p>
-          Watch stories come alive.
-        </p>
-      </div>
-
-    </div>
-
-    <div class="video-section">
-
-      <div class="video-empty">
-
-        <div class="video-icon">🎬</div>
-
-        <strong>
-          Story videos are coming soon.
-        </strong>
-
-        <p>
-          Videos will appear here when they are added
-          to Epshitah Stories.
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- ABOUT -->
-
-  <section
-    class="section"
-    id="about"
-  >
-
-    <div class="section-heading">
-
-      <div>
-        <h2>About Epshitah Stories</h2>
-        <p>
-          Stories with heart.
-        </p>
-      </div>
-
-    </div>
-
-
-    <div class="about">
-
-      <div class="about-card">
-
-        <h3>Our Stories</h3>
-
-        <p>
-          Epshitah Stories is a home for emotional and
-          meaningful stories. From romance and family
-          to difficult experiences and inspiring journeys,
-          every story has something to say.
-        </p>
-
-      </div>
-
-
-      <div class="about-card">
-
-        <h3>Why We Tell Them</h3>
-
-        <p>
-          Sometimes a story helps someone realise they
-          are not alone. Sometimes it gives someone hope.
-          And sometimes it simply gives a voice to something
-          that was difficult to say.
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-</main>
-
-
-<!-- FOOTER -->
-
-<footer class="footer">
-
-  <div class="footer-inner">
-
-    <div>
-
-      <div class="footer-brand">
-        Epshitah Stories
-      </div>
-
-      <p>
-        Emotional stories that touch the heart.
-      </p>
-
-    </div>
-
-    <div>
-
-      <p>
-        © <span id="year"></span>
-        Epshitah Stories. All rights reserved.
-      </p>
-
-    </div>
-
-  </div>
-
-</footer>
-
-
-<!-- STORY MODAL -->
-
-<div
-  class="modal"
-  id="storyModal"
-  onclick="closeStoryOutside(event)"
->
-
-  <div class="modal-box">
-
-    <button
-      class="close"
-      onclick="closeStory()"
-    >
-      ×
-    </button>
-
-    <div class="modal-head">
-
-      <span
-        class="genre-tag"
-        id="modalGenre"
-      ></span>
-
-      <h2 id="modalTitle"></h2>
-
-    </div>
-
-    <div class="modal-body">
-
-      <p
-        class="modal-description"
-        id="modalDescription"
-      ></p>
-
-      <div
-        class="full-story"
-        id="modalStory"
-      ></div>
-
-    </div>
-
-  </div>
+</style></head><body><header class="header">
+<nav class="nav"><a href="#" class="logo" onclick="goHome();return false;">
+Epshitah <span>Stories</span>
+</a><div class="nav-links"><a href="#stories">Stories</a>
+<a href="#about">About</a>
+
+<div class="user-area" id="userArea">
+<span class="user-name" id="userName"></span>
+<button class="logout-btn" onclick="logout()">Log Out</button>
+</div><button class="login-btn" id="loginButton" onclick="openLogin()">
+Sign In
+</button></div>
+</nav>
+</header><section class="hero"><div class="hero-inner"><div class="hero-decoration"></div>
+<div class="hero-decoration two"></div><div class="hero-content"><span class="hero-kicker">
+EMOTIONAL STORIES THAT TOUCH THE HEART
+</span><h1>
+Every story deserves
+to be heard.
+</h1><p>
+Welcome to Epshitah Stories — a place for stories
+of love, pain, hope, family, heartbreak and life.
+Read stories that stay with you long after the last page.
+</p><div class="hero-actions"><button
+class="hero-primary"
+onclick="document.getElementById('stories').scrollIntoView()">
+Explore Stories
+</button>
+
+<button
+class="hero-secondary"
+onclick="document.getElementById('about').scrollIntoView()">
+About Epshitah
+</button>
 
 </div>
-
-
-<!-- LOGIN MODAL -->
-
-<div
-  class="login-panel"
-  id="loginPanel"
-  onclick="closeLoginOutside(event)"
->
-
-  <div class="login-box">
-
-    <button
-      class="close"
-      onclick="closeLogin()"
-    >
-      ×
-    </button>
-
-    <h2>Welcome Back</h2>
-
-    <p>
-      Sign in to continue reading and saving your stories.
-    </p>
-
-    <form onsubmit="login(event)">
-
-      <label for="loginEmail">
-        Email
-      </label>
-
-      <input
-        id="loginEmail"
-        type="email"
-        required
-        placeholder="Enter your email"
-      >
-
-
-      <label for="loginPassword">
-        Password
-      </label>
-
-      <input
-        id="loginPassword"
-        type="password"
-        required
-        placeholder="Enter your password"
-      >
-
-
-      <button
-        class="login-submit"
-        type="submit"
-      >
-        Sign In
-      </button>
-
-    </form>
-
-    <div
-      class="login-message"
-      id="loginMessage"
-    ></div>
-
-    <div class="signup-link">
-
-      Don't have an account?
-
-      <button onclick="goToSignup()">
-        Create one
-      </button>
-
-    </div>
-
-  </div>
-
 </div>
+</div>
+</section><main class="container"><section class="section"><div class="search-area"><div class="search-wrap"><input
+id="searchInput"
+type="search"
+placeholder="Search stories..."
+oninput="filterStories()">
 
+<button onclick="filterStories()">Search</button>
 
-<script>
+</div><div class="genre-list" id="genreList"></div></div>
+</section><section class="section" id="stories"><div class="section-heading"><div>
+<h2>Latest Stories</h2>
+<p>Discover stories written to make you feel.</p>
+</div></div><div class="story-grid" id="storyGrid"><div class="empty">
+<strong>Loading stories...</strong>
+Please wait while we bring the stories to you.
+</div></div>
+</section><section class="section"><div class="section-heading"><div>
+<h2>Story Videos</h2>
+<p>Watch stories come alive.</p>
+</div></div><div class="video-section"><div class="video-empty"><div class="video-icon">🎬</div><strong>Story videos are coming soon.</strong>
+
+<p>
+Videos will appear here when they are added
+to Epshitah Stories.
+</p></div>
+</div>
+</section><section class="section" id="about"><div class="section-heading"><div>
+<h2>About Epshitah Stories</h2>
+<p>Stories with heart.</p>
+</div></div><div class="about"><div class="about-card"><h3>Our Stories</h3><p>
+Epshitah Stories is a home for emotional and
+meaningful stories. From romance and family
+to difficult experiences and inspiring journeys,
+every story has something to say.
+</p></div><div class="about-card"><h3>Why We Tell Them</h3><p>
+Sometimes a story helps someone realise they
+are not alone. Sometimes it gives someone hope.
+And sometimes it simply gives a voice to something
+that was difficult to say.
+</p></div></div>
+</section></main><footer class="footer"><div class="footer-inner"><div>
+<div class="footer-brand">Epshitah Stories</div>
+<p>Emotional stories that touch the heart.</p>
+</div><div>
+<p>
+© <span id="year"></span>
+Epshitah Stories. All rights reserved.
+</p>
+</div></div>
+</footer><!-- STORY MODAL --><div class="modal" id="storyModal" onclick="closeStoryOutside(event)"><div class="modal-box"><button class="close" onclick="closeStory()">×</button>
+
+<div class="modal-head"><span class="genre-tag" id="modalGenre"></span>
+
+<h2 id="modalTitle"></h2></div><div class="modal-body"><p class="modal-description" id="modalDescription"></p><div class="full-story" id="modalStory"></div></div>
+</div>
+</div><!-- LOGIN MODAL --><div class="auth-panel" id="loginPanel" onclick="closeAuthOutside(event)"><div class="auth-box"><button class="close" onclick="closeLogin()">×</button>
+
+<h2>Welcome Back</h2><p class="auth-subtitle">
+Sign in to continue reading and saving your stories.
+</p><form onsubmit="login(event)"><label>Email</label>
+
+<input
+id="loginEmail"
+type="email"
+required
+autocomplete="email"
+placeholder="Enter your email">
+
+<label>Password</label>
+
+<input
+id="loginPassword"
+type="password"
+required
+autocomplete="current-password"
+placeholder="Enter your password">
+
+<button class="auth-submit" type="submit">
+Sign In
+</button></form><div class="auth-message" id="loginMessage"></div><div class="auth-switch">Don't have an account?
+
+<button onclick="openSignup()">
+Create one
+</button></div></div>
+</div><!-- SIGN UP MODAL --><div class="auth-panel" id="signupPanel" onclick="closeAuthOutside(event)"><div class="auth-box"><button class="close" onclick="closeSignup()">×</button>
+
+<h2>Create Your Account</h2><p class="auth-subtitle">
+Join Epshitah Stories and start reading.
+</p><form onsubmit="signup(event)"><label>Name</label>
+
+<input
+id="signupName"
+type="text"
+required
+autocomplete="name"
+placeholder="Enter your name">
+
+<label>Email</label>
+
+<input
+id="signupEmail"
+type="email"
+required
+autocomplete="email"
+placeholder="Enter your email">
+
+<label>Password</label>
+
+<input
+id="signupPassword"
+type="password"
+required
+autocomplete="new-password"
+placeholder="Create a password">
+
+<button class="auth-submit" type="submit">
+Create Account
+</button></form><div class="auth-message" id="signupMessage"></div><div class="auth-switch">Already have an account?
+
+<button onclick="openLogin()">
+Sign In
+</button></div></div>
+</div><script>
 
 let allStories = [];
 let selectedGenre = '';
 
 
-/* ================= LOAD STORIES ================= */
+/* ================= STORIES ================= */
 
 async function loadStories(){
 
-  const grid =
-    document.getElementById('storyGrid');
+const grid=document.getElementById('storyGrid');
 
-  try{
+try{
 
-    const response =
-      await fetch('/api/stories');
+const response=await fetch('/api/stories');
 
-    if(!response.ok){
-      throw new Error('Could not load stories');
-    }
-
-    allStories =
-      await response.json();
-
-    buildGenres();
-
-    renderStories(allStories);
-
-  }catch(error){
-
-    console.error(error);
-
-    grid.innerHTML = `
-      <div class="empty">
-        <strong>Stories couldn't be loaded.</strong>
-        Please refresh the page and try again.
-      </div>
-    `;
-
-  }
-
+if(!response.ok){
+throw new Error('Could not load stories');
 }
 
+allStories=await response.json();
 
-/* ================= GENRES ================= */
+buildGenres();
+renderStories(allStories);
+
+}catch(error){
+
+console.error(error);
+
+grid.innerHTML=`
+<div class="empty">
+<strong>Stories couldn't be loaded.</strong>
+Please refresh the page and try again.
+</div>
+`;
+
+}
+}
+
 
 function buildGenres(){
 
-  const container =
-    document.getElementById('genreList');
+const container=document.getElementById('genreList');
 
-  const genres =
-    [
-      ...new Set(
-        allStories
-          .map(story => story.category)
-          .filter(Boolean)
-      )
-    ].sort();
+const genres=[
+...new Set(
+allStories
+.map(story=>story.category)
+.filter(Boolean)
+)
+].sort();
 
+container.innerHTML='';
 
-  container.innerHTML = '';
+if(!genres.length)return;
 
+const allButton=document.createElement('button');
 
-  if(genres.length === 0){
-    return;
-  }
+allButton.className='genre-btn active';
+allButton.textContent='All Stories';
 
+allButton.onclick=()=>{
 
-  const allButton =
-    document.createElement('button');
+selectedGenre='';
+updateGenreButtons();
+filterStories();
 
-  allButton.className =
-    'genre-btn active';
+};
 
-  allButton.textContent =
-    'All Stories';
+container.appendChild(allButton);
 
-  allButton.onclick = () => {
+genres.forEach(genre=>{
 
-    selectedGenre = '';
+const button=document.createElement('button');
 
-    updateGenreButtons();
+button.className='genre-btn';
+button.textContent=genre;
 
-    filterStories();
+button.onclick=()=>{
 
-  };
+selectedGenre=genre;
+updateGenreButtons();
+filterStories();
 
-  container.appendChild(allButton);
+};
 
+container.appendChild(button);
 
-  genres.forEach(genre => {
-
-    const button =
-      document.createElement('button');
-
-    button.className =
-      'genre-btn';
-
-    button.textContent =
-      genre;
-
-    button.onclick = () => {
-
-      selectedGenre = genre;
-
-      updateGenreButtons();
-
-      filterStories();
-
-    };
-
-    container.appendChild(button);
-
-  });
+});
 
 }
 
-
-/* ================= GENRE BUTTONS ================= */
 
 function updateGenreButtons(){
 
-  document
-    .querySelectorAll('.genre-btn')
-    .forEach(button => {
+document.querySelectorAll('.genre-btn').forEach(button=>{
 
-      button.classList.remove('active');
+button.classList.remove('active');
 
-      if(
-        selectedGenre === '' &&
-        button.textContent === 'All Stories'
-      ){
-        button.classList.add('active');
-      }
+if(
+selectedGenre==='' &&
+button.textContent==='All Stories'
+){
+button.classList.add('active');
+}
 
-      if(
-        selectedGenre &&
-        button.textContent === selectedGenre
-      ){
-        button.classList.add('active');
-      }
+if(
+selectedGenre &&
+button.textContent===selectedGenre
+){
+button.classList.add('active');
+}
 
-    });
+});
 
 }
 
-
-/* ================= FILTER ================= */
 
 function filterStories(){
 
-  const search =
-    document
-      .getElementById('searchInput')
-      .value
-      .trim()
-      .toLowerCase();
+const search=document
+.getElementById('searchInput')
+.value
+.trim()
+.toLowerCase();
 
+const filtered=allStories.filter(story=>{
 
-  const filtered =
-    allStories.filter(story => {
+const title=(story.title||'').toLowerCase();
+const description=(story.description||'').toLowerCase();
+const category=(story.category||'').toLowerCase();
 
-      const title =
-        (story.title || '').toLowerCase();
+const matchesSearch=
+!search ||
+title.includes(search) ||
+description.includes(search) ||
+category.includes(search);
 
-      const description =
-        (story.description || '').toLowerCase();
+const matchesGenre=
+!selectedGenre ||
+story.category===selectedGenre;
 
-      const category =
-        (story.category || '').toLowerCase();
+return matchesSearch && matchesGenre;
 
+});
 
-      const matchesSearch =
-        !search ||
-        title.includes(search) ||
-        description.includes(search) ||
-        category.includes(search);
-
-
-      const matchesGenre =
-        !selectedGenre ||
-        story.category === selectedGenre;
-
-
-      return matchesSearch && matchesGenre;
-
-    });
-
-
-  renderStories(filtered);
+renderStories(filtered);
 
 }
 
-
-/* ================= RENDER STORIES ================= */
 
 function renderStories(stories){
 
-  const grid =
-    document.getElementById('storyGrid');
+const grid=document.getElementById('storyGrid');
 
+if(!stories.length){
 
-  if(!stories.length){
+grid.innerHTML=`
+<div class="empty">
+<strong>No stories found.</strong>
+Try another search or genre.
+</div>
+`;
 
-    grid.innerHTML = `
-      <div class="empty">
-        <strong>No stories found.</strong>
-        Try another search or genre.
-      </div>
-    `;
+return;
+}
 
-    return;
+grid.innerHTML=stories.map(story=>{
 
-  }
+const safeTitle=escapeHtml(
+story.title||'Untitled Story'
+);
 
+const safeCategory=escapeHtml(
+story.category||'Story'
+);
 
-  grid.innerHTML =
-    stories.map(story => {
+const safeDescription=escapeHtml(
+story.description||
+'A story waiting to be discovered.'
+);
 
-      const safeTitle =
-        escapeHtml(story.title || 'Untitled Story');
+return`
 
-      const safeCategory =
-        escapeHtml(story.category || 'Story');
+<article class="story-card">
 
-      const safeDescription =
-        escapeHtml(
-          story.description ||
-          'A story waiting to be discovered.'
-        );
+<div class="cover">
 
+<div>
 
-      return `
+<div class="cover-placeholder">♡</div>
 
-        <article class="story-card">
+<div class="cover-title">
+${safeTitle}
+</div>
 
-          <div class="cover">
+</div>
 
-            <div>
+</div>
 
-              <div class="cover-placeholder">
-                ♡
-              </div>
+<div class="story-info">
 
-              <div class="cover-title">
-                ${safeTitle}
-              </div>
+<span class="genre-tag">
+${safeCategory}
+</span>
 
-            </div>
+<h3>${safeTitle}</h3>
 
-          </div>
+<p>${safeDescription}</p>
 
+<button
+class="read-btn"
+onclick="openStory(${story.id})">
+Read Story
+</button>
 
-          <div class="story-info">
+</div>
 
-            <span class="genre-tag">
-              ${safeCategory}
-            </span>
+</article>
 
-            <h3>
-              ${safeTitle}
-            </h3>
+`;
 
-            <p>
-              ${safeDescription}
-            </p>
-
-            <button
-              class="read-btn"
-              onclick="openStory(${story.id})"
-            >
-              Read Story
-            </button>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join('');
+}).join('');
 
 }
 
 
-/* ================= OPEN STORY ================= */
-
 function openStory(id){
 
-  const story =
-    allStories.find(
-      item => item.id == id
-    );
+const story=allStories.find(
+item=>item.id==id
+);
 
+if(!story)return;
 
-  if(!story){
-    return;
-  }
+document.getElementById('modalTitle').textContent=
+story.title||'Untitled Story';
 
+document.getElementById('modalGenre').textContent=
+story.category||'Story';
 
-  document.getElementById('modalTitle').textContent =
-    story.title || 'Untitled Story';
+document.getElementById('modalDescription').textContent=
+story.description||'';
 
+document.getElementById('modalStory').textContent=
+story.content||'';
 
-  document.getElementById('modalGenre').textContent =
-    story.category || 'Story';
+document.getElementById('storyModal')
+.classList.add('show');
 
-
-  document.getElementById('modalDescription').textContent =
-    story.description || '';
-
-
-  document.getElementById('modalStory').textContent =
-    story.content || '';
-
-
-  document
-    .getElementById('storyModal')
-    .classList.add('show');
-
-
-  document.body.style.overflow =
-    'hidden';
+document.body.style.overflow='hidden';
 
 }
 
 
 function closeStory(){
 
-  document
-    .getElementById('storyModal')
-    .classList.remove('show');
+document.getElementById('storyModal')
+.classList.remove('show');
 
-  document.body.style.overflow =
-    '';
+document.body.style.overflow='';
 
 }
 
 
 function closeStoryOutside(event){
 
-  if(event.target.id === 'storyModal'){
-    closeStory();
-  }
+if(event.target.id==='storyModal'){
+closeStory();
+}
 
 }
 
@@ -1506,132 +1096,301 @@ function closeStoryOutside(event){
 
 function openLogin(){
 
-  document
-    .getElementById('loginPanel')
-    .classList.add('show');
+document.getElementById('signupPanel')
+.classList.remove('show');
 
-  document.body.style.overflow =
-    'hidden';
+document.getElementById('loginPanel')
+.classList.add('show');
+
+document.body.style.overflow='hidden';
 
 }
 
 
 function closeLogin(){
 
-  document
-    .getElementById('loginPanel')
-    .classList.remove('show');
+document.getElementById('loginPanel')
+.classList.remove('show');
 
-  document.body.style.overflow =
-    '';
+document.body.style.overflow='';
 
 }
 
-
-function closeLoginOutside(event){
-
-  if(event.target.id === 'loginPanel'){
-    closeLogin();
-  }
-
-}
-
-
-/* ================= READER LOGIN ================= */
 
 async function login(event){
 
-  event.preventDefault();
+event.preventDefault();
 
+const email=document
+.getElementById('loginEmail')
+.value.trim();
 
-  const email =
-    document
-      .getElementById('loginEmail')
-      .value
-      .trim();
+const password=document
+.getElementById('loginPassword')
+.value;
 
+const message=document
+.getElementById('loginMessage');
 
-  const password =
-    document
-      .getElementById('loginPassword')
-      .value;
+message.className='auth-message';
 
+try{
 
-  const message =
-    document.getElementById('loginMessage');
+const response=await fetch('/api/login',{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({
+email,
+password
+})
+});
 
+let data={};
 
-  message.className =
-    'login-message';
+try{
+data=await response.json();
+}catch(e){}
 
+if(!response.ok){
 
-  try{
+message.textContent=
+data.message||
+data.error||
+'Email or password is incorrect.';
 
-    const response =
-      await fetch(
-        '/api/login',
-        {
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json'
-          },
-          body:JSON.stringify({
-            email,
-            password
-          })
-        }
-      );
+message.classList.add('show');
 
+return;
+}
 
-    const data =
-      await response.json();
+closeLogin();
 
+await checkReader();
 
-    if(!response.ok){
+window.location.reload();
 
-      message.textContent =
-        data.message ||
-        'Email or password is incorrect.';
+}catch(error){
 
-      message.classList.add('show');
+console.error(error);
 
-      return;
+message.textContent=
+'Something went wrong. Please try again.';
 
-    }
+message.classList.add('show');
 
-
-    closeLogin();
-
-    /*
-      The existing server/session remains
-      responsible for keeping the reader logged in.
-    */
-
-    window.location.reload();
-
-
-  }catch(error){
-
-    message.textContent =
-      'Something went wrong. Please try again.';
-
-    message.classList.add('show');
-
-  }
+}
 
 }
 
 
-/* ================= SIGNUP ================= */
+/* ================= SIGN UP ================= */
 
-function goToSignup(){
+function openSignup(){
 
-  /*
-    Keep the existing reader account flow.
-    The server can serve the signup page if available.
-  */
+document.getElementById('loginPanel')
+.classList.remove('show');
 
-  window.location.href = '/signup';
+document.getElementById('signupPanel')
+.classList.add('show');
+
+document.body.style.overflow='hidden';
+
+}
+
+
+function closeSignup(){
+
+document.getElementById('signupPanel')
+.classList.remove('show');
+
+document.body.style.overflow='';
+
+}
+
+
+async function signup(event){
+
+event.preventDefault();
+
+const name=document
+.getElementById('signupName')
+.value.trim();
+
+const email=document
+.getElementById('signupEmail')
+.value.trim();
+
+const password=document
+.getElementById('signupPassword')
+.value;
+
+const message=document
+.getElementById('signupMessage');
+
+message.className='auth-message';
+
+try{
+
+const response=await fetch('/api/signup',{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({
+name,
+email,
+password
+})
+});
+
+let data={};
+
+try{
+data=await response.json();
+}catch(e){}
+
+if(!response.ok){
+
+message.textContent=
+data.message||
+data.error||
+'Unable to create the account.';
+
+message.classList.add('show');
+
+return;
+}
+
+
+/*
+  Some server versions automatically log the reader in
+  after signup. If yours does, the session is preserved.
+*/
+
+closeSignup();
+
+await checkReader();
+
+window.location.reload();
+
+}catch(error){
+
+console.error(error);
+
+message.textContent=
+'Something went wrong. Please try again.';
+
+message.classList.add('show');
+
+}
+
+}
+
+
+/* ================= READER SESSION ================= */
+
+async function checkReader(){
+
+try{
+
+const response=await fetch('/api/me');
+
+if(!response.ok){
+
+showLoggedOut();
+return null;
+
+}
+
+const data=await response.json();
+
+const user=
+data.user ||
+data.reader ||
+data;
+
+if(user && (user.name || user.email)){
+
+showLoggedIn(user);
+return user;
+
+}
+
+showLoggedOut();
+return null;
+
+}catch(error){
+
+console.error(error);
+showLoggedOut();
+return null;
+
+}
+
+}
+
+
+function showLoggedIn(user){
+
+document.getElementById('loginButton')
+.style.display='none';
+
+const area=document.getElementById('userArea');
+
+area.classList.add('show');
+
+document.getElementById('userName')
+.textContent=
+'Hi, '+(user.name||user.email);
+
+}
+
+
+function showLoggedOut(){
+
+document.getElementById('loginButton')
+.style.display='block';
+
+document.getElementById('userArea')
+.classList.remove('show');
+
+}
+
+
+async function logout(){
+
+try{
+
+await fetch('/api/logout',{
+method:'POST'
+});
+
+}catch(error){
+
+console.error(error);
+
+}
+
+showLoggedOut();
+
+window.location.reload();
+
+}
+
+
+/* ================= AUTH OUTSIDE CLICK ================= */
+
+function closeAuthOutside(event){
+
+if(event.target.id==='loginPanel'){
+closeLogin();
+}
+
+if(event.target.id==='signupPanel'){
+closeSignup();
+}
 
 }
 
@@ -1640,10 +1399,10 @@ function goToSignup(){
 
 function goHome(){
 
-  window.scrollTo({
-    top:0,
-    behavior:'smooth'
-  });
+window.scrollTo({
+top:0,
+behavior:'smooth'
+});
 
 }
 
@@ -1652,27 +1411,26 @@ function goHome(){
 
 function escapeHtml(value){
 
-  return String(value ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#039;');
+return String(value??'')
+.replace(/&/g,'&amp;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;')
+.replace(/"/g,'&quot;')
+.replace(/'/g,'&#039;');
 
 }
 
 
 /* ================= YEAR ================= */
 
-document.getElementById('year').textContent =
-  new Date().getFullYear();
+document.getElementById('year').textContent=
+new Date().getFullYear();
 
 
 /* ================= START ================= */
 
 loadStories();
+checkReader();
 
-</script>
-
-</body>
+</script></body>
 </html>
