@@ -1,1 +1,84 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Molebatsi Stories</title><link rel="stylesheet" href="style.css"></head><body><header><h1>MOLEBATSI STORIES</h1><p>Emotional stories that touch the heart</p></header><nav><a href="#stories">Stories</a> | <a href="#account">Account</a></nav><main><section class="hero"><h2>Welcome Reader</h2><p>Discover powerful African stories.</p></section><section id="stories" class="card"><h2>Featured Stories</h2><div class="story"><h3>The Day I Almost Disappeared</h3><p>M30 • Chapter 1 free</p><button onclick="preview()">Preview</button><button class="gold" onclick="buy()">Buy</button></div><div class="story"><h3>When Love Turned Cold</h3><p>M30 • Emotional marriage drama</p><button onclick="preview2()">Preview</button><button class="gold" onclick="buy()">Buy</button></div></section><section id="account" class="card"><h2>Create Reader Account</h2><input id="name" placeholder="Name"><input id="email" placeholder="Email"><button onclick="signup()">Sign Up</button><p id="msg"></p></section><section class="card"><h2>Admin</h2><p>Future: upload stories & lock chapters.</p></section></main><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epshitah Stories</title>
+<meta name="description" content="Emotional stories that touch the heart.">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff8fb;color:#241a20}
+header{background:linear-gradient(135deg,#7b174d,#b62d72);color:white;padding:30px 18px;text-align:center}
+header h1{margin:0;font-size:32px}
+header p{margin:8px 0 0}
+main{max-width:850px;margin:auto;padding:22px 16px 50px}
+.box{background:white;border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 5px 22px #0002}
+.story h2{margin-top:8px}
+.tag{display:inline-block;background:#f7dce9;color:#7b174d;border-radius:30px;padding:6px 11px;font-size:13px;font-weight:bold}
+button{border:0;border-radius:10px;padding:12px 18px;background:#8d1f59;color:white;font-size:16px;font-weight:bold;cursor:pointer}
+.reader{display:none}
+.reader p{font-size:18px;line-height:1.8}
+.back{background:#eee;color:#333}
+footer{text-align:center;color:#777;padding:20px}
+</style>
+</head>
+<body>
+<header>
+<h1>Epshitah Stories</h1>
+<p>Emotional stories that touch the heart.</p>
+</header>
+
+<main>
+<section class="box">
+<h2>Welcome to Epshitah Stories</h2>
+<p>Discover stories of love, pain, courage and the moments that change our lives.</p>
+</section>
+
+<section class="box story" id="catalogue">
+<span class="tag">FREE STORY</span>
+<h2>The Day Everything Changed</h2>
+<p>A short emotional story.</p>
+<p>I thought it was going to be an ordinary day...</p>
+<button onclick="readStory()">Read Story</button>
+</section>
+
+<section class="box reader" id="reader">
+<button class="back" onclick="goBack()">← Back</button>
+<h2>The Day Everything Changed</h2>
+
+<p>I thought it was going to be an ordinary day.</p>
+<p>I woke up early, made myself a cup of tea, and stepped outside. The morning was quiet, and for a moment, everything felt peaceful.</p>
+<p>Then my phone rang.</p>
+<p>It was my sister.</p>
+<p>Her voice was shaking.</p>
+<p>“Please come home.”</p>
+<p>I froze. “What happened?”</p>
+<p>She didn't answer immediately. I could hear her crying.</p>
+<p>That was the moment I knew something was wrong.</p>
+<p>I grabbed my bag and rushed out of the house. My heart was beating so hard that I could barely think.</p>
+<p>When I arrived, everyone was standing outside.</p>
+<p>Nobody spoke.</p>
+<p>I looked at their faces and suddenly realized that my life was about to change forever.</p>
+<p>Sometimes, life gives you no warning.</p>
+<p>One minute, everything is normal.</p>
+<p>The next minute, you are standing in the middle of a moment you will never forget.</p>
+</section>
+</main>
+
+<footer>© <span id="year"></span> Epshitah Stories</footer>
+
+<script>
+function readStory(){
+ document.getElementById("catalogue").style.display="none";
+ document.getElementById("reader").style.display="block";
+ window.scrollTo(0,0);
+}
+function goBack(){
+ document.getElementById("reader").style.display="none";
+ document.getElementById("catalogue").style.display="block";
+ window.scrollTo(0,0);
+}
+document.getElementById("year").textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
