@@ -1,505 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Epshitah Stories</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{box-sizing:border-box}
+  <title>Epshitah Stories</title>
 
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#fff8fb;
-  color:#241a20;
-}
-
-header{
-  background:linear-gradient(135deg,#7b174d,#b62d72);
-  color:white;
-  padding:25px 15px;
-  text-align:center;
-}
-
-header h1{
-  margin:0;
-  font-size:32px;
-}
-
-header p{
-  margin:8px 0 15px;
-}
-
-nav button{
-  border:0;
-  border-radius:20px;
-  padding:10px 16px;
-  margin:4px;
-  background:white;
-  color:#7b174d;
-  font-weight:bold;
-}
-
-main{
-  max-width:850px;
-  margin:auto;
-  padding:20px 15px 50px;
-}
-
-.box{
-  background:white;
-  padding:22px;
-  margin-bottom:20px;
-  border-radius:18px;
-  box-shadow:0 5px 20px #0002;
-}
-
-button{
-  border:0;
-  border-radius:10px;
-  padding:12px 18px;
-  background:#8d1f59;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-}
-
-.secondary{
-  background:#eee;
-  color:#333;
-}
-
-input{
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:16px;
-}
-
-.auth,.reader{
-  display:none;
-}
-
-.reader p{
-  font-size:18px;
-  line-height:1.8;
-}
-
-.tag{
-  background:#f7dce9;
-  color:#7b174d;
-  padding:6px 10px;
-  border-radius:20px;
-  font-size:13px;
-  font-weight:bold;
-}
-
-.hidden{
-  display:none;
-}
-
-.message{
-  margin:10px 0;
-  font-weight:bold;
-}
-
-footer{
-  text-align:center;
-  color:#777;
-  padding:20px;
-}
-</style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="logo">Epshitah <span>Stories</span></div>
 
-<h1>Epshitah Stories</h1>
+    <div class="header-buttons">
+      <button class="login-btn" onclick="openAuth('login')">Log In</button>
+      <button class="signup-btn" onclick="openAuth('signup')">Sign Up</button>
+    </div>
+  </header>
 
-<p>Emotional stories that touch the heart.</p>
 
-<nav>
+  <!-- HERO -->
+  <section class="hero">
 
-<button id="loginBtn" onclick="showLogin()">
-Log In
-</button>
+    <div class="hero-content">
 
-<button id="signupBtn" onclick="showSignup()">
-Sign Up
-</button>
+      <p class="small-title">WELCOME TO EPSHITAH STORIES</p>
 
-<button id="logoutBtn" class="hidden" onclick="logout()">
-Log Out
-</button>
+      <h1>
+        Stories That<br>
+        <span>Touch the Heart.</span>
+      </h1>
 
-</nav>
+      <p class="hero-text">
+        Discover emotional stories of love, heartbreak, family,
+        mystery, survival and life.
+      </p>
 
-<div id="welcome"></div>
+      <button class="main-button" onclick="scrollToStories()">
+        Explore Stories
+      </button>
 
-</header>
+    </div>
 
+    <div class="hero-book">
+      📖
+    </div>
 
-<main>
+  </section>
 
-<section class="box" id="home">
 
-<h2>Welcome to Epshitah Stories</h2>
+  <!-- GENRES -->
+  <section class="section">
 
-<p>
-Discover stories of love, pain, courage and the moments that change our lives.
-</p>
+    <div class="section-heading">
+      <div>
+        <p class="section-small">EXPLORE</p>
+        <h2>What do you want to read?</h2>
+      </div>
+    </div>
 
-</section>
+    <div class="genres">
 
+      <button class="genre-card" onclick="showGenre('Romance')">
+        <span>❤️</span>
+        <strong>Romance</strong>
+        <small>Love stories</small>
+      </button>
 
-<section class="box" id="story">
+      <button class="genre-card" onclick="showGenre('Drama')">
+        <span>🎭</span>
+        <strong>Drama</strong>
+        <small>Deep emotions</small>
+      </button>
 
-<span class="tag">FREE STORY</span>
+      <button class="genre-card" onclick="showGenre('Heartbreak')">
+        <span>💔</span>
+        <strong>Heartbreak</strong>
+        <small>Stories of pain</small>
+      </button>
 
-<h2>The Day Everything Changed</h2>
+      <button class="genre-card" onclick="showGenre('Thriller')">
+        <span>🔥</span>
+        <strong>Thriller</strong>
+        <small>Can't stop reading</small>
+      </button>
 
-<p>A short emotional story.</p>
+      <button class="genre-card" onclick="showGenre('Mystery')">
+        <span>🔎</span>
+        <strong>Mystery</strong>
+        <small>Secrets & questions</small>
+      </button>
 
-<p>
-I thought it was going to be an ordinary day...
-</p>
+      <button class="genre-card" onclick="showGenre('Life Stories')">
+        <span>🌿</span>
+        <strong>Life Stories</strong>
+        <small>Real emotions</small>
+      </button>
 
-<button onclick="readStory()">
-Read Story
-</button>
+    </div>
 
-</section>
+  </section>
 
 
-<section class="box auth" id="login">
+  <!-- FEATURED -->
+  <section class="section stories-section" id="stories">
 
-<h2>Log In</h2>
+    <div class="section-heading">
 
-<input
-id="loginEmail"
-type="email"
-placeholder="Email address">
+      <div>
+        <p class="section-small">DISCOVER</p>
+        <h2>Featured Stories</h2>
+      </div>
 
-<input
-id="loginPassword"
-type="password"
-placeholder="Password">
+      <button class="see-all" onclick="showAllStories()">
+        See All →
+      </button>
 
-<div id="loginMessage" class="message"></div>
+    </div>
 
-<button onclick="login()">
-Log In
-</button>
+    <div id="featuredStories" class="story-grid">
 
-<br><br>
+      <div class="loading">
+        Loading stories...
+      </div>
 
-<button class="secondary" onclick="showSignup()">
-Create an account
-</button>
+    </div>
 
-</section>
+  </section>
 
 
-<section class="box auth" id="signup">
+  <!-- DYNAMIC GENRES -->
+  <div id="genreSections"></div>
 
-<h2>Create Your Account</h2>
 
-<input
-id="signupName"
-type="text"
-placeholder="Your name">
+  <!-- JOIN -->
+  <section class="join-section">
 
-<input
-id="signupEmail"
-type="email"
-placeholder="Email address">
+    <div>
 
-<input
-id="signupPassword"
-type="password"
-placeholder="Password (at least 6 characters)">
+      <p class="section-small">BECOME A READER</p>
 
-<div id="signupMessage" class="message"></div>
+      <h2>Never miss a story.</h2>
 
-<button onclick="signup()">
-Sign Up
-</button>
+      <p>
+        Create your free reader account and discover
+        stories that stay with you.
+      </p>
 
-<br><br>
+      <button class="main-button" onclick="openAuth('signup')">
+        Create Free Account
+      </button>
 
-<button class="secondary" onclick="showLogin()">
-I already have an account
-</button>
+    </div>
 
-</section>
+  </section>
 
 
-<section class="box reader" id="reader">
+  <!-- FOOTER -->
+  <footer>
 
-<button class="secondary" onclick="goBack()">
-← Back
-</button>
+    <div class="logo">Epshitah <span>Stories</span></div>
 
-<h2>The Day Everything Changed</h2>
+    <p>
+      Emotional stories that touch the heart.
+    </p>
 
-<p>I thought it was going to be an ordinary day.</p>
+    <p class="copyright">
+      © 2026 Epshitah Stories
+    </p>
 
-<p>
-I woke up early, made myself a cup of tea, and stepped outside.
-The morning was quiet, and for a moment, everything felt peaceful.
-</p>
+  </footer>
 
-<p>Then my phone rang.</p>
 
-<p>It was my sister.</p>
+  <!-- AUTH MODAL -->
+  <div id="authModal" class="modal">
 
-<p>Her voice was shaking.</p>
+    <div class="modal-box">
 
-<p><strong>“Please come home.”</strong></p>
+      <button class="close" onclick="closeAuth()">×</button>
 
-<p>I froze. “What happened?”</p>
+      <!-- LOGIN -->
+      <div id="loginForm">
 
-<p>
-She didn't answer immediately. I could hear her crying.
-</p>
+        <h2>Welcome Back</h2>
 
-<p>
-That was the moment I knew something was wrong.
-</p>
+        <p class="modal-subtitle">
+          Log in to continue reading.
+        </p>
 
-<p>
-I grabbed my bag and rushed out of the house.
-My heart was beating so hard that I could barely think.
-</p>
+        <form onsubmit="login(event)">
 
-<p>
-When I arrived, everyone was standing outside.
-</p>
+          <label>Email</label>
 
-<p>Nobody spoke.</p>
+          <input
+            type="email"
+            id="loginEmail"
+            placeholder="Enter your email"
+            required
+          >
 
-<p>
-I looked at their faces and suddenly realized that my life
-was about to change forever.
-</p>
+          <label>Password</label>
 
-<p>
-Sometimes, life gives you no warning.
-</p>
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Enter your password"
+            required
+          >
 
-<p>
-One minute, everything is normal.
-</p>
+          <button type="submit" class="form-button">
+            Log In
+          </button>
 
-<p>
-The next minute, you are standing in the middle of a moment
-you will never forget.
-</p>
+        </form>
 
-</section>
+        <p class="switch-text">
+          Don't have an account?
+          <button onclick="openAuth('signup')">
+            Sign Up
+          </button>
+        </p>
 
-</main>
+      </div>
 
 
-<footer>
-© 2026 Epshitah Stories
-</footer>
+      <!-- SIGNUP -->
+      <div id="signupForm" style="display:none;">
 
+        <h2>Create Account</h2>
 
-<script>
+        <p class="modal-subtitle">
+          Join Epshitah Stories for free.
+        </p>
 
-function hideSections(){
+        <form onsubmit="signup(event)">
 
-document.getElementById("home").style.display="block";
+          <label>Name</label>
 
-document.getElementById("story").style.display="block";
+          <input
+            type="text"
+            id="signupName"
+            placeholder="Your name"
+            required
+          >
 
-document.getElementById("login").style.display="none";
+          <label>Email</label>
 
-document.getElementById("signup").style.display="none";
+          <input
+            type="email"
+            id="signupEmail"
+            placeholder="Your email"
+            required
+          >
 
-document.getElementById("reader").style.display="none";
+          <label>Password</label>
 
-}
+          <input
+            type="password"
+            id="signupPassword"
+            placeholder="Create a password"
+            required
+          >
 
+          <button type="submit" class="form-button">
+            Create Account
+          </button>
 
-function showLogin(){
+        </form>
 
-document.getElementById("home").style.display="none";
+        <p class="switch-text">
+          Already have an account?
+          <button onclick="openAuth('login')">
+            Log In
+          </button>
+        </p>
 
-document.getElementById("story").style.display="none";
+      </div>
 
-document.getElementById("signup").style.display="none";
+    </div>
 
-document.getElementById("reader").style.display="none";
+  </div>
 
-document.getElementById("login").style.display="block";
 
-window.scrollTo(0,0);
+  <!-- STORY READER MODAL -->
+  <div id="storyModal" class="modal">
 
-}
+    <div class="story-reader">
 
+      <button class="close" onclick="closeStory()">×</button>
 
-function showSignup(){
+      <span id="readerCategory" class="story-category"></span>
 
-document.getElementById("home").style.display="none";
+      <h2 id="readerTitle"></h2>
 
-document.getElementById("story").style.display="none";
+      <p id="readerDescription" class="reader-description"></p>
 
-document.getElementById("login").style.display="none";
+      <div id="readerContent" class="reader-content"></div>
 
-document.getElementById("reader").style.display="none";
+    </div>
 
-document.getElementById("signup").style.display="block";
+  </div>
 
-window.scrollTo(0,0);
 
-}
-
-
-function readStory(){
-
-document.getElementById("home").style.display="none";
-
-document.getElementById("story").style.display="none";
-
-document.getElementById("login").style.display="none";
-
-document.getElementById("signup").style.display="none";
-
-document.getElementById("reader").style.display="block";
-
-window.scrollTo(0,0);
-
-}
-
-
-function goBack(){
-
-hideSections();
-
-window.scrollTo(0,0);
-
-}
-
-
-async function signup(){
-
-let name=document.getElementById("signupName").value;
-
-let email=document.getElementById("signupEmail").value;
-
-let password=document.getElementById("signupPassword").value;
-
-let message=document.getElementById("signupMessage");
-
-let response=await fetch("/api/signup",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-name:name,
-email:email,
-password:password
-})
-
-});
-
-let data=await response.json();
-
-message.textContent=data.message;
-
-if(response.ok){
-
-showWelcome(data.user);
-
-setTimeout(goBack,700);
-
-}
-
-}
-
-
-async function login(){
-
-let email=document.getElementById("loginEmail").value;
-
-let password=document.getElementById("loginPassword").value;
-
-let message=document.getElementById("loginMessage");
-
-let response=await fetch("/api/login",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-email:email,
-password:password
-})
-
-});
-
-let data=await response.json();
-
-message.textContent=data.message;
-
-if(response.ok){
-
-showWelcome(data.user);
-
-setTimeout(goBack,700);
-
-}
-
-}
-
-
-async function logout(){
-
-await fetch("/api/logout",{
-method:"POST"
-});
-
-document.getElementById("welcome").textContent="";
-
-document.getElementById("loginBtn").classList.remove("hidden");
-
-document.getElementById("signupBtn").classList.remove("hidden");
-
-document.getElementById("logoutBtn").classList.add("hidden");
-
-hideSections();
-
-}
-
-
-function showWelcome(user){
-
-document.getElementById("welcome").textContent=
-"Welcome, "+user.name+"!";
-
-document.getElementById("loginBtn").classList.add("hidden");
-
-document.getElementById("signupBtn").classList.add("hidden");
-
-document.getElementById("logoutBtn").classList.remove("hidden");
-
-}
-
-
-</script>
+  <script src="script.js"></script>
 
 </body>
- </html>
+</html>
