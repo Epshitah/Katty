@@ -1,5 +1,7 @@
 const express = require("express");
 const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
+const { Pool } = require("pg");
 const crypto = require("crypto");
 const path = require("path");
 
@@ -15,14 +17,24 @@ const ADMIN_EMAIL =
 const ADMIN_PASSWORD =
   process.env.ADMIN_PASSWORD || "";
 
-const users = new Map();
-const stories = [];
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
+    store: new pgSession({
+      pool: pool,
+      tableName: "user_sessions",
+      createTableIfMissing: true
+    }),
+
     secret:
       process.env.SESSION_SECRET ||
       "epshitah-test-secret-change-later",
@@ -41,21 +53,56 @@ app.use(
 
 
 // ========================
-// HELPER FUNCTIONS
+// DATABASE
+// ========================
+
+async function setupDatabase() {
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS stories (
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
+      category TEXT DEFAULT 'STORY',
+      description TEXT DEFAULT '',
+      content TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  console.log("Database tables are ready.");
+}
+
+
+// ========================
+// HELPERS
 // ========================
 
 function hashPassword(password) {
+
   return crypto
     .createHash("sha256")
     .update(password)
     .digest("hex");
+
 }
 
 
 function cleanEmail(email) {
+
   return String(email || "")
     .trim()
     .toLowerCase();
+
 }
 
 
@@ -63,70 +110,119 @@ function cleanEmail(email) {
 // READER SIGN UP
 // ========================
 
-app.post("/api/signup", (req, res) => {
+app.post("/api/signup", async (req, res) => {
 
-  const name =
-    String(req.body.name || "").trim();
+  try {
 
-  const email =
-    cleanEmail(req.body.email);
+    const name =
+      String(req.body.name || "").trim();
 
-  const password =
-    String(req.body.password || "");
+    const email =
+      cleanEmail(req.body.email);
 
-
-  if (!name || !email || !password) {
-
-    return res.status(400).json({
-      message: "Please fill in all fields."
-    });
-
-  }
+    const password =
+      String(req.body.password || "");
 
 
-  if (password.length < 6) {
+    if (!name || !email || !password) {
 
-    return res.status(400).json({
-      message:
-        "Password must be at least 6 characters."
-    });
+      return res.status(400).json({
+        message:
+          "Please fill in all fields."
+      });
 
-  }
-
-
-  if (users.has(email)) {
-
-    return res.status(400).json({
-      message:
-        "An account with this email already exists."
-    });
-
-  }
-
-
-  const user = {
-    name,
-    email,
-    password: hashPassword(password)
-  };
-
-
-  users.set(email, user);
-
-  req.session.userEmail = email;
-
-
-  res.json({
-
-    message:
-      "Account created successfully!",
-
-    user: {
-      name: user.name,
-      email: user.email
     }
 
-  });
+
+    if (password.length < 6) {
+
+      return res.status(400).json({
+        message:
+          "Password must be at least 6 characters."
+      });
+
+    }
+
+
+    const existing =
+      await pool.query(
+        "SELECT id FROM users WHERE email = $1",
+        [email]
+      );
+
+
+    if (existing.rows.length > 0) {
+
+      return res.status(400).json({
+        message:
+          "An account with this email already exists."
+      });
+
+    }
+
+
+    const result =
+      await pool.query(
+        `
+        INSERT INTO users
+        (name, email, password)
+        VALUES ($1, $2, $3)
+        RETURNING id, name, email
+        `,
+        [
+          name,
+          email,
+          hashPassword(password)
+        ]
+      );
+
+
+    const user =
+      result.rows[0];
+
+
+    req.session.userEmail =
+      user.email;
+
+
+    req.session.save((error) => {
+
+      if (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+          message:
+            "Account was created, but the login session could not be saved."
+        });
+
+      }
+
+
+      res.json({
+
+        message:
+          "Account created successfully!",
+
+        user: {
+          name: user.name,
+          email: user.email
+        }
+
+      });
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message:
+        "Could not create the account."
+    });
+
+  }
 
 });
 
@@ -135,55 +231,97 @@ app.post("/api/signup", (req, res) => {
 // READER LOGIN
 // ========================
 
-app.post("/api/login", (req, res) => {
+app.post("/api/login", async (req, res) => {
 
-  const email =
-    cleanEmail(req.body.email);
+  try {
 
-  const password =
-    String(req.body.password || "");
+    const email =
+      cleanEmail(req.body.email);
 
-  const user =
-    users.get(email);
-
-
-  if (!user) {
-
-    return res.status(401).json({
-      message:
-        "Email or password is incorrect."
-    });
-
-  }
+    const password =
+      String(req.body.password || "");
 
 
-  if (
-    user.password !==
-    hashPassword(password)
-  ) {
-
-    return res.status(401).json({
-      message:
-        "Email or password is incorrect."
-    });
-
-  }
+    const result =
+      await pool.query(
+        `
+        SELECT name, email, password
+        FROM users
+        WHERE email = $1
+        `,
+        [email]
+      );
 
 
-  req.session.userEmail = email;
+    if (result.rows.length === 0) {
 
+      return res.status(401).json({
+        message:
+          "Email or password is incorrect."
+      });
 
-  res.json({
-
-    message:
-      "Logged in successfully!",
-
-    user: {
-      name: user.name,
-      email: user.email
     }
 
-  });
+
+    const user =
+      result.rows[0];
+
+
+    if (
+      user.password !==
+      hashPassword(password)
+    ) {
+
+      return res.status(401).json({
+        message:
+          "Email or password is incorrect."
+      });
+
+    }
+
+
+    req.session.userEmail =
+      user.email;
+
+
+    req.session.save((error) => {
+
+      if (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+          message:
+            "Login worked, but the session could not be saved."
+        });
+
+      }
+
+
+      res.json({
+
+        message:
+          "Logged in successfully!",
+
+        user: {
+          name: user.name,
+          email: user.email
+        }
+
+      });
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message:
+        "Could not log in."
+    });
+
+  }
 
 });
 
@@ -192,40 +330,63 @@ app.post("/api/login", (req, res) => {
 // CURRENT READER
 // ========================
 
-app.get("/api/me", (req, res) => {
+app.get("/api/me", async (req, res) => {
 
-  if (!req.session.userEmail) {
+  try {
 
-    return res.json({
-      loggedIn: false
-    });
+    if (!req.session.userEmail) {
 
-  }
+      return res.json({
+        loggedIn: false
+      });
 
-
-  const user =
-    users.get(req.session.userEmail);
-
-
-  if (!user) {
-
-    return res.json({
-      loggedIn: false
-    });
-
-  }
-
-
-  res.json({
-
-    loggedIn: true,
-
-    user: {
-      name: user.name,
-      email: user.email
     }
 
-  });
+
+    const result =
+      await pool.query(
+        `
+        SELECT name, email
+        FROM users
+        WHERE email = $1
+        `,
+        [req.session.userEmail]
+      );
+
+
+    if (result.rows.length === 0) {
+
+      return res.json({
+        loggedIn: false
+      });
+
+    }
+
+
+    const user =
+      result.rows[0];
+
+
+    res.json({
+
+      loggedIn: true,
+
+      user: {
+        name: user.name,
+        email: user.email
+      }
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      loggedIn: false
+    });
+
+  }
 
 });
 
@@ -266,10 +427,8 @@ app.post("/api/admin/login", (req, res) => {
   if (!ADMIN_PASSWORD) {
 
     return res.status(500).json({
-
       message:
         "Admin password has not been configured on the server."
-
     });
 
   }
@@ -281,10 +440,8 @@ app.post("/api/admin/login", (req, res) => {
   ) {
 
     return res.status(401).json({
-
       message:
         "Admin email or password is incorrect."
-
     });
 
   }
@@ -303,20 +460,16 @@ app.post("/api/admin/login", (req, res) => {
       console.error(error);
 
       return res.status(500).json({
-
         message:
           "Admin login worked, but the session could not be saved."
-
       });
 
     }
 
 
     res.json({
-
       message:
         "Admin login successful."
-
     });
 
   });
@@ -362,10 +515,8 @@ app.post("/api/admin/logout", (req, res) => {
     res.clearCookie("connect.sid");
 
     res.json({
-
       message:
         "Admin logged out."
-
     });
 
   });
@@ -574,88 +725,182 @@ async function login() {
 // STORIES
 // ========================
 
+app.get("/api/stories", async (req, res) => {
 
-// GET ALL STORIES
+  try {
 
-app.get("/api/stories", (req, res) => {
+    const result =
+      await pool.query(`
+        SELECT
+          id,
+          title,
+          category,
+          description,
+          content,
+          created_at AS "createdAt"
+        FROM stories
+        ORDER BY id DESC
+      `);
 
-  res.json(stories);
+
+    res.json(result.rows);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message:
+        "Could not load stories."
+    });
+
+  }
 
 });
 
 
-// ADD STORY — ADMIN ONLY
+// ========================
+// ADD STORY
+// ========================
 
-app.post("/api/admin/stories", (req, res) => {
+app.post("/api/admin/stories", async (req, res) => {
 
-  if (!req.session.isAdmin) {
+  try {
 
-    return res.status(401).json({
+    if (!req.session.isAdmin) {
+
+      return res.status(401).json({
+        message:
+          "Admin login required."
+      });
+
+    }
+
+
+    const title =
+      String(req.body.title || "").trim();
+
+    const category =
+      String(req.body.category || "").trim();
+
+    const description =
+      String(req.body.description || "").trim();
+
+    const content =
+      String(req.body.content || "").trim();
+
+
+    if (!title || !content) {
+
+      return res.status(400).json({
+        message:
+          "Story title and story content are required."
+      });
+
+    }
+
+
+    const result =
+      await pool.query(
+        `
+        INSERT INTO stories
+        (title, category, description, content)
+        VALUES ($1, $2, $3, $4)
+        RETURNING
+          id,
+          title,
+          category,
+          description,
+          content,
+          created_at AS "createdAt"
+        `,
+        [
+          title,
+          category || "STORY",
+          description || "No description added.",
+          content
+        ]
+      );
+
+
+    res.json({
 
       message:
-        "Admin login required."
+        "Story saved successfully!",
 
+      story:
+        result.rows[0]
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message:
+        "Could not save the story."
     });
 
   }
 
-
-  const title =
-    String(req.body.title || "").trim();
-
-  const category =
-    String(req.body.category || "").trim();
-
-  const description =
-    String(req.body.description || "").trim();
-
-  const content =
-    String(req.body.content || "").trim();
+});
 
 
-  if (!title || !content) {
+// ========================
+// DELETE STORY
+// ========================
 
-    return res.status(400).json({
+app.delete("/api/admin/stories/:id", async (req, res) => {
 
+  try {
+
+    if (!req.session.isAdmin) {
+
+      return res.status(401).json({
+        message:
+          "Admin login required."
+      });
+
+    }
+
+
+    const id =
+      Number(req.params.id);
+
+
+    const result =
+      await pool.query(
+        "DELETE FROM stories WHERE id = $1 RETURNING id",
+        [id]
+      );
+
+
+    if (result.rows.length === 0) {
+
+      return res.status(404).json({
+        message:
+          "Story not found."
+      });
+
+    }
+
+
+    res.json({
       message:
-        "Story title and story content are required."
+        "Story deleted permanently."
+    });
 
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message:
+        "Could not delete the story."
     });
 
   }
-
-
-  const story = {
-
-    id: Date.now(),
-
-    title: title,
-
-    category:
-      category || "STORY",
-
-    description:
-      description || "No description added.",
-
-    content: content,
-
-    createdAt:
-      new Date().toISOString()
-
-  };
-
-
-  stories.push(story);
-
-
-  res.json({
-
-    message:
-      "Story saved successfully!",
-
-    story: story
-
-  });
 
 });
 
@@ -667,10 +912,35 @@ app.post("/api/admin/stories", (req, res) => {
 app.use(express.static("."));
 
 
-app.listen(PORT, () => {
+// ========================
+// START SERVER
+// ========================
 
-  console.log(
-    `Epshitah Stories running on port ${PORT}`
-  );
+async function startServer() {
 
-});
+  try {
+
+    await setupDatabase();
+
+    app.listen(PORT, () => {
+
+      console.log(
+        `Epshitah Stories running on port ${PORT}`
+      );
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Could not start server:",
+      error
+    );
+
+    process.exit(1);
+
+  }
+
+}
+
+startServer();
