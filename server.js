@@ -16,7 +16,6 @@ const ADMIN_PASSWORD =
   process.env.ADMIN_PASSWORD || "";
 
 const users = new Map();
-
 const stories = [];
 
 app.use(express.json());
@@ -29,7 +28,6 @@ app.use(
       "epshitah-test-secret-change-later",
 
     resave: false,
-
     saveUninitialized: false,
 
     cookie: {
@@ -42,22 +40,22 @@ app.use(
 );
 
 
-function hashPassword(password) {
+// ========================
+// HELPER FUNCTIONS
+// ========================
 
+function hashPassword(password) {
   return crypto
     .createHash("sha256")
     .update(password)
     .digest("hex");
-
 }
 
 
 function cleanEmail(email) {
-
   return String(email || "")
     .trim()
     .toLowerCase();
-
 }
 
 
@@ -191,7 +189,7 @@ app.post("/api/login", (req, res) => {
 
 
 // ========================
-// READER CURRENT USER
+// CURRENT READER
 // ========================
 
 app.get("/api/me", (req, res) => {
@@ -464,13 +462,9 @@ a {
 
 <div class="box">
 
-<h1>
-Epshitah Stories
-</h1>
+<h1>Epshitah Stories</h1>
 
-<h2>
-Admin Login
-</h2>
+<h2>Admin Login</h2>
 
 <input
 id="email"
@@ -496,7 +490,6 @@ Log In
 </a>
 
 </div>
-
 
 <script>
 
@@ -581,13 +574,9 @@ async function login() {
 // STORIES
 // ========================
 
-// Temporary story storage.
-// We will connect this to your database later.
-
-const stories = [];
-
 
 // GET ALL STORIES
+
 app.get("/api/stories", (req, res) => {
 
   res.json(stories);
@@ -596,6 +585,7 @@ app.get("/api/stories", (req, res) => {
 
 
 // ADD STORY — ADMIN ONLY
+
 app.post("/api/admin/stories", (req, res) => {
 
   if (!req.session.isAdmin) {
@@ -639,7 +629,7 @@ app.post("/api/admin/stories", (req, res) => {
 
     id: Date.now(),
 
-    title,
+    title: title,
 
     category:
       category || "STORY",
@@ -647,7 +637,7 @@ app.post("/api/admin/stories", (req, res) => {
     description:
       description || "No description added.",
 
-    content,
+    content: content,
 
     createdAt:
       new Date().toISOString()
@@ -663,7 +653,7 @@ app.post("/api/admin/stories", (req, res) => {
     message:
       "Story saved successfully!",
 
-    story
+    story: story
 
   });
 
