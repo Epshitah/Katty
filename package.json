@@ -1,10 +1,11 @@
 {
-  "name": "molebatsi-stories",
-  "version": "1.0.0",
+  "name": "epshitah-stories",
+  "version": "1.1.0",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "express-session": "^1.18.2"
   }
 }
