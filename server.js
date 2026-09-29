@@ -6,7 +6,6 @@ const path = require("path");
 const crypto = require("crypto");
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 
 app.set("trust proxy", 1);
@@ -23,8 +22,19 @@ const ADMIN_EMAIL =
 const ADMIN_PASSWORD =
   process.env.ADMIN_PASSWORD || "";
 
-if (!process.env.DATABASE_URL) {
-  console.error("DATABASE_URL is not configured.");
+
+/* =========================
+   OPTIONAL OLD PASSWORD SUPPORT
+========================= */
+
+let bcrypt = null;
+
+try {
+  bcrypt = require("bcryptjs");
+} catch (error) {
+  console.log(
+    "bcryptjs not installed. SHA-256 passwords will still work."
+  );
 }
 
 
@@ -54,10 +64,8 @@ app.use(
   })
 );
 
-
 app.use(
   session({
-
     store: new pgSession({
       pool: pool,
       tableName: "user_sessions",
@@ -79,7 +87,6 @@ app.use(
       maxAge:
         7 * 24 * 60 * 60 * 1000
     }
-
   })
 );
 
@@ -91,58 +98,30 @@ app.use(
 async function setupDatabase() {
 
   await pool.query(`
-
     CREATE TABLE IF NOT EXISTS users (
-
       id SERIAL PRIMARY KEY,
-
       name TEXT NOT NULL,
-
       email TEXT UNIQUE NOT NULL,
-
       password TEXT NOT NULL,
-
-      created_at
-        TIMESTAMPTZ DEFAULT NOW()
-
+      created_at TIMESTAMPTZ DEFAULT NOW()
     )
-
   `);
 
 
   await pool.query(`
-
     CREATE TABLE IF NOT EXISTS stories (
-
       id SERIAL PRIMARY KEY,
-
       title TEXT NOT NULL,
-
-      category
-        TEXT DEFAULT 'STORY',
-
-      description
-        TEXT DEFAULT '',
-
+      category TEXT DEFAULT 'STORY',
+      description TEXT DEFAULT '',
       content TEXT NOT NULL,
-
-      created_at
-        TIMESTAMPTZ DEFAULT NOW()
-
+      created_at TIMESTAMPTZ DEFAULT NOW()
     )
-
   `);
 
 
-  /*
-    NEW:
-    SAVED STORIES
-  */
-
   await pool.query(`
-
     CREATE TABLE IF NOT EXISTS saved_stories (
-
       id SERIAL PRIMARY KEY,
 
       user_id INTEGER NOT NULL
@@ -153,19 +132,14 @@ async function setupDatabase() {
         REFERENCES stories(id)
         ON DELETE CASCADE,
 
-      created_at
-        TIMESTAMPTZ DEFAULT NOW(),
+      created_at TIMESTAMPTZ DEFAULT NOW(),
 
       UNIQUE(user_id, story_id)
-
     )
-
   `);
 
 
-  console.log(
-    "Database tables are ready."
-  );
+  console.log("Database tables are ready.");
 
 }
 
@@ -194,6 +168,88 @@ function cleanEmail(email) {
 
 
 /*
+  Check reader password.
+
+  Supports:
+  - SHA-256 passwords
+  - older bcrypt passwords
+*/
+
+async function verifyReaderPassword(
+  password,
+  storedPassword
+) {
+
+  const sha256Password =
+    hashPassword(password);
+
+
+  /*
+    Current password format
+  */
+
+  if (
+    storedPassword ===
+    sha256Password
+  ) {
+
+    return {
+      valid: true,
+      format: "sha256"
+    };
+
+  }
+
+
+  /*
+    Older bcrypt format
+  */
+
+  if (
+    bcrypt &&
+    typeof storedPassword === "string" &&
+    storedPassword.startsWith("$2")
+  ) {
+
+    try {
+
+      const valid =
+        await bcrypt.compare(
+          password,
+          storedPassword
+        );
+
+
+      if (valid) {
+
+        return {
+          valid: true,
+          format: "bcrypt"
+        };
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "bcrypt password check failed:",
+        error
+      );
+
+    }
+
+  }
+
+
+  return {
+    valid: false,
+    format: null
+  };
+
+}
+
+
+/*
   Get currently logged-in reader.
 */
 
@@ -203,19 +259,25 @@ async function getCurrentUser(req) {
     return null;
   }
 
+
   const result =
     await pool.query(
       `
-      SELECT id, name, email
+      SELECT
+        id,
+        name,
+        email
       FROM users
       WHERE email = $1
       `,
       [req.session.userEmail]
     );
 
+
   if (!result.rows.length) {
     return null;
   }
+
 
   return result.rows[0];
 
@@ -292,15 +354,19 @@ app.post(
         await pool.query(
           `
           INSERT INTO users
-          (name, email, password)
+          (
+            name,
+            email,
+            password
+          )
 
           VALUES
           ($1, $2, $3)
 
           RETURNING
-          id,
-          name,
-          email
+            id,
+            name,
+            email
           `,
           [
             name,
@@ -338,11 +404,11 @@ app.post(
             "Account created successfully!",
 
           user: {
+            name:
+              user.name,
 
-            name: user.name,
-
-            email: user.email
-
+            email:
+              user.email
           }
 
         });
@@ -354,10 +420,8 @@ app.post(
       console.error(error);
 
       res.status(500).json({
-
         message:
           "Could not create the account."
-
       });
 
     }
@@ -383,16 +447,25 @@ app.post(
         String(req.body.password || "");
 
 
+      if (!email || !password) {
+
+        return res.status(400).json({
+          message:
+            "Please enter your email and password."
+        });
+
+      }
+
+
       const result =
         await pool.query(
           `
           SELECT
-          name,
-          email,
-          password
-
+            id,
+            name,
+            email,
+            password
           FROM users
-
           WHERE email = $1
           `,
           [email]
@@ -402,10 +475,8 @@ app.post(
       if (!result.rows.length) {
 
         return res.status(401).json({
-
           message:
             "Email or password is incorrect."
-
         });
 
       }
@@ -415,20 +486,62 @@ app.post(
         result.rows[0];
 
 
-      if (
-        user.password !==
-        hashPassword(password)
-      ) {
+      const passwordCheck =
+        await verifyReaderPassword(
+          password,
+          user.password
+        );
+
+
+      if (!passwordCheck.valid) {
 
         return res.status(401).json({
-
           message:
             "Email or password is incorrect."
-
         });
 
       }
 
+
+      /*
+        Upgrade an old bcrypt password
+        to the current SHA-256 format.
+      */
+
+      if (
+        passwordCheck.format ===
+        "bcrypt"
+      ) {
+
+        try {
+
+          await pool.query(
+            `
+            UPDATE users
+            SET password = $1
+            WHERE id = $2
+            `,
+            [
+              hashPassword(password),
+              user.id
+            ]
+          );
+
+        } catch (upgradeError) {
+
+          console.error(
+            "Could not upgrade old password:",
+            upgradeError
+          );
+
+        }
+
+      }
+
+
+      /*
+        Create reader session.
+      */
 
       req.session.userEmail =
         user.email;
@@ -438,29 +551,30 @@ app.post(
 
         if (error) {
 
-          console.error(error);
+          console.error(
+            "Reader session error:",
+            error
+          );
 
           return res.status(500).json({
-
             message:
               "Login worked, but the session could not be saved."
-
           });
 
         }
 
 
-        res.json({
+        return res.json({
 
           message:
             "Logged in successfully!",
 
           user: {
+            name:
+              user.name,
 
-            name: user.name,
-
-            email: user.email
-
+            email:
+              user.email
           }
 
         });
@@ -469,13 +583,14 @@ app.post(
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "Reader login error:",
+        error
+      );
 
-      res.status(500).json({
-
+      return res.status(500).json({
         message:
           "Could not log in."
-
       });
 
     }
@@ -512,11 +627,11 @@ app.get(
         loggedIn: true,
 
         user: {
+          name:
+            user.name,
 
-          name: user.name,
-
-          email: user.email
-
+          email:
+            user.email
         }
 
       });
@@ -526,9 +641,7 @@ app.get(
       console.error(error);
 
       res.status(500).json({
-
         loggedIn: false
-
       });
 
     }
@@ -552,10 +665,8 @@ app.post(
       );
 
       res.json({
-
         message:
           "Logged out successfully."
-
       });
 
     });
@@ -567,11 +678,6 @@ app.post(
 /* =========================
    SAVED STORIES
 ========================= */
-
-
-/*
-  GET MY SAVED STORIES
-*/
 
 app.get(
   "/api/saved-stories",
@@ -586,10 +692,8 @@ app.get(
       if (!user) {
 
         return res.status(401).json({
-
           message:
             "Please log in first."
-
         });
 
       }
@@ -599,7 +703,6 @@ app.get(
         await pool.query(
           `
           SELECT
-
             s.id,
             s.title,
             s.category,
@@ -615,7 +718,6 @@ app.get(
           WHERE ss.user_id = $1
 
           ORDER BY ss.created_at DESC
-
           `,
           [user.id]
         );
@@ -628,10 +730,8 @@ app.get(
       console.error(error);
 
       res.status(500).json({
-
         message:
           "Could not load your library."
-
       });
 
     }
@@ -640,9 +740,9 @@ app.get(
 );
 
 
-/*
-  SAVE STORY
-*/
+/* =========================
+   SAVE STORY
+========================= */
 
 app.post(
   "/api/saved-stories/:storyId",
@@ -657,10 +757,8 @@ app.post(
       if (!user) {
 
         return res.status(401).json({
-
           message:
             "Please log in to save stories."
-
         });
 
       }
@@ -673,10 +771,8 @@ app.post(
       if (!Number.isInteger(storyId)) {
 
         return res.status(400).json({
-
           message:
             "Invalid story."
-
         });
 
       }
@@ -696,10 +792,8 @@ app.post(
       if (!story.rows.length) {
 
         return res.status(404).json({
-
           message:
             "Story not found."
-
         });
 
       }
@@ -708,9 +802,13 @@ app.post(
       await pool.query(
         `
         INSERT INTO saved_stories
-        (user_id, story_id)
+        (
+          user_id,
+          story_id
+        )
 
-        VALUES ($1, $2)
+        VALUES
+        ($1, $2)
 
         ON CONFLICT
         (user_id, story_id)
@@ -724,10 +822,8 @@ app.post(
 
 
       res.json({
-
         message:
           "Story saved to your library."
-
       });
 
     } catch (error) {
@@ -735,10 +831,8 @@ app.post(
       console.error(error);
 
       res.status(500).json({
-
         message:
           "Could not save the story."
-
       });
 
     }
@@ -747,9 +841,9 @@ app.post(
 );
 
 
-/*
-  REMOVE STORY
-*/
+/* =========================
+   REMOVE SAVED STORY
+========================= */
 
 app.delete(
   "/api/saved-stories/:storyId",
@@ -764,10 +858,8 @@ app.delete(
       if (!user) {
 
         return res.status(401).json({
-
           message:
             "Please log in first."
-
         });
 
       }
@@ -793,10 +885,8 @@ app.delete(
 
 
       res.json({
-
         message:
           "Story removed from your library."
-
       });
 
     } catch (error) {
@@ -804,10 +894,8 @@ app.delete(
       console.error(error);
 
       res.status(500).json({
-
         message:
           "Could not remove the story."
-
       });
 
     }
@@ -834,28 +922,21 @@ app.post(
     if (!ADMIN_PASSWORD) {
 
       return res.status(500).json({
-
         message:
           "Admin password has not been configured on the server."
-
       });
 
     }
 
 
     if (
-      email !==
-        cleanEmail(ADMIN_EMAIL)
-      ||
-      password !==
-        ADMIN_PASSWORD
+      email !== cleanEmail(ADMIN_EMAIL) ||
+      password !== ADMIN_PASSWORD
     ) {
 
       return res.status(401).json({
-
         message:
           "Admin email or password is incorrect."
-
       });
 
     }
@@ -874,20 +955,16 @@ app.post(
         console.error(error);
 
         return res.status(500).json({
-
           message:
             "Admin login worked, but the session could not be saved."
-
         });
 
       }
 
 
       res.json({
-
         message:
           "Admin login successful."
-
       });
 
     });
@@ -941,10 +1018,8 @@ app.post(
       );
 
       res.json({
-
         message:
           "Admin logged out."
-
       });
 
     });
@@ -965,167 +1040,184 @@ app.get(
 
       return res.status(401).send(`
 
-        <!DOCTYPE html>
+<!DOCTYPE html>
 
-        <html>
+<html>
 
-        <head>
+<head>
 
-        <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-        <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-        <title>Epshitah Stories Admin</title>
+<title>Epshitah Stories Admin</title>
 
-        <style>
+<style>
 
-        body {
-          margin:0;
-          padding:30px 15px;
-          font-family:Arial;
-          background:#fff8fb;
+body {
+  margin:0;
+  padding:30px 15px;
+  font-family:Arial;
+  background:#fff8fb;
+}
+
+.box {
+  max-width:450px;
+  margin:40px auto;
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 5px 20px #0002;
+}
+
+h1,
+h2 {
+  color:#7b174d;
+}
+
+input {
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  margin:8px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:16px;
+}
+
+button {
+  width:100%;
+  padding:13px;
+  margin-top:10px;
+  border:0;
+  border-radius:10px;
+  background:#8d1f59;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.message {
+  margin:12px 0;
+  font-weight:bold;
+}
+
+a {
+  display:block;
+  margin-top:15px;
+  text-align:center;
+  color:#7b174d;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Epshitah Stories</h1>
+
+<h2>Admin Login</h2>
+
+<input
+id="email"
+type="email"
+placeholder="Admin email">
+
+<input
+id="password"
+type="password"
+placeholder="Admin password">
+
+<div
+id="message"
+class="message">
+</div>
+
+<button onclick="login()">
+Log In
+</button>
+
+<a href="/">
+← Back to Epshitah Stories
+</a>
+
+</div>
+
+<script>
+
+async function login() {
+
+  const email =
+    document.getElementById("email").value;
+
+  const password =
+    document.getElementById("password").value;
+
+  const message =
+    document.getElementById("message");
+
+  message.textContent =
+    "Logging in...";
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/admin/login",
+        {
+          method:"POST",
+
+          credentials:"same-origin",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              email,
+              password
+            })
         }
+      );
 
-        .box {
-          max-width:450px;
-          margin:40px auto;
-          background:white;
-          padding:25px;
-          border-radius:18px;
-          box-shadow:0 5px 20px #0002;
-        }
 
-        h1,h2 {
-          color:#7b174d;
-        }
+    const data =
+      await response.json();
 
-        input {
-          width:100%;
-          box-sizing:border-box;
-          padding:12px;
-          margin:8px 0;
-          border:1px solid #ddd;
-          border-radius:10px;
-          font-size:16px;
-        }
 
-        button {
-          width:100%;
-          padding:13px;
-          margin-top:10px;
-          border:0;
-          border-radius:10px;
-          background:#8d1f59;
-          color:white;
-          font-size:16px;
-          font-weight:bold;
-        }
+    message.textContent =
+      data.message;
 
-        .message {
-          margin:12px 0;
-          font-weight:bold;
-        }
 
-        a {
-          display:block;
-          margin-top:15px;
-          text-align:center;
-          color:#7b174d;
-        }
+    if (response.ok) {
 
-        </style>
+      window.location.href =
+        "/admin";
 
-        </head>
+    }
 
-        <body>
+  } catch (error) {
 
-        <div class="box">
+    message.textContent =
+      "Could not connect to the server.";
 
-        <h1>Epshitah Stories</h1>
+  }
 
-        <h2>Admin Login</h2>
+}
 
-        <input
-        id="email"
-        type="email"
-        placeholder="Admin email">
+</script>
 
-        <input
-        id="password"
-        type="password"
-        placeholder="Admin password">
+</body>
 
-        <div
-        id="message"
-        class="message">
-        </div>
-
-        <button onclick="login()">
-        Log In
-        </button>
-
-        <a href="/">
-        ← Back to Epshitah Stories
-        </a>
-
-        </div>
-
-        <script>
-
-        async function login() {
-
-          const email =
-            document.getElementById("email").value;
-
-          const password =
-            document.getElementById("password").value;
-
-          const message =
-            document.getElementById("message");
-
-          message.textContent =
-            "Logging in...";
-
-          const response =
-            await fetch(
-              "/api/admin/login",
-              {
-                method:"POST",
-                credentials:"same-origin",
-                headers:{
-                  "Content-Type":
-                    "application/json"
-                },
-                body:
-                  JSON.stringify({
-                    email,
-                    password
-                  })
-              }
-            );
-
-          const data =
-            await response.json();
-
-          message.textContent =
-            data.message;
-
-          if (response.ok) {
-
-            window.location.href =
-              "/admin";
-
-          }
-
-        }
-
-        </script>
-
-        </body>
-
-        </html>
+</html>
 
       `);
 
@@ -1157,15 +1249,12 @@ app.get(
         await pool.query(
           `
           SELECT
-
             id,
             title,
             category,
             description,
             content,
-
-            created_at
-            AS "createdAt"
+            created_at AS "createdAt"
 
           FROM stories
 
@@ -1181,10 +1270,8 @@ app.get(
       console.error(error);
 
       res.status(500).json({
-
         message:
           "Could not load stories."
-
       });
 
     }
@@ -1206,10 +1293,8 @@ app.post(
       if (!req.session.isAdmin) {
 
         return res.status(401).json({
-
           message:
             "Admin login required."
-
         });
 
       }
@@ -1220,15 +1305,18 @@ app.post(
           req.body.title || ""
         ).trim();
 
+
       const category =
         String(
           req.body.category || ""
         ).trim();
 
+
       const description =
         String(
           req.body.description || ""
         ).trim();
+
 
       const content =
         String(
@@ -1239,10 +1327,8 @@ app.post(
       if (!title || !content) {
 
         return res.status(400).json({
-
           message:
             "Story title and story content are required."
-
         });
 
       }
@@ -1252,23 +1338,23 @@ app.post(
         await pool.query(
           `
           INSERT INTO stories
-
-          (title, category, description, content)
+          (
+            title,
+            category,
+            description,
+            content
+          )
 
           VALUES
           ($1, $2, $3, $4)
 
           RETURNING
-
-          id,
-          title,
-          category,
-          description,
-          content,
-
-          created_at
-          AS "createdAt"
-
+            id,
+            title,
+            category,
+            description,
+            content,
+            created_at AS "createdAt"
           `,
           [
             title,
@@ -1295,10 +1381,8 @@ app.post(
       console.error(error);
 
       res.status(500).json({
-
         message:
           "Could not save the story."
-
       });
 
     }
@@ -1320,10 +1404,8 @@ app.delete(
       if (!req.session.isAdmin) {
 
         return res.status(401).json({
-
           message:
             "Admin login required."
-
         });
 
       }
@@ -1336,10 +1418,8 @@ app.delete(
       if (!Number.isInteger(id)) {
 
         return res.status(400).json({
-
           message:
             "Invalid story ID."
-
         });
 
       }
@@ -1349,9 +1429,7 @@ app.delete(
         await pool.query(
           `
           DELETE FROM stories
-
           WHERE id = $1
-
           RETURNING id
           `,
           [id]
@@ -1361,20 +1439,16 @@ app.delete(
       if (!result.rows.length) {
 
         return res.status(404).json({
-
           message:
             "Story not found."
-
         });
 
       }
 
 
       res.json({
-
         message:
           "Story deleted permanently."
-
       });
 
     } catch (error) {
@@ -1382,10 +1456,8 @@ app.delete(
       console.error(error);
 
       res.status(500).json({
-
         message:
           "Could not delete the story."
-
       });
 
     }
@@ -1412,6 +1484,7 @@ async function startServer() {
   try {
 
     await setupDatabase();
+
 
     app.listen(
       PORT,
