@@ -4,63 +4,238 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Epshitah Stories — My Page</title>
+<title>Epshitah Stories — Author Studio</title>
 
 <style>
 * {
   box-sizing: border-box;
 }
 
+:root {
+  --purple: #7b174d;
+  --purple-dark: #4d1032;
+  --purple-light: #b62d72;
+  --pink: #f8e4ee;
+  --bg: #faf7fa;
+  --white: #ffffff;
+  --text: #241a20;
+  --muted: #777;
+  --border: #eadfe5;
+  --danger: #b3263e;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #fff8fb;
-  color: #241a20;
+  background: var(--bg);
+  color: var(--text);
 }
 
-header {
-  background: linear-gradient(135deg, #7b174d, #b62d72);
+/* SIDEBAR */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 245px;
+  height: 100vh;
+  background: linear-gradient(180deg, #5b1239, #8d1f59);
   color: white;
   padding: 25px 15px;
-  text-align: center;
+  z-index: 1000;
+  overflow-y: auto;
 }
 
-header h1 {
-  margin: 0;
+.logo {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.logo .symbol {
   font-size: 30px;
 }
 
-header p {
-  margin: 8px 0 0;
+.logo h1 {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  margin: 5px 0;
 }
 
-main {
-  max-width: 850px;
-  margin: auto;
-  padding: 20px 15px 50px;
+.logo p {
+  margin: 0;
+  font-size: 12px;
+  opacity: .8;
 }
+
+.nav-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: .6;
+  margin: 20px 10px 8px;
+}
+
+.nav-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: white;
+  padding: 13px 12px;
+  margin: 3px 0;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  background: rgba(255,255,255,.16);
+}
+
+.logout-btn {
+  margin-top: 25px;
+  background: rgba(0,0,0,.18);
+}
+
+/* MAIN */
+
+.main {
+  margin-left: 245px;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 18px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.topbar h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  color: var(--purple);
+}
+
+.mobile-menu {
+  display: none;
+  border: 0;
+  background: var(--purple);
+  color: white;
+  border-radius: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.content {
+  padding: 30px;
+  max-width: 1250px;
+  margin: auto;
+}
+
+/* SECTIONS */
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.welcome {
+  background: linear-gradient(135deg, #6a1544, #b62d72);
+  color: white;
+  border-radius: 22px;
+  padding: 30px;
+  margin-bottom: 25px;
+}
+
+.welcome h1 {
+  font-family: Georgia, serif;
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.welcome p {
+  margin: 0;
+  opacity: .9;
+}
+
+/* DASHBOARD CARDS */
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.quick-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.quick-card .icon {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.quick-card h3 {
+  margin: 0 0 6px;
+  color: var(--purple);
+}
+
+.quick-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* BOX */
 
 .box {
   background: white;
-  padding: 22px;
-  margin-bottom: 20px;
+  border: 1px solid var(--border);
   border-radius: 18px;
-  box-shadow: 0 5px 20px #0002;
+  padding: 24px;
+  margin-bottom: 22px;
 }
 
-h2 {
-  color: #7b174d;
+.box h2 {
+  margin-top: 0;
+  color: var(--purple);
+  font-family: Georgia, serif;
+}
+
+/* FORM */
+
+label {
+  display: block;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 15px;
+  margin-bottom: 6px;
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
-  padding: 12px;
-  margin: 8px 0;
+  padding: 13px;
   border: 1px solid #ddd;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-family: Arial, sans-serif;
+  background: white;
 }
 
 textarea {
@@ -68,156 +243,839 @@ textarea {
   resize: vertical;
 }
 
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 12px 18px;
-  background: #8d1f59;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 8px;
+select {
   cursor: pointer;
 }
 
-.logout {
-  background: #555;
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--purple-light);
+  box-shadow: 0 0 0 3px rgba(182,45,114,.1);
 }
 
-.delete {
-  background: #b21f3b;
+.form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
-.message {
-  margin: 10px 0;
+.primary {
+  border: 0;
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
   font-weight: bold;
+  cursor: pointer;
+}
+
+.secondary {
+  border: 1px solid var(--purple);
+  background: white;
+  color: var(--purple);
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.danger {
+  border: 0;
+  background: var(--danger);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 9px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* STORIES */
+
+.story-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.story-toolbar input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.story-toolbar select {
+  width: 190px;
+}
+
+.story-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
 }
 
 .story-card {
-  border: 1px solid #eee;
-  border-radius: 14px;
-  padding: 15px;
-  margin-top: 12px;
-  background: #fffafd;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(80,20,50,.08);
+}
+
+.story-card h3 {
+  font-family: Georgia, serif;
+  color: var(--purple);
+  margin: 12px 0 8px;
+}
+
+.story-card p {
+  color: #666;
+  line-height: 1.5;
 }
 
 .tag {
   display: inline-block;
-  background: #f7dce9;
-  color: #7b174d;
+  background: var(--pink);
+  color: var(--purple);
   padding: 6px 10px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
 }
 
-.story-content {
-  white-space: pre-wrap;
-  line-height: 1.7;
+.story-date {
+  color: #999;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.story-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
   margin-top: 15px;
 }
 
-.note {
-  background: #fff3f8;
-  padding: 12px;
-  border-radius: 10px;
-  line-height: 1.5;
+.small-btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--purple);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.small-btn:hover {
+  background: var(--pink);
+}
+
+/* PROFILE */
+
+.profile-header {
+  text-align: center;
+  padding: 15px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  margin: auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+/* SETTINGS */
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.setting-row:last-child {
+  border-bottom: 0;
+}
+
+.setting-row strong {
+  display: block;
+}
+
+.setting-row span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* MESSAGE */
+
+.message {
+  margin-top: 12px;
+  font-weight: bold;
 }
 
 .empty {
   text-align: center;
-  color: #777;
+  color: var(--muted);
+  padding: 40px 20px;
+  background: white;
+  border: 1px dashed #ddd;
+  border-radius: 15px;
+}
+
+/* MODAL */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20,10,15,.7);
+  z-index: 3000;
   padding: 20px;
+  overflow-y: auto;
+}
+
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  padding: 25px;
+}
+
+.modal-box h2 {
+  color: var(--purple);
+  font-family: Georgia, serif;
+}
+
+.preview-content {
+  white-space: pre-wrap;
+  line-height: 1.8;
+  color: #333;
+}
+
+.close {
+  float: right;
+  border: 0;
+  background: #eee;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* FEATURED */
+
+.featured-box {
+  background: linear-gradient(135deg, #fff1f7, #fff);
+  border: 1px solid #f0d5e2;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .25s;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
+  .topbar {
+    padding: 15px 18px;
+  }
+
+  .content {
+    padding: 20px 15px 40px;
+  }
+
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .story-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+
+  .welcome {
+    padding: 22px;
+  }
+
+  .welcome h1 {
+    font-size: 25px;
+  }
+
+  .box {
+    padding: 18px;
+  }
+
+  .story-toolbar {
+    display: block;
+  }
+
+  .story-toolbar input,
+  .story-toolbar select {
+    width: 100%;
+    margin-bottom: 8px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header>
+<!-- SIDEBAR -->
 
-<h1>Epshitah Stories</h1>
+<aside class="sidebar" id="sidebar">
 
-<p>My Private Author Page</p>
+  <div class="logo">
+    <div class="symbol">✦</div>
+    <h1>Epshitah Stories</h1>
+    <p>Author Studio</p>
+  </div>
 
-<button class="logout" onclick="adminLogout()">
-Log Out
-</button>
+  <div class="nav-title">Workspace</div>
 
-</header>
+  <button class="nav-btn active" onclick="showPage('dashboard', this)">
+    🏠 Dashboard
+  </button>
 
-<main>
+  <button class="nav-btn" onclick="showPage('stories', this)">
+    📚 My Stories
+  </button>
 
-<section class="box">
+  <button class="nav-btn" onclick="showPage('create', this)">
+    ✍️ Create Story
+  </button>
 
-<h2>Welcome, Molebatsi ❤️</h2>
+  <div class="nav-title">Author</div>
 
-<p>
-This is your private author dashboard.
-</p>
+  <button class="nav-btn" onclick="showPage('profile', this)">
+    👤 Author Profile
+  </button>
 
-<div class="note">
-<strong>Permanent storage:</strong><br>
-Stories saved here are stored in your database and can be loaded again later.
+  <button class="nav-btn" onclick="showPage('settings', this)">
+    ⚙️ Settings
+  </button>
+
+  <button class="nav-btn logout-btn" onclick="adminLogout()">
+    🚪 Log Out
+  </button>
+
+</aside>
+
+<!-- MAIN -->
+
+<div class="main">
+
+  <header class="topbar">
+
+    <button class="mobile-menu" onclick="toggleSidebar()">
+      ☰
+    </button>
+
+    <h2 id="pageTitle">Dashboard</h2>
+
+    <div>
+      ✦ <strong>Molebatsi</strong>
+    </div>
+
+  </header>
+
+  <main class="content">
+
+    <!-- DASHBOARD -->
+
+    <section id="dashboard" class="page active">
+
+      <div class="welcome">
+
+        <h1>Welcome back, Molebatsi ❤️</h1>
+
+        <p>
+          Your stories. Your voice. Your author space.
+        </p>
+
+      </div>
+
+      <div class="quick-grid">
+
+        <div class="quick-card">
+
+          <div class="icon">📚</div>
+
+          <h3 id="dashboardStoryCount">0 Stories</h3>
+
+          <p>
+            Stories currently saved in your collection.
+          </p>
+
+        </div>
+
+        <div class="quick-card">
+
+          <div class="icon">✍️</div>
+
+          <h3>Create</h3>
+
+          <p>
+            Write and publish another story to your website.
+          </p>
+
+        </div>
+
+        <div class="quick-card">
+
+          <div class="icon">⭐</div>
+
+          <h3>Featured Story</h3>
+
+          <p>
+            Choose a story to highlight on your author page.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="box featured-box">
+
+        <h2>⭐ Featured Story</h2>
+
+        <p id="featuredText">
+          No featured story selected yet.
+        </p>
+
+        <button class="secondary" onclick="showPage('stories')">
+          Choose From My Stories
+        </button>
+
+      </div>
+
+      <div class="box">
+
+        <h2>Recent Stories</h2>
+
+        <div id="recentStories">
+
+          <div class="empty">
+            Loading stories...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MY STORIES -->
+
+    <section id="stories" class="page">
+
+      <div class="box">
+
+        <h2>📚 My Stories</h2>
+
+        <p>
+          Manage the stories you have created.
+        </p>
+
+        <div class="story-toolbar">
+
+          <input
+            id="searchStories"
+            type="search"
+            placeholder="🔍 Search your stories..."
+            oninput="renderStories()"
+          >
+
+          <select
+            id="genreFilter"
+            onchange="renderStories()"
+          >
+            <option value="">All Genres</option>
+            <option value="Romance">Romance</option>
+            <option value="Drama">Drama</option>
+            <option value="Heartbreak">Heartbreak</option>
+            <option value="Thriller">Thriller</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Life Stories">Life Stories</option>
+            <option value="Family">Family</option>
+            <option value="Other">Other</option>
+          </select>
+
+        </div>
+
+        <div id="storyList" class="story-list">
+
+          <div class="empty">
+            Loading your stories...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- CREATE -->
+
+    <section id="create" class="page">
+
+      <div class="box">
+
+        <h2>✍️ Create a New Story</h2>
+
+        <p>
+          Write a story and save it permanently to your database.
+        </p>
+
+        <label for="storyTitle">
+          Story Title
+        </label>
+
+        <input
+          id="storyTitle"
+          type="text"
+          placeholder="Enter your story title"
+        >
+
+        <label for="storyCategory">
+          Genre
+        </label>
+
+        <select id="storyCategory">
+
+          <option value="">
+            Select a genre
+          </option>
+
+          <option value="Romance">
+            Romance
+          </option>
+
+          <option value="Drama">
+            Drama
+          </option>
+
+          <option value="Heartbreak">
+            Heartbreak
+          </option>
+
+          <option value="Thriller">
+            Thriller
+          </option>
+
+          <option value="Mystery">
+            Mystery
+          </option>
+
+          <option value="Life Stories">
+            Life Stories
+          </option>
+
+          <option value="Family">
+            Family
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
+        </select>
+
+        <label for="storyDescription">
+          Short Description
+        </label>
+
+        <textarea
+          id="storyDescription"
+          style="min-height:110px"
+          placeholder="Give readers a short introduction to your story..."
+        ></textarea>
+
+        <label for="storyContent">
+          Story
+        </label>
+
+        <textarea
+          id="storyContent"
+          placeholder="Write your story here..."
+        ></textarea>
+
+        <div class="form-actions">
+
+          <button class="primary" onclick="saveStory()">
+            💾 Save Story
+          </button>
+
+          <button class="secondary" onclick="clearStoryForm()">
+            Clear
+          </button>
+
+        </div>
+
+        <div
+          id="storyMessage"
+          class="message"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- PROFILE -->
+
+    <section id="profile" class="page">
+
+      <div class="box">
+
+        <div class="profile-header">
+
+          <div class="avatar">
+            M
+          </div>
+
+          <h2>Author Profile</h2>
+
+          <p>
+            Your public author identity on Epshitah Stories.
+          </p>
+
+        </div>
+
+        <label>
+          Author Name
+        </label>
+
+        <input
+          id="authorName"
+          type="text"
+          value="Molebatsi"
+        >
+
+        <label>
+          Author Bio
+        </label>
+
+        <textarea
+          id="authorBio"
+          style="min-height:130px"
+          placeholder="Tell your readers a little about yourself..."
+        ></textarea>
+
+        <label>
+          Favourite Genre
+        </label>
+
+        <select id="authorGenre">
+
+          <option>Romance</option>
+          <option>Drama</option>
+          <option>Heartbreak</option>
+          <option>Thriller</option>
+          <option>Mystery</option>
+          <option>Life Stories</option>
+
+        </select>
+
+        <div class="form-actions">
+
+          <button class="primary" onclick="saveProfile()">
+            Save Profile
+          </button>
+
+        </div>
+
+        <div
+          id="profileMessage"
+          class="message"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SETTINGS -->
+
+    <section id="settings" class="page">
+
+      <div class="box">
+
+        <h2>⚙️ Settings</h2>
+
+        <div class="setting-row">
+
+          <div>
+            <strong>Author Dashboard</strong>
+            <span>
+              Private management area
+            </span>
+          </div>
+
+          <strong>ON</strong>
+
+        </div>
+
+        <div class="setting-row">
+
+          <div>
+            <strong>Story Storage</strong>
+            <span>
+              Stories are stored in the website database
+            </span>
+          </div>
+
+          <strong>ACTIVE</strong>
+
+        </div>
+
+        <div class="setting-row">
+
+          <div>
+            <strong>Reader Accounts</strong>
+            <span>
+              Reader registration and login
+            </span>
+          </div>
+
+          <strong>ACTIVE</strong>
+
+        </div>
+
+        <div class="setting-row">
+
+          <div>
+            <strong>Payments</strong>
+            <span>
+              No paid-story system is enabled right now
+            </span>
+          </div>
+
+          <strong>FREE</strong>
+
+        </div>
+
+      </div>
+
+      <div class="box">
+
+        <h2>About Your Studio</h2>
+
+        <p>
+          This is your private space for creating and managing
+          Epshitah Stories.
+        </p>
+
+        <p>
+          Reader statistics will only become meaningful when
+          real readers begin using the website.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
 </div>
 
-</section>
 
-<section class="box">
+<!-- PREVIEW MODAL -->
 
-<h2>➕ Add a Story</h2>
+<div
+  class="modal"
+  id="previewModal"
+  onclick="closePreviewOutside(event)"
+>
 
-<input
-id="storyTitle"
-type="text"
-placeholder="Story title">
+  <div class="modal-box">
 
-<input
-id="storyCategory"
-type="text"
-placeholder="Category e.g. Love, Pain, Family">
+    <button
+      class="close"
+      onclick="closePreview()"
+    >
+      ×
+    </button>
 
-<textarea
-id="storyDescription"
-placeholder="Short description of the story"></textarea>
+    <h2 id="previewTitle">
+      Story Preview
+    </h2>
 
-<textarea
-id="storyContent"
-placeholder="Write your story here..."></textarea>
+    <div id="previewGenre"></div>
 
-<button onclick="saveStory()">
-Save Story Permanently
-</button>
+    <p id="previewDescription"></p>
 
-<div id="storyMessage" class="message"></div>
+    <hr>
 
-</section>
+    <div
+      id="previewContent"
+      class="preview-content"
+    ></div>
 
-<section class="box">
-
-<h2>📚 My Stories</h2>
-
-<div id="stories">
-
-<div class="empty">
-Loading your saved stories...
-</div>
+  </div>
 
 </div>
 
-</section>
-
-</main>
 
 <script>
+
+let allStories = [];
+
+
+/* CHECK ADMIN */
 
 async function checkAdmin() {
 
   try {
 
-    const response = await fetch("/api/admin/me", {
-      credentials: "same-origin"
-    });
+    const response = await fetch(
+      "/api/admin/me",
+      {
+        credentials: "same-origin"
+      }
+    );
 
     const data = await response.json();
 
@@ -242,14 +1100,19 @@ async function checkAdmin() {
 }
 
 
+/* LOGOUT */
+
 async function adminLogout() {
 
   try {
 
-    await fetch("/api/admin/logout", {
-      method: "POST",
-      credentials: "same-origin"
-    });
+    await fetch(
+      "/api/admin/logout",
+      {
+        method: "POST",
+        credentials: "same-origin"
+      }
+    );
 
   } finally {
 
@@ -260,19 +1123,127 @@ async function adminLogout() {
 }
 
 
+/* SIDEBAR */
+
+function toggleSidebar() {
+
+  document
+    .getElementById("sidebar")
+    .classList.toggle("open");
+
+}
+
+
+/* PAGE NAVIGATION */
+
+function showPage(pageId, button) {
+
+  document
+    .querySelectorAll(".page")
+    .forEach(function(page) {
+
+      page.classList.remove("active");
+
+    });
+
+
+  const page =
+    document.getElementById(pageId);
+
+  if (page) {
+
+    page.classList.add("active");
+
+  }
+
+
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach(function(btn) {
+
+      btn.classList.remove("active");
+
+    });
+
+
+  if (button) {
+
+    button.classList.add("active");
+
+  } else {
+
+    const matching =
+      document.querySelector(
+        '.nav-btn[onclick*="' +
+        pageId +
+        '"]'
+      );
+
+    if (matching) {
+
+      matching.classList.add("active");
+
+    }
+
+  }
+
+
+  const titles = {
+
+    dashboard: "Dashboard",
+    stories: "My Stories",
+    create: "Create Story",
+    profile: "Author Profile",
+    settings: "Settings"
+
+  };
+
+
+  document.getElementById("pageTitle").textContent =
+    titles[pageId] || "Author Studio";
+
+
+  document
+    .getElementById("sidebar")
+    .classList.remove("open");
+
+
+  if (pageId === "stories") {
+
+    renderStories();
+
+  }
+
+}
+
+
+/* SAVE STORY */
+
 async function saveStory() {
 
   const title =
-    document.getElementById("storyTitle").value.trim();
+    document
+      .getElementById("storyTitle")
+      .value
+      .trim();
 
   const category =
-    document.getElementById("storyCategory").value.trim();
+    document
+      .getElementById("storyCategory")
+      .value
+      .trim();
 
   const description =
-    document.getElementById("storyDescription").value.trim();
+    document
+      .getElementById("storyDescription")
+      .value
+      .trim();
 
   const content =
-    document.getElementById("storyContent").value.trim();
+    document
+      .getElementById("storyContent")
+      .value
+      .trim();
 
   const message =
     document.getElementById("storyMessage");
@@ -299,32 +1270,42 @@ async function saveStory() {
 
 
   message.textContent =
-    "Saving permanently...";
+    "Saving your story...";
 
 
   try {
 
-    const response = await fetch("/api/admin/stories", {
+    const response =
+      await fetch(
+        "/api/admin/stories",
+        {
 
-      method: "POST",
+          method: "POST",
 
-      credentials: "same-origin",
+          credentials: "same-origin",
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-      body: JSON.stringify({
-        title: title,
-        category: category,
-        description: description,
-        content: content
-      })
+          body: JSON.stringify({
 
-    });
+            title: title,
+
+            category: category,
+
+            description: description,
+
+            content: content
+
+          })
+
+        }
+      );
 
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
 
     if (!response.ok) {
@@ -339,19 +1320,13 @@ async function saveStory() {
 
 
     message.textContent =
-      "✅ Story saved permanently!";
+      "✅ Story saved successfully!";
 
 
-    document.getElementById("storyTitle").value = "";
-
-    document.getElementById("storyCategory").value = "";
-
-    document.getElementById("storyDescription").value = "";
-
-    document.getElementById("storyContent").value = "";
+    clearStoryForm();
 
 
-    loadStories();
+    await loadStories();
 
 
   } catch (error) {
@@ -366,21 +1341,38 @@ async function saveStory() {
 }
 
 
+/* CLEAR FORM */
+
+function clearStoryForm() {
+
+  document.getElementById("storyTitle").value = "";
+
+  document.getElementById("storyCategory").value = "";
+
+  document.getElementById("storyDescription").value = "";
+
+  document.getElementById("storyContent").value = "";
+
+}
+
+
+/* LOAD STORIES */
+
 async function loadStories() {
-
-  const container =
-    document.getElementById("stories");
-
 
   try {
 
     const response =
-      await fetch("/api/stories");
+      await fetch(
+        "/api/stories"
+      );
 
 
     if (!response.ok) {
 
-      throw new Error("Could not load stories.");
+      throw new Error(
+        "Could not load stories."
+      );
 
     }
 
@@ -389,74 +1381,293 @@ async function loadStories() {
       await response.json();
 
 
-    if (!stories.length) {
-
-      container.innerHTML = `
-        <div class="empty">
-          You have not saved any stories yet.
-        </div>
-      `;
-
-      return;
-
-    }
+    allStories =
+      Array.isArray(stories)
+        ? stories
+        : [];
 
 
-    container.innerHTML = "";
+    updateStoryCount();
+
+    renderStories();
+
+    renderRecentStories();
+
+  } catch (error) {
+
+    console.error(error);
+
+    allStories = [];
+
+    updateStoryCount();
+
+    document.getElementById(
+      "storyList"
+    ).innerHTML = `
+      <div class="empty">
+        Could not load your stories.
+      </div>
+    `;
+
+  }
+
+}
 
 
-    stories.forEach(function(story) {
+/* STORY COUNT */
+
+function updateStoryCount() {
+
+  const count =
+    allStories.length;
+
+  document.getElementById(
+    "dashboardStoryCount"
+  ).textContent =
+    count +
+    (count === 1 ? " Story" : " Stories");
+
+}
+
+
+/* RENDER STORIES */
+
+function renderStories() {
+
+  const container =
+    document.getElementById(
+      "storyList"
+    );
+
+
+  if (!container) {
+
+    return;
+
+  }
+
+
+  const search =
+    (
+      document.getElementById(
+        "searchStories"
+      )?.value || ""
+    )
+      .toLowerCase()
+      .trim();
+
+
+  const genre =
+    document.getElementById(
+      "genreFilter"
+    )?.value || "";
+
+
+  const filtered =
+    allStories.filter(
+      function(story) {
+
+        const title =
+          (story.title || "")
+            .toLowerCase();
+
+        const description =
+          (story.description || "")
+            .toLowerCase();
+
+        const category =
+          (story.category || "")
+            .toLowerCase();
+
+
+        const matchesSearch =
+          !search ||
+          title.includes(search) ||
+          description.includes(search) ||
+          category.includes(search);
+
+
+        const matchesGenre =
+          !genre ||
+          (story.category || "")
+            .toLowerCase() ===
+          genre.toLowerCase();
+
+
+        return matchesSearch &&
+               matchesGenre;
+
+      }
+    );
+
+
+  if (!filtered.length) {
+
+    container.innerHTML = `
+      <div class="empty">
+        ${
+          allStories.length
+            ? "No stories match your search."
+            : "You have not created any stories yet."
+        }
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML = "";
+
+
+  filtered.forEach(
+    function(story) {
 
       const card =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       card.className =
         "story-card";
 
 
       const tag =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
 
       tag.className =
         "tag";
 
       tag.textContent =
-        story.category || "STORY";
+        story.category ||
+        "STORY";
 
 
       const title =
-        document.createElement("h3");
+        document.createElement(
+          "h3"
+        );
 
       title.textContent =
-        story.title;
+        story.title ||
+        "Untitled Story";
 
 
       const description =
-        document.createElement("p");
+        document.createElement(
+          "p"
+        );
 
       description.textContent =
-        story.description || "";
+        story.description ||
+        "No description added yet.";
 
 
-      const content =
-        document.createElement("div");
+      const date =
+        document.createElement(
+          "div"
+        );
 
-      content.className =
-        "story-content";
+      date.className =
+        "story-date";
 
-      content.textContent =
-        story.content;
+      if (story.created_at) {
+
+        const d =
+          new Date(
+            story.created_at
+          );
+
+        if (!isNaN(d.getTime())) {
+
+          date.textContent =
+            "Created " +
+            d.toLocaleDateString();
+
+        }
+
+      }
+
+
+      const actions =
+        document.createElement(
+          "div"
+        );
+
+      actions.className =
+        "story-actions";
+
+
+      const preview =
+        document.createElement(
+          "button"
+        );
+
+      preview.className =
+        "small-btn";
+
+      preview.textContent =
+        "👁️ Preview";
+
+      preview.onclick =
+        function() {
+
+          openPreview(story);
+
+        };
+
+
+      const edit =
+        document.createElement(
+          "button"
+        );
+
+      edit.className =
+        "small-btn";
+
+      edit.textContent =
+        "✏️ Edit";
+
+      edit.onclick =
+        function() {
+
+          editStory(story);
+
+        };
+
+
+      const featured =
+        document.createElement(
+          "button"
+        );
+
+      featured.className =
+        "small-btn";
+
+      featured.textContent =
+        "⭐ Featured";
+
+      featured.onclick =
+        function() {
+
+          setFeatured(story);
+
+        };
 
 
       const deleteButton =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
 
       deleteButton.className =
-        "delete";
+        "danger";
 
       deleteButton.textContent =
-        "Delete Story";
-
+        "Delete";
 
       deleteButton.onclick =
         function() {
@@ -466,36 +1677,241 @@ async function loadStories() {
         };
 
 
+      actions.appendChild(preview);
+
+      actions.appendChild(edit);
+
+      actions.appendChild(featured);
+
+      actions.appendChild(deleteButton);
+
+
       card.appendChild(tag);
 
       card.appendChild(title);
 
       card.appendChild(description);
 
-      card.appendChild(content);
+      card.appendChild(date);
 
-      card.appendChild(deleteButton);
+      card.appendChild(actions);
 
 
       container.appendChild(card);
 
-    });
+    }
+  );
+
+}
 
 
-  } catch (error) {
+/* RECENT STORIES */
 
-    console.error(error);
+function renderRecentStories() {
+
+  const container =
+    document.getElementById(
+      "recentStories"
+    );
+
+
+  if (!container) {
+
+    return;
+
+  }
+
+
+  if (!allStories.length) {
 
     container.innerHTML = `
       <div class="empty">
-        Could not load your saved stories.
+        You have not created any stories yet.
       </div>
     `;
+
+    return;
+
+  }
+
+
+  const recent =
+    allStories.slice(0, 5);
+
+
+  container.innerHTML = "";
+
+
+  recent.forEach(
+    function(story) {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+      item.style.padding =
+        "14px 0";
+
+      item.style.borderBottom =
+        "1px solid #eee";
+
+
+      const title =
+        document.createElement(
+          "strong"
+        );
+
+      title.textContent =
+        story.title ||
+        "Untitled Story";
+
+      title.style.color =
+        "var(--purple)";
+
+
+      const category =
+        document.createElement(
+          "div"
+        );
+
+      category.textContent =
+        story.category ||
+        "STORY";
+
+      category.style.fontSize =
+        "12px";
+
+      category.style.color =
+        "#999";
+
+      category.style.marginTop =
+        "4px";
+
+
+      item.appendChild(title);
+
+      item.appendChild(category);
+
+
+      container.appendChild(item);
+
+    }
+  );
+
+}
+
+
+/* PREVIEW */
+
+function openPreview(story) {
+
+  document.getElementById(
+    "previewTitle"
+  ).textContent =
+    story.title ||
+    "Untitled Story";
+
+
+  document.getElementById(
+    "previewGenre"
+  ).innerHTML =
+    '<span class="tag">' +
+    escapeHtml(
+      story.category ||
+      "STORY"
+    ) +
+    '</span>';
+
+
+  document.getElementById(
+    "previewDescription"
+  ).textContent =
+    story.description ||
+    "";
+
+
+  document.getElementById(
+    "previewContent"
+  ).textContent =
+    story.content ||
+    "";
+
+
+  document.getElementById(
+    "previewModal"
+  ).classList.add(
+    "show"
+  );
+
+}
+
+
+function closePreview() {
+
+  document.getElementById(
+    "previewModal"
+  ).classList.remove(
+    "show"
+  );
+
+}
+
+
+function closePreviewOutside(event) {
+
+  if (
+    event.target.id ===
+    "previewModal"
+  ) {
+
+    closePreview();
 
   }
 
 }
 
+
+/* EDIT */
+
+function editStory(story) {
+
+  showPage("create");
+
+
+  document.getElementById(
+    "storyTitle"
+  ).value =
+    story.title || "";
+
+
+  document.getElementById(
+    "storyCategory"
+  ).value =
+    story.category || "";
+
+
+  document.getElementById(
+    "storyDescription"
+  ).value =
+    story.description || "";
+
+
+  document.getElementById(
+    "storyContent"
+  ).value =
+    story.content || "";
+
+
+  document.getElementById(
+    "storyMessage"
+  ).textContent =
+    "You are editing this story. Saving will create the updated version when editing is supported by the server.";
+
+}
+
+
+/* DELETE */
 
 async function deleteStory(id) {
 
@@ -518,8 +1934,11 @@ async function deleteStory(id) {
       await fetch(
         "/api/admin/stories/" + id,
         {
+
           method: "DELETE",
+
           credentials: "same-origin"
+
         }
       );
 
@@ -540,8 +1959,7 @@ async function deleteStory(id) {
     }
 
 
-    loadStories();
-
+    await loadStories();
 
   } catch (error) {
 
@@ -556,17 +1974,228 @@ async function deleteStory(id) {
 }
 
 
+/* FEATURED STORY */
+
+function setFeatured(story) {
+
+  try {
+
+    localStorage.setItem(
+      "epshitahFeaturedStory",
+      JSON.stringify(story)
+    );
+
+    updateFeaturedStory();
+
+    alert(
+      "⭐ Featured story selected."
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
+
+function updateFeaturedStory() {
+
+  const text =
+    document.getElementById(
+      "featuredText"
+    );
+
+
+  if (!text) {
+
+    return;
+
+  }
+
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        "epshitahFeaturedStory"
+      );
+
+
+    if (!saved) {
+
+      text.textContent =
+        "No featured story selected yet.";
+
+      return;
+
+    }
+
+
+    const story =
+      JSON.parse(saved);
+
+
+    text.textContent =
+      "⭐ " +
+      (
+        story.title ||
+        "Featured Story"
+      );
+
+  } catch (error) {
+
+    text.textContent =
+      "No featured story selected yet.";
+
+  }
+
+}
+
+
+/* PROFILE */
+
+function saveProfile() {
+
+  const name =
+    document.getElementById(
+      "authorName"
+    ).value.trim();
+
+
+  const bio =
+    document.getElementById(
+      "authorBio"
+    ).value.trim();
+
+
+  const genre =
+    document.getElementById(
+      "authorGenre"
+    ).value;
+
+
+  localStorage.setItem(
+    "epshitahAuthorProfile",
+    JSON.stringify({
+
+      name: name,
+
+      bio: bio,
+
+      genre: genre
+
+    })
+  );
+
+
+  document.getElementById(
+    "profileMessage"
+  ).textContent =
+    "✅ Profile saved on this device.";
+
+}
+
+
+/* LOAD PROFILE */
+
+function loadProfile() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        "epshitahAuthorProfile"
+      );
+
+
+    if (!saved) {
+
+      return;
+
+    }
+
+
+    const profile =
+      JSON.parse(saved);
+
+
+    if (profile.name) {
+
+      document.getElementById(
+        "authorName"
+      ).value =
+        profile.name;
+
+    }
+
+
+    if (profile.bio) {
+
+      document.getElementById(
+        "authorBio"
+      ).value =
+        profile.bio;
+
+    }
+
+
+    if (profile.genre) {
+
+      document.getElementById(
+        "authorGenre"
+      ).value =
+        profile.genre;
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* ESCAPE HTML */
+
+function escapeHtml(value) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    value || "";
+
+  return div.innerHTML;
+
+}
+
+
+/* START */
+
 async function start() {
 
   const loggedIn =
     await checkAdmin();
 
 
-  if (loggedIn) {
+  if (!loggedIn) {
 
-    loadStories();
+    return;
 
   }
+
+
+  loadProfile();
+
+  updateFeaturedStory();
+
+  await loadStories();
 
 }
 
