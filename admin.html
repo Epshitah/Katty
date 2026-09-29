@@ -77,10 +77,15 @@ button {
   font-size: 16px;
   font-weight: bold;
   margin-top: 8px;
+  cursor: pointer;
 }
 
 .logout {
   background: #555;
+}
+
+.delete {
+  background: #b21f3b;
 }
 
 .message {
@@ -106,8 +111,10 @@ button {
   font-weight: bold;
 }
 
-.hidden {
-  display: none;
+.story-content {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  margin-top: 15px;
 }
 
 .note {
@@ -115,6 +122,12 @@ button {
   padding: 12px;
   border-radius: 10px;
   line-height: 1.5;
+}
+
+.empty {
+  text-align: center;
+  color: #777;
+  padding: 20px;
 }
 </style>
 </head>
@@ -133,7 +146,6 @@ Log Out
 
 </header>
 
-
 <main>
 
 <section class="box">
@@ -145,11 +157,11 @@ This is your private author dashboard.
 </p>
 
 <div class="note">
-Only the administrator who is logged in can use this page.
+<strong>Permanent storage:</strong><br>
+Stories saved here are stored in your database and can be loaded again later.
 </div>
 
 </section>
-
 
 <section class="box">
 
@@ -174,13 +186,12 @@ id="storyContent"
 placeholder="Write your story here..."></textarea>
 
 <button onclick="saveStory()">
-Save Story
+Save Story Permanently
 </button>
 
 <div id="storyMessage" class="message"></div>
 
 </section>
-
 
 <section class="box">
 
@@ -188,16 +199,8 @@ Save Story
 
 <div id="stories">
 
-<div class="story-card">
-
-<span class="tag">DEMO</span>
-
-<h3>The Day Everything Changed</h3>
-
-<p>
-This is where your published stories will appear.
-</p>
-
+<div class="empty">
+Loading your saved stories...
 </div>
 
 </div>
@@ -206,45 +209,33 @@ This is where your published stories will appear.
 
 </main>
 
-
 <script>
 
 async function checkAdmin() {
 
-  const response = await fetch("/api/admin/me");
+  try {
 
-  const data = await response.json();
+    const response = await fetch("/api/admin/me", {
+      credentials: "same-origin"
+    });
 
-  if (!data.loggedIn) {
+    const data = await response.json();
 
-    document.body.innerHTML = `
-      <div style="
-        font-family:Arial;
-        text-align:center;
-        padding:50px 20px;
-      ">
+    if (!data.loggedIn) {
 
-        <h2>Admin Login Required</h2>
+      window.location.href = "/admin";
 
-        <p>
-        You must log in as the Epshitah Stories administrator.
-        </p>
+      return false;
 
-        <button
-        onclick="window.location.href='/'"
-        style="
-          padding:12px 18px;
-          border:0;
-          border-radius:10px;
-          background:#8d1f59;
-          color:white;
-          font-weight:bold;
-        ">
-        Go to Epshitah Stories
-        </button>
+    }
 
-      </div>
-    `;
+    return true;
+
+  } catch (error) {
+
+    console.error(error);
+
+    return false;
 
   }
 
@@ -253,16 +244,23 @@ async function checkAdmin() {
 
 async function adminLogout() {
 
-  await fetch("/api/admin/logout", {
-    method: "POST"
-  });
+  try {
 
-  window.location.href = "/";
+    await fetch("/api/admin/logout", {
+      method: "POST",
+      credentials: "same-origin"
+    });
+
+  } finally {
+
+    window.location.href = "/admin";
+
+  }
 
 }
 
 
-function saveStory() {
+async function saveStory() {
 
   const title =
     document.getElementById("storyTitle").value.trim();
@@ -280,64 +278,302 @@ function saveStory() {
     document.getElementById("storyMessage");
 
 
-  if (!title || !content) {
+  if (!title) {
 
     message.textContent =
-      "Please enter a story title and story content.";
+      "Please enter a story title.";
 
     return;
 
   }
 
 
-  const storyBox =
-    document.createElement("div");
+  if (!content) {
 
-  storyBox.className =
-    "story-card";
+    message.textContent =
+      "Please enter your story.";
 
+    return;
 
-  storyBox.innerHTML = `
-
-    <span class="tag">
-      ${category || "STORY"}
-    </span>
-
-    <h3>
-      ${title}
-    </h3>
-
-    <p>
-      ${description || "No description added."}
-    </p>
-
-  `;
-
-
-  document
-    .getElementById("stories")
-    .appendChild(storyBox);
+  }
 
 
   message.textContent =
-    "Story added to this page for now.";
+    "Saving permanently...";
 
 
-  document.getElementById("storyTitle").value = "";
+  try {
 
-  document.getElementById("storyCategory").value = "";
+    const response = await fetch("/api/admin/stories", {
 
-  document.getElementById("storyDescription").value = "";
+      method: "POST",
 
-  document.getElementById("storyContent").value = "";
+      credentials: "same-origin",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        title: title,
+        category: category,
+        description: description,
+        content: content
+      })
+
+    });
+
+
+    const data = await response.json();
+
+
+    if (!response.ok) {
+
+      message.textContent =
+        data.message ||
+        "The story could not be saved.";
+
+      return;
+
+    }
+
+
+    message.textContent =
+      "✅ Story saved permanently!";
+
+
+    document.getElementById("storyTitle").value = "";
+
+    document.getElementById("storyCategory").value = "";
+
+    document.getElementById("storyDescription").value = "";
+
+    document.getElementById("storyContent").value = "";
+
+
+    loadStories();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "Could not connect to the server.";
+
+  }
 
 }
 
 
-checkAdmin();
+async function loadStories() {
+
+  const container =
+    document.getElementById("stories");
+
+
+  try {
+
+    const response =
+      await fetch("/api/stories");
+
+
+    if (!response.ok) {
+
+      throw new Error("Could not load stories.");
+
+    }
+
+
+    const stories =
+      await response.json();
+
+
+    if (!stories.length) {
+
+      container.innerHTML = `
+        <div class="empty">
+          You have not saved any stories yet.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    stories.forEach(function(story) {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "story-card";
+
+
+      const tag =
+        document.createElement("span");
+
+      tag.className =
+        "tag";
+
+      tag.textContent =
+        story.category || "STORY";
+
+
+      const title =
+        document.createElement("h3");
+
+      title.textContent =
+        story.title;
+
+
+      const description =
+        document.createElement("p");
+
+      description.textContent =
+        story.description || "";
+
+
+      const content =
+        document.createElement("div");
+
+      content.className =
+        "story-content";
+
+      content.textContent =
+        story.content;
+
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.className =
+        "delete";
+
+      deleteButton.textContent =
+        "Delete Story";
+
+
+      deleteButton.onclick =
+        function() {
+
+          deleteStory(story.id);
+
+        };
+
+
+      card.appendChild(tag);
+
+      card.appendChild(title);
+
+      card.appendChild(description);
+
+      card.appendChild(content);
+
+      card.appendChild(deleteButton);
+
+
+      container.appendChild(card);
+
+    });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    container.innerHTML = `
+      <div class="empty">
+        Could not load your saved stories.
+      </div>
+    `;
+
+  }
+
+}
+
+
+async function deleteStory(id) {
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to permanently delete this story?"
+    );
+
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/admin/stories/" + id,
+        {
+          method: "DELETE",
+          credentials: "same-origin"
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      alert(
+        data.message ||
+        "Could not delete the story."
+      );
+
+      return;
+
+    }
+
+
+    loadStories();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Could not connect to the server."
+    );
+
+  }
+
+}
+
+
+async function start() {
+
+  const loggedIn =
+    await checkAdmin();
+
+
+  if (loggedIn) {
+
+    loadStories();
+
+  }
+
+}
+
+
+start();
 
 </script>
 
 </body>
-  </html>
-  
+</html>
