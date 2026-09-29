@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Epshitah Stories — My Page</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fff8fb;
+  color: #241a20;
+}
+
+header {
+  background: linear-gradient(135deg, #7b174d, #b62d72);
+  color: white;
+  padding: 25px 15px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+header p {
+  margin: 8px 0 0;
+}
+
+main {
+  max-width: 850px;
+  margin: auto;
+  padding: 20px 15px 50px;
+}
+
+.box {
+  background: white;
+  padding: 22px;
+  margin-bottom: 20px;
+  border-radius: 18px;
+  box-shadow: 0 5px 20px #0002;
+}
+
+h2 {
+  color: #7b174d;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 18px;
+  background: #8d1f59;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.logout {
+  background: #555;
+}
+
+.message {
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.story-card {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 15px;
+  margin-top: 12px;
+  background: #fffafd;
+}
+
+.tag {
+  display: inline-block;
+  background: #f7dce9;
+  color: #7b174d;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.hidden {
+  display: none;
+}
+
+.note {
+  background: #fff3f8;
+  padding: 12px;
+  border-radius: 10px;
+  line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>Epshitah Stories</h1>
+
+<p>My Private Author Page</p>
+
+<button class="logout" onclick="adminLogout()">
+Log Out
+</button>
+
+</header>
+
+
+<main>
+
+<section class="box">
+
+<h2>Welcome, Molebatsi ❤️</h2>
+
+<p>
+This is your private author dashboard.
+</p>
+
+<div class="note">
+Only the administrator who is logged in can use this page.
+</div>
+
+</section>
+
+
+<section class="box">
+
+<h2>➕ Add a Story</h2>
+
+<input
+id="storyTitle"
+type="text"
+placeholder="Story title">
+
+<input
+id="storyCategory"
+type="text"
+placeholder="Category e.g. Love, Pain, Family">
+
+<textarea
+id="storyDescription"
+placeholder="Short description of the story"></textarea>
+
+<textarea
+id="storyContent"
+placeholder="Write your story here..."></textarea>
+
+<button onclick="saveStory()">
+Save Story
+</button>
+
+<div id="storyMessage" class="message"></div>
+
+</section>
+
+
+<section class="box">
+
+<h2>📚 My Stories</h2>
+
+<div id="stories">
+
+<div class="story-card">
+
+<span class="tag">DEMO</span>
+
+<h3>The Day Everything Changed</h3>
+
+<p>
+This is where your published stories will appear.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+async function checkAdmin() {
+
+  const response = await fetch("/api/admin/me");
+
+  const data = await response.json();
+
+  if (!data.loggedIn) {
+
+    document.body.innerHTML = `
+      <div style="
+        font-family:Arial;
+        text-align:center;
+        padding:50px 20px;
+      ">
+
+        <h2>Admin Login Required</h2>
+
+        <p>
+        You must log in as the Epshitah Stories administrator.
+        </p>
+
+        <button
+        onclick="window.location.href='/'"
+        style="
+          padding:12px 18px;
+          border:0;
+          border-radius:10px;
+          background:#8d1f59;
+          color:white;
+          font-weight:bold;
+        ">
+        Go to Epshitah Stories
+        </button>
+
+      </div>
+    `;
+
+  }
+
+}
+
+
+async function adminLogout() {
+
+  await fetch("/api/admin/logout", {
+    method: "POST"
+  });
+
+  window.location.href = "/";
+
+}
+
+
+function saveStory() {
+
+  const title =
+    document.getElementById("storyTitle").value.trim();
+
+  const category =
+    document.getElementById("storyCategory").value.trim();
+
+  const description =
+    document.getElementById("storyDescription").value.trim();
+
+  const content =
+    document.getElementById("storyContent").value.trim();
+
+  const message =
+    document.getElementById("storyMessage");
+
+
+  if (!title || !content) {
+
+    message.textContent =
+      "Please enter a story title and story content.";
+
+    return;
+
+  }
+
+
+  const storyBox =
+    document.createElement("div");
+
+  storyBox.className =
+    "story-card";
+
+
+  storyBox.innerHTML = `
+
+    <span class="tag">
+      ${category || "STORY"}
+    </span>
+
+    <h3>
+      ${title}
+    </h3>
+
+    <p>
+      ${description || "No description added."}
+    </p>
+
+  `;
+
+
+  document
+    .getElementById("stories")
+    .appendChild(storyBox);
+
+
+  message.textContent =
+    "Story added to this page for now.";
+
+
+  document.getElementById("storyTitle").value = "";
+
+  document.getElementById("storyCategory").value = "";
+
+  document.getElementById("storyDescription").value = "";
+
+  document.getElementById("storyContent").value = "";
+
+}
+
+
+checkAdmin();
+
+</script>
+
+</body>
+</html>
