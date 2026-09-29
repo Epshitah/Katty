@@ -17,6 +17,8 @@ const ADMIN_PASSWORD =
 
 const users = new Map();
 
+const stories = [];
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -565,16 +567,105 @@ async function login() {
   }
 
 
-  // IMPORTANT:
-  // Your file is admin.html
-  // It is in the same folder as server.js.
-
   res.sendFile(
     path.join(
       __dirname,
       "admin.html"
     )
   );
+
+});
+
+
+// ========================
+// STORIES
+// ========================
+
+// Temporary story storage.
+// We will connect this to your database later.
+
+const stories = [];
+
+
+// GET ALL STORIES
+app.get("/api/stories", (req, res) => {
+
+  res.json(stories);
+
+});
+
+
+// ADD STORY — ADMIN ONLY
+app.post("/api/admin/stories", (req, res) => {
+
+  if (!req.session.isAdmin) {
+
+    return res.status(401).json({
+
+      message:
+        "Admin login required."
+
+    });
+
+  }
+
+
+  const title =
+    String(req.body.title || "").trim();
+
+  const category =
+    String(req.body.category || "").trim();
+
+  const description =
+    String(req.body.description || "").trim();
+
+  const content =
+    String(req.body.content || "").trim();
+
+
+  if (!title || !content) {
+
+    return res.status(400).json({
+
+      message:
+        "Story title and story content are required."
+
+    });
+
+  }
+
+
+  const story = {
+
+    id: Date.now(),
+
+    title,
+
+    category:
+      category || "STORY",
+
+    description:
+      description || "No description added.",
+
+    content,
+
+    createdAt:
+      new Date().toISOString()
+
+  };
+
+
+  stories.push(story);
+
+
+  res.json({
+
+    message:
+      "Story saved successfully!",
+
+    story
+
+  });
 
 });
 
