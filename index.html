@@ -6,289 +6,1143 @@
 
 <title>Epshitah Stories</title>
 
-<link rel="stylesheet" href="style.css">
+<meta
+  name="description"
+  content="Epshitah Stories — Emotional stories that touch the heart."
+>
+
+<style>
+
+:root{
+  --purple:#7b174d;
+  --purple-dark:#4d1032;
+  --purple-light:#b62d72;
+  --pink:#f8e4ee;
+  --soft:#fcf8fb;
+  --white:#ffffff;
+  --text:#241a20;
+  --muted:#777;
+  --border:#eadfe5;
+  --shadow:0 10px 30px rgba(75,16,50,.10);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--soft);
+  color:var(--text);
+  line-height:1.6;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+
+.nav{
+  max-width:1200px;
+  margin:auto;
+  height:70px;
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  text-decoration:none;
+  color:var(--purple);
+  font-size:23px;
+  font-weight:800;
+  letter-spacing:-.5px;
+}
+
+.logo span{
+  color:var(--purple-light);
+}
+
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.nav-links button,
+.nav-links a{
+  border:0;
+  background:transparent;
+  text-decoration:none;
+  color:var(--text);
+  padding:9px 12px;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.nav-links button:hover,
+.nav-links a:hover{
+  background:var(--pink);
+  color:var(--purple);
+}
+
+.login-btn{
+  background:var(--purple)!important;
+  color:white!important;
+  padding:10px 17px!important;
+}
+
+.login-btn:hover{
+  background:var(--purple-dark)!important;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+  max-width:1200px;
+  margin:25px auto 0;
+  padding:0 20px;
+}
+
+.hero-inner{
+  min-height:440px;
+  border-radius:25px;
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  align-items:center;
+  background:
+    radial-gradient(circle at 80% 20%,rgba(255,255,255,.16),transparent 30%),
+    linear-gradient(135deg,var(--purple-dark),var(--purple),var(--purple-light));
+  box-shadow:var(--shadow);
+}
+
+.hero-decoration{
+  position:absolute;
+  width:340px;
+  height:340px;
+  border-radius:50%;
+  right:-110px;
+  bottom:-130px;
+  background:rgba(255,255,255,.09);
+}
+
+.hero-decoration.two{
+  width:210px;
+  height:210px;
+  right:120px;
+  top:-120px;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  color:white;
+  max-width:700px;
+  padding:60px;
+}
+
+.hero-kicker{
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:20px;
+  background:rgba(255,255,255,.14);
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+
+.hero h1{
+  font-size:48px;
+  line-height:1.08;
+  letter-spacing:-1.5px;
+  margin-bottom:18px;
+}
+
+.hero p{
+  font-size:17px;
+  max-width:580px;
+  color:rgba(255,255,255,.9);
+  margin-bottom:25px;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.hero-primary{
+  border:0;
+  background:white;
+  color:var(--purple);
+  padding:13px 20px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.hero-secondary{
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.08);
+  color:white;
+  padding:13px 20px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* ================= MAIN ================= */
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:45px 20px;
+}
+
+.section{
+  margin-bottom:50px;
+}
+
+.section-heading{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:20px;
+}
+
+.section-heading h2{
+  font-size:26px;
+  color:var(--purple-dark);
+}
+
+.section-heading p{
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* ================= SEARCH ================= */
+
+.search-area{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  margin-bottom:30px;
+}
+
+.search-wrap{
+  display:flex;
+  gap:10px;
+}
+
+.search-wrap input{
+  flex:1;
+  min-width:0;
+  padding:14px 16px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  outline:none;
+  font-size:15px;
+}
+
+.search-wrap input:focus{
+  border-color:var(--purple-light);
+}
+
+.search-wrap button{
+  border:0;
+  background:var(--purple);
+  color:white;
+  border-radius:10px;
+  padding:0 20px;
+  font-weight:700;
+}
+
+/* ================= GENRES ================= */
+
+.genre-list{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+.genre-btn{
+  border:1px solid var(--border);
+  background:white;
+  color:var(--purple);
+  padding:8px 13px;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+}
+
+.genre-btn:hover,
+.genre-btn.active{
+  background:var(--purple);
+  color:white;
+  border-color:var(--purple);
+}
+
+/* ================= STORIES ================= */
+
+.story-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.story-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:17px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:.2s;
+}
+
+.story-card:hover{
+  transform:translateY(-3px);
+}
+
+.cover{
+  height:230px;
+  background:
+    linear-gradient(135deg,var(--purple),var(--purple-light));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  padding:25px;
+  text-align:center;
+  position:relative;
+}
+
+.cover-placeholder{
+  font-size:42px;
+  opacity:.9;
+}
+
+.cover-title{
+  font-size:22px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.story-info{
+  padding:18px;
+}
+
+.genre-tag{
+  display:inline-block;
+  background:var(--pink);
+  color:var(--purple);
+  border-radius:20px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:9px;
+}
+
+.story-info h3{
+  font-size:19px;
+  margin-bottom:7px;
+}
+
+.story-info p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.read-btn{
+  width:100%;
+  margin-top:15px;
+  border:0;
+  background:var(--purple);
+  color:white;
+  padding:11px;
+  border-radius:9px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.read-btn:hover{
+  background:var(--purple-dark);
+}
+
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:55px 20px;
+  background:white;
+  border:1px dashed var(--border);
+  border-radius:15px;
+  color:var(--muted);
+}
+
+.empty strong{
+  display:block;
+  color:var(--purple);
+  font-size:19px;
+  margin-bottom:6px;
+}
+
+/* ================= VIDEO ================= */
+
+.video-section{
+  background:linear-gradient(135deg,#fff,#f9edf4);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+}
+
+.video-empty{
+  text-align:center;
+  padding:35px 15px;
+  color:var(--muted);
+}
+
+.video-icon{
+  font-size:40px;
+  margin-bottom:8px;
+}
+
+/* ================= ABOUT ================= */
+
+.about{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:25px;
+}
+
+.about-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:28px;
+  box-shadow:var(--shadow);
+}
+
+.about-card h3{
+  color:var(--purple);
+  margin-bottom:10px;
+}
+
+.about-card p{
+  color:var(--muted);
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+  background:var(--purple-dark);
+  color:white;
+  margin-top:20px;
+}
+
+.footer-inner{
+  max-width:1200px;
+  margin:auto;
+  padding:35px 20px;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.footer-brand{
+  font-size:21px;
+  font-weight:800;
+}
+
+.footer p{
+  color:rgba(255,255,255,.7);
+  font-size:13px;
+  margin-top:5px;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(20,10,16,.72);
+  z-index:3000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:760px;
+  max-height:92vh;
+  overflow:auto;
+  border-radius:20px;
+  position:relative;
+}
+
+.modal-head{
+  padding:24px 25px 18px;
+  border-bottom:1px solid var(--border);
+}
+
+.close{
+  position:absolute;
+  top:15px;
+  right:15px;
+  width:35px;
+  height:35px;
+  border:0;
+  border-radius:50%;
+  background:var(--pink);
+  color:var(--purple);
+  font-size:22px;
+  cursor:pointer;
+}
+
+.modal-head h2{
+  color:var(--purple-dark);
+  padding-right:40px;
+}
+
+.modal-body{
+  padding:25px;
+}
+
+.modal-description{
+  color:var(--muted);
+  margin-bottom:20px;
+}
+
+.full-story{
+  white-space:pre-wrap;
+  line-height:1.9;
+  font-size:16px;
+}
+
+/* ================= LOGIN ================= */
+
+.login-panel{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(20,10,16,.72);
+  z-index:4000;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.login-panel.show{
+  display:flex;
+}
+
+.login-box{
+  width:100%;
+  max-width:430px;
+  background:white;
+  border-radius:20px;
+  padding:28px;
+  position:relative;
+}
+
+.login-box h2{
+  color:var(--purple);
+  margin-bottom:6px;
+}
+
+.login-box p{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+.login-box label{
+  display:block;
+  font-weight:700;
+  font-size:13px;
+  margin:13px 0 7px;
+}
+
+.login-box input{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  outline:none;
+}
+
+.login-submit{
+  width:100%;
+  border:0;
+  background:var(--purple);
+  color:white;
+  padding:13px;
+  border-radius:9px;
+  font-weight:700;
+  margin-top:18px;
+}
+
+.login-message{
+  display:none;
+  margin-top:12px;
+  padding:10px;
+  border-radius:8px;
+  font-size:13px;
+  background:#fdebec;
+  color:#9b1c2e;
+}
+
+.login-message.show{
+  display:block;
+}
+
+.signup-link{
+  margin-top:16px;
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.signup-link button{
+  border:0;
+  background:none;
+  color:var(--purple);
+  font-weight:700;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+  .story-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .hero h1{
+    font-size:40px;
+  }
+
+}
+
+@media(max-width:650px){
+
+  .nav{
+    height:62px;
+  }
+
+  .logo{
+    font-size:20px;
+  }
+
+  .nav-links a:not(.login-btn){
+    display:none;
+  }
+
+  .hero{
+    margin-top:15px;
+    padding:0 12px;
+  }
+
+  .hero-inner{
+    min-height:430px;
+    border-radius:19px;
+  }
+
+  .hero-content{
+    padding:35px 25px;
+  }
+
+  .hero h1{
+    font-size:34px;
+  }
+
+  .hero p{
+    font-size:15px;
+  }
+
+  .container{
+    padding:32px 14px;
+  }
+
+  .section-heading{
+    display:block;
+  }
+
+  .section-heading h2{
+    font-size:23px;
+  }
+
+  .story-grid{
+    grid-template-columns:1fr;
+  }
+
+  .about{
+    grid-template-columns:1fr;
+  }
+
+  .search-wrap{
+    flex-direction:column;
+  }
+
+  .search-wrap button{
+    padding:12px;
+  }
+
+  .cover{
+    height:250px;
+  }
+
+  .footer-inner{
+    display:block;
+  }
+
+  .footer-inner > div{
+    margin-bottom:15px;
+  }
+
+}
+
+</style>
 </head>
+
 
 <body>
 
-<header class="topbar">
 
-  <div class="brand">
-    <div class="logo">E</div>
+<!-- HEADER -->
 
-    <div>
-      <h1>Epshitah Stories</h1>
-      <p>Stories That Touch the Heart.</p>
+<header class="header">
+
+  <nav class="nav">
+
+    <a
+      href="#"
+      class="logo"
+      onclick="goHome()"
+    >
+      Epshitah <span>Stories</span>
+    </a>
+
+    <div class="nav-links">
+
+      <a href="#stories">
+        Stories
+      </a>
+
+      <a href="#about">
+        About
+      </a>
+
+      <button
+        class="login-btn"
+        onclick="openLogin()"
+      >
+        Sign In
+      </button>
+
     </div>
-  </div>
 
-  <div class="top-actions">
-    <button id="libraryBtn" class="header-btn hidden">
-      ❤️ My Library
-    </button>
-
-    <button id="accountBtn" class="header-btn">
-      👤 Log In
-    </button>
-  </div>
+  </nav>
 
 </header>
 
 
-<main>
+<!-- HERO -->
 
 <section class="hero">
 
-  <div class="hero-content">
+  <div class="hero-inner">
 
-    <span class="hero-label">WELCOME TO EPSHITAH STORIES</span>
+    <div class="hero-decoration"></div>
+    <div class="hero-decoration two"></div>
 
-    <h2>Stories that stay<br>with you.</h2>
+    <div class="hero-content">
 
-    <p>
-      Discover emotional stories filled with love,
-      heartbreak, mystery, drama and unforgettable moments.
-    </p>
+      <span class="hero-kicker">
+        EMOTIONAL STORIES THAT TOUCH THE HEART
+      </span>
 
-    <button id="browseBtn" class="primary-btn">
-      📖 Start Reading
-    </button>
+      <h1>
+        Every story deserves
+        to be heard.
+      </h1>
+
+      <p>
+        Welcome to Epshitah Stories — a place for stories
+        of love, pain, hope, family, heartbreak and life.
+        Read stories that stay with you long after the last page.
+      </p>
+
+      <div class="hero-actions">
+
+        <button
+          class="hero-primary"
+          onclick="document.getElementById('stories').scrollIntoView()"
+        >
+          Explore Stories
+        </button>
+
+        <button
+          class="hero-secondary"
+          onclick="document.getElementById('about').scrollIntoView()"
+        >
+          About Epshitah
+        </button>
+
+      </div>
+
+    </div>
 
   </div>
 
 </section>
 
 
-<section class="search-section">
+<!-- MAIN -->
 
-  <div class="search-box">
+<main class="container">
 
-    <span>🔎</span>
 
-    <input
-      id="searchInput"
-      type="search"
-      placeholder="Search stories..."
-      autocomplete="off"
+  <!-- SEARCH -->
+
+  <section class="section">
+
+    <div class="search-area">
+
+      <div class="search-wrap">
+
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search stories..."
+          oninput="filterStories()"
+        >
+
+        <button onclick="filterStories()">
+          Search
+        </button>
+
+      </div>
+
+      <div
+        class="genre-list"
+        id="genreList"
+      ></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- STORIES -->
+
+  <section
+    class="section"
+    id="stories"
+  >
+
+    <div class="section-heading">
+
+      <div>
+        <h2>Latest Stories</h2>
+        <p>
+          Discover stories written to make you feel.
+        </p>
+      </div>
+
+    </div>
+
+
+    <div
+      class="story-grid"
+      id="storyGrid"
     >
 
-  </div>
+      <div class="empty">
 
-</section>
+        <strong>Loading stories...</strong>
 
+        Please wait while we bring the stories to you.
 
-<section class="section">
+      </div>
 
-  <div class="section-title">
-    <h2>Choose Your Genre</h2>
-    <p>What kind of story are you in the mood for?</p>
-  </div>
+    </div>
 
-  <div class="genres">
-
-    <button class="genre-card" data-genre="Romance">
-      <span>❤️</span>
-      <strong>Romance</strong>
-      <small>Love & relationships</small>
-    </button>
-
-    <button class="genre-card" data-genre="Drama">
-      <span>🎭</span>
-      <strong>Drama</strong>
-      <small>Emotional stories</small>
-    </button>
-
-    <button class="genre-card" data-genre="Heartbreak">
-      <span>💔</span>
-      <strong>Heartbreak</strong>
-      <small>Stories of pain</small>
-    </button>
-
-    <button class="genre-card" data-genre="Thriller">
-      <span>🔥</span>
-      <strong>Thriller</strong>
-      <small>Suspense & danger</small>
-    </button>
-
-    <button class="genre-card" data-genre="Mystery">
-      <span>🔮</span>
-      <strong>Mystery</strong>
-      <small>Secrets & questions</small>
-    </button>
-
-    <button class="genre-card" data-genre="Life Stories">
-      <span>🌹</span>
-      <strong>Life Stories</strong>
-      <small>Real emotions</small>
-    </button>
-
-  </div>
-
-</section>
+  </section>
 
 
-<section id="featuredSection" class="section">
+  <!-- VIDEO -->
 
-  <div class="section-title">
-    <h2>✨ Featured Stories</h2>
-    <p>Stories waiting for you.</p>
-  </div>
+  <section class="section">
 
-  <div id="featuredStories" class="story-grid">
-    <div class="loading">Loading stories...</div>
-  </div>
+    <div class="section-heading">
 
-</section>
+      <div>
+        <h2>Story Videos</h2>
+        <p>
+          Watch stories come alive.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="video-section">
+
+      <div class="video-empty">
+
+        <div class="video-icon">🎬</div>
+
+        <strong>
+          Story videos are coming soon.
+        </strong>
+
+        <p>
+          Videos will appear here when they are added
+          to Epshitah Stories.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
 
 
-<section id="genreSections"></section>
+  <!-- ABOUT -->
+
+  <section
+    class="section"
+    id="about"
+  >
+
+    <div class="section-heading">
+
+      <div>
+        <h2>About Epshitah Stories</h2>
+        <p>
+          Stories with heart.
+        </p>
+      </div>
+
+    </div>
 
 
-<section id="searchResultsSection" class="section hidden">
+    <div class="about">
 
-  <div class="section-title">
+      <div class="about-card">
 
-    <h2>🔎 Search Results</h2>
+        <h3>Our Stories</h3>
 
-    <p id="searchResultText"></p>
+        <p>
+          Epshitah Stories is a home for emotional and
+          meaningful stories. From romance and family
+          to difficult experiences and inspiring journeys,
+          every story has something to say.
+        </p>
 
-  </div>
-
-  <div id="searchResults" class="story-grid"></div>
-
-</section>
+      </div>
 
 
-<section class="account-promo">
+      <div class="about-card">
 
-  <div>
+        <h3>Why We Tell Them</h3>
 
-    <span>❤️</span>
+        <p>
+          Sometimes a story helps someone realise they
+          are not alone. Sometimes it gives someone hope.
+          And sometimes it simply gives a voice to something
+          that was difficult to say.
+        </p>
 
-    <h2>Keep your favourite stories close.</h2>
+      </div>
 
-    <p>
-      Create a free reader account and save stories
-      to your personal library.
-    </p>
+    </div>
 
-  </div>
+  </section>
 
-  <button id="promoAccountBtn" class="primary-btn">
-    Create Free Account
-  </button>
-
-</section>
 
 </main>
 
 
-<footer>
+<!-- FOOTER -->
 
-  <h2>Epshitah Stories</h2>
+<footer class="footer">
 
-  <p>Stories That Touch the Heart.</p>
+  <div class="footer-inner">
 
-  <small>© 2026 Epshitah Stories</small>
+    <div>
+
+      <div class="footer-brand">
+        Epshitah Stories
+      </div>
+
+      <p>
+        Emotional stories that touch the heart.
+      </p>
+
+    </div>
+
+    <div>
+
+      <p>
+        © <span id="year"></span>
+        Epshitah Stories. All rights reserved.
+      </p>
+
+    </div>
+
+  </div>
 
 </footer>
 
 
-<!-- AUTH MODAL -->
+<!-- STORY MODAL -->
 
-<div id="authModal" class="modal hidden">
+<div
+  class="modal"
+  id="storyModal"
+  onclick="closeStoryOutside(event)"
+>
 
-  <div class="modal-card">
+  <div class="modal-box">
 
-    <button class="close-btn" data-close="authModal">×</button>
+    <button
+      class="close"
+      onclick="closeStory()"
+    >
+      ×
+    </button>
 
-    <div id="authTabs" class="auth-tabs">
+    <div class="modal-head">
 
-      <button id="loginTab" class="active">
-        Log In
-      </button>
+      <span
+        class="genre-tag"
+        id="modalGenre"
+      ></span>
 
-      <button id="signupTab">
-        Sign Up
-      </button>
+      <h2 id="modalTitle"></h2>
 
     </div>
 
+    <div class="modal-body">
 
-    <div id="loginForm">
+      <p
+        class="modal-description"
+        id="modalDescription"
+      ></p>
 
-      <h2>Welcome back ❤️</h2>
+      <div
+        class="full-story"
+        id="modalStory"
+      ></div>
 
-      <p>Log in to continue reading.</p>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- LOGIN MODAL -->
+
+<div
+  class="login-panel"
+  id="loginPanel"
+  onclick="closeLoginOutside(event)"
+>
+
+  <div class="login-box">
+
+    <button
+      class="close"
+      onclick="closeLogin()"
+    >
+      ×
+    </button>
+
+    <h2>Welcome Back</h2>
+
+    <p>
+      Sign in to continue reading and saving your stories.
+    </p>
+
+    <form onsubmit="login(event)">
+
+      <label for="loginEmail">
+        Email
+      </label>
 
       <input
         id="loginEmail"
         type="email"
-        placeholder="Email address"
+        required
+        placeholder="Enter your email"
       >
+
+
+      <label for="loginPassword">
+        Password
+      </label>
 
       <input
         id="loginPassword"
         type="password"
-        placeholder="Password"
+        required
+        placeholder="Enter your password"
       >
 
-      <button id="loginSubmit" class="primary-btn full">
-        Log In
+
+      <button
+        class="login-submit"
+        type="submit"
+      >
+        Sign In
       </button>
 
-      <div id="loginMessage" class="form-message"></div>
+    </form>
 
-    </div>
+    <div
+      class="login-message"
+      id="loginMessage"
+    ></div>
 
+    <div class="signup-link">
 
-    <div id="signupForm" class="hidden">
+      Don't have an account?
 
-      <h2>Join Epshitah Stories ❤️</h2>
-
-      <p>Create your free reader account.</p>
-
-      <input
-        id="signupName"
-        type="text"
-        placeholder="Your name"
-      >
-
-      <input
-        id="signupEmail"
-        type="email"
-        placeholder="Email address"
-      >
-
-      <input
-        id="signupPassword"
-        type="password"
-        placeholder="Create password"
-      >
-
-      <button id="signupSubmit" class="primary-btn full">
-        Create Account
-      </button>
-
-      <div id="signupMessage" class="form-message"></div>
-
-    </div>
-
-
-    <div id="loggedAccount" class="hidden">
-
-      <div class="account-avatar">❤️</div>
-
-      <h2>Hello, <span id="accountName"></span>!</h2>
-
-      <p id="accountEmail"></p>
-
-      <button id="accountLibraryBtn" class="primary-btn full">
-        📚 My Library
-      </button>
-
-      <button id="logoutBtn" class="secondary-btn full">
-        Log Out
+      <button onclick="goToSignup()">
+        Create one
       </button>
 
     </div>
@@ -298,68 +1152,527 @@
 </div>
 
 
-<!-- READER MODAL -->
+<script>
 
-<div id="readerModal" class="reader-modal hidden">
-
-  <div class="reader-header">
-
-    <button id="closeReader" class="reader-close">
-      ← Back
-    </button>
-
-    <div class="reader-controls">
-
-      <button id="fontDown">A−</button>
-
-      <button id="fontUp">A+</button>
-
-      <button id="saveReaderBtn">
-        ♡ Save
-      </button>
-
-    </div>
-
-  </div>
+let allStories = [];
+let selectedGenre = '';
 
 
-  <article class="reader-page">
+/* ================= LOAD STORIES ================= */
 
-    <span id="readerCategory" class="reader-category"></span>
+async function loadStories(){
 
-    <h1 id="readerTitle"></h1>
+  const grid =
+    document.getElementById('storyGrid');
 
-    <p id="readerDescription" class="reader-description"></p>
+  try{
 
-    <div class="reader-divider"></div>
+    const response =
+      await fetch('/api/stories');
 
-    <div id="readerContent" class="reader-content"></div>
+    if(!response.ok){
+      throw new Error('Could not load stories');
+    }
 
-  </article>
+    allStories =
+      await response.json();
 
-</div>
+    buildGenres();
+
+    renderStories(allStories);
+
+  }catch(error){
+
+    console.error(error);
+
+    grid.innerHTML = `
+      <div class="empty">
+        <strong>Stories couldn't be loaded.</strong>
+        Please refresh the page and try again.
+      </div>
+    `;
+
+  }
+
+}
 
 
-<!-- LIBRARY MODAL -->
+/* ================= GENRES ================= */
 
-<div id="libraryModal" class="modal hidden">
+function buildGenres(){
 
-  <div class="modal-card library-card">
+  const container =
+    document.getElementById('genreList');
 
-    <button class="close-btn" data-close="libraryModal">×</button>
-
-    <h2>❤️ My Library</h2>
-
-    <p>Stories you have saved.</p>
-
-    <div id="libraryStories"></div>
-
-  </div>
-
-</div>
+  const genres =
+    [
+      ...new Set(
+        allStories
+          .map(story => story.category)
+          .filter(Boolean)
+      )
+    ].sort();
 
 
-<script src="script.js"></script>
+  container.innerHTML = '';
+
+
+  if(genres.length === 0){
+    return;
+  }
+
+
+  const allButton =
+    document.createElement('button');
+
+  allButton.className =
+    'genre-btn active';
+
+  allButton.textContent =
+    'All Stories';
+
+  allButton.onclick = () => {
+
+    selectedGenre = '';
+
+    updateGenreButtons();
+
+    filterStories();
+
+  };
+
+  container.appendChild(allButton);
+
+
+  genres.forEach(genre => {
+
+    const button =
+      document.createElement('button');
+
+    button.className =
+      'genre-btn';
+
+    button.textContent =
+      genre;
+
+    button.onclick = () => {
+
+      selectedGenre = genre;
+
+      updateGenreButtons();
+
+      filterStories();
+
+    };
+
+    container.appendChild(button);
+
+  });
+
+}
+
+
+/* ================= GENRE BUTTONS ================= */
+
+function updateGenreButtons(){
+
+  document
+    .querySelectorAll('.genre-btn')
+    .forEach(button => {
+
+      button.classList.remove('active');
+
+      if(
+        selectedGenre === '' &&
+        button.textContent === 'All Stories'
+      ){
+        button.classList.add('active');
+      }
+
+      if(
+        selectedGenre &&
+        button.textContent === selectedGenre
+      ){
+        button.classList.add('active');
+      }
+
+    });
+
+}
+
+
+/* ================= FILTER ================= */
+
+function filterStories(){
+
+  const search =
+    document
+      .getElementById('searchInput')
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    allStories.filter(story => {
+
+      const title =
+        (story.title || '').toLowerCase();
+
+      const description =
+        (story.description || '').toLowerCase();
+
+      const category =
+        (story.category || '').toLowerCase();
+
+
+      const matchesSearch =
+        !search ||
+        title.includes(search) ||
+        description.includes(search) ||
+        category.includes(search);
+
+
+      const matchesGenre =
+        !selectedGenre ||
+        story.category === selectedGenre;
+
+
+      return matchesSearch && matchesGenre;
+
+    });
+
+
+  renderStories(filtered);
+
+}
+
+
+/* ================= RENDER STORIES ================= */
+
+function renderStories(stories){
+
+  const grid =
+    document.getElementById('storyGrid');
+
+
+  if(!stories.length){
+
+    grid.innerHTML = `
+      <div class="empty">
+        <strong>No stories found.</strong>
+        Try another search or genre.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  grid.innerHTML =
+    stories.map(story => {
+
+      const safeTitle =
+        escapeHtml(story.title || 'Untitled Story');
+
+      const safeCategory =
+        escapeHtml(story.category || 'Story');
+
+      const safeDescription =
+        escapeHtml(
+          story.description ||
+          'A story waiting to be discovered.'
+        );
+
+
+      return `
+
+        <article class="story-card">
+
+          <div class="cover">
+
+            <div>
+
+              <div class="cover-placeholder">
+                ♡
+              </div>
+
+              <div class="cover-title">
+                ${safeTitle}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="story-info">
+
+            <span class="genre-tag">
+              ${safeCategory}
+            </span>
+
+            <h3>
+              ${safeTitle}
+            </h3>
+
+            <p>
+              ${safeDescription}
+            </p>
+
+            <button
+              class="read-btn"
+              onclick="openStory(${story.id})"
+            >
+              Read Story
+            </button>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join('');
+
+}
+
+
+/* ================= OPEN STORY ================= */
+
+function openStory(id){
+
+  const story =
+    allStories.find(
+      item => item.id == id
+    );
+
+
+  if(!story){
+    return;
+  }
+
+
+  document.getElementById('modalTitle').textContent =
+    story.title || 'Untitled Story';
+
+
+  document.getElementById('modalGenre').textContent =
+    story.category || 'Story';
+
+
+  document.getElementById('modalDescription').textContent =
+    story.description || '';
+
+
+  document.getElementById('modalStory').textContent =
+    story.content || '';
+
+
+  document
+    .getElementById('storyModal')
+    .classList.add('show');
+
+
+  document.body.style.overflow =
+    'hidden';
+
+}
+
+
+function closeStory(){
+
+  document
+    .getElementById('storyModal')
+    .classList.remove('show');
+
+  document.body.style.overflow =
+    '';
+
+}
+
+
+function closeStoryOutside(event){
+
+  if(event.target.id === 'storyModal'){
+    closeStory();
+  }
+
+}
+
+
+/* ================= LOGIN ================= */
+
+function openLogin(){
+
+  document
+    .getElementById('loginPanel')
+    .classList.add('show');
+
+  document.body.style.overflow =
+    'hidden';
+
+}
+
+
+function closeLogin(){
+
+  document
+    .getElementById('loginPanel')
+    .classList.remove('show');
+
+  document.body.style.overflow =
+    '';
+
+}
+
+
+function closeLoginOutside(event){
+
+  if(event.target.id === 'loginPanel'){
+    closeLogin();
+  }
+
+}
+
+
+/* ================= READER LOGIN ================= */
+
+async function login(event){
+
+  event.preventDefault();
+
+
+  const email =
+    document
+      .getElementById('loginEmail')
+      .value
+      .trim();
+
+
+  const password =
+    document
+      .getElementById('loginPassword')
+      .value;
+
+
+  const message =
+    document.getElementById('loginMessage');
+
+
+  message.className =
+    'login-message';
+
+
+  try{
+
+    const response =
+      await fetch(
+        '/api/login',
+        {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      message.textContent =
+        data.message ||
+        'Email or password is incorrect.';
+
+      message.classList.add('show');
+
+      return;
+
+    }
+
+
+    closeLogin();
+
+    /*
+      The existing server/session remains
+      responsible for keeping the reader logged in.
+    */
+
+    window.location.reload();
+
+
+  }catch(error){
+
+    message.textContent =
+      'Something went wrong. Please try again.';
+
+    message.classList.add('show');
+
+  }
+
+}
+
+
+/* ================= SIGNUP ================= */
+
+function goToSignup(){
+
+  /*
+    Keep the existing reader account flow.
+    The server can serve the signup page if available.
+  */
+
+  window.location.href = '/signup';
+
+}
+
+
+/* ================= HOME ================= */
+
+function goHome(){
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+
+}
+
+
+/* ================= ESCAPE ================= */
+
+function escapeHtml(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+/* ================= YEAR ================= */
+
+document.getElementById('year').textContent =
+  new Date().getFullYear();
+
+
+/* ================= START ================= */
+
+loadStories();
+
+</script>
 
 </body>
 </html>
