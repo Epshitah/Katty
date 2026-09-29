@@ -4,81 +4,502 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Epshitah Stories</title>
-<meta name="description" content="Emotional stories that touch the heart.">
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#fff8fb;color:#241a20}
-header{background:linear-gradient(135deg,#7b174d,#b62d72);color:white;padding:30px 18px;text-align:center}
-header h1{margin:0;font-size:32px}
-header p{margin:8px 0 0}
-main{max-width:850px;margin:auto;padding:22px 16px 50px}
-.box{background:white;border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 5px 22px #0002}
-.story h2{margin-top:8px}
-.tag{display:inline-block;background:#f7dce9;color:#7b174d;border-radius:30px;padding:6px 11px;font-size:13px;font-weight:bold}
-button{border:0;border-radius:10px;padding:12px 18px;background:#8d1f59;color:white;font-size:16px;font-weight:bold;cursor:pointer}
-.reader{display:none}
-.reader p{font-size:18px;line-height:1.8}
-.back{background:#eee;color:#333}
-footer{text-align:center;color:#777;padding:20px}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#fff8fb;
+  color:#241a20;
+}
+
+header{
+  background:linear-gradient(135deg,#7b174d,#b62d72);
+  color:white;
+  padding:25px 15px;
+  text-align:center;
+}
+
+header h1{
+  margin:0;
+  font-size:32px;
+}
+
+header p{
+  margin:8px 0 15px;
+}
+
+nav button{
+  border:0;
+  border-radius:20px;
+  padding:10px 16px;
+  margin:4px;
+  background:white;
+  color:#7b174d;
+  font-weight:bold;
+}
+
+main{
+  max-width:850px;
+  margin:auto;
+  padding:20px 15px 50px;
+}
+
+.box{
+  background:white;
+  padding:22px;
+  margin-bottom:20px;
+  border-radius:18px;
+  box-shadow:0 5px 20px #0002;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  background:#8d1f59;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.secondary{
+  background:#eee;
+  color:#333;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:16px;
+}
+
+.auth,.reader{
+  display:none;
+}
+
+.reader p{
+  font-size:18px;
+  line-height:1.8;
+}
+
+.tag{
+  background:#f7dce9;
+  color:#7b174d;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.hidden{
+  display:none;
+}
+
+.message{
+  margin:10px 0;
+  font-weight:bold;
+}
+
+footer{
+  text-align:center;
+  color:#777;
+  padding:20px;
+}
 </style>
 </head>
+
 <body>
+
 <header>
+
 <h1>Epshitah Stories</h1>
+
 <p>Emotional stories that touch the heart.</p>
+
+<nav>
+
+<button id="loginBtn" onclick="showLogin()">
+Log In
+</button>
+
+<button id="signupBtn" onclick="showSignup()">
+Sign Up
+</button>
+
+<button id="logoutBtn" class="hidden" onclick="logout()">
+Log Out
+</button>
+
+</nav>
+
+<div id="welcome"></div>
+
 </header>
 
+
 <main>
-<section class="box">
+
+<section class="box" id="home">
+
 <h2>Welcome to Epshitah Stories</h2>
-<p>Discover stories of love, pain, courage and the moments that change our lives.</p>
+
+<p>
+Discover stories of love, pain, courage and the moments that change our lives.
+</p>
+
 </section>
 
-<section class="box story" id="catalogue">
+
+<section class="box" id="story">
+
 <span class="tag">FREE STORY</span>
+
 <h2>The Day Everything Changed</h2>
+
 <p>A short emotional story.</p>
-<p>I thought it was going to be an ordinary day...</p>
-<button onclick="readStory()">Read Story</button>
+
+<p>
+I thought it was going to be an ordinary day...
+</p>
+
+<button onclick="readStory()">
+Read Story
+</button>
+
 </section>
+
+
+<section class="box auth" id="login">
+
+<h2>Log In</h2>
+
+<input
+id="loginEmail"
+type="email"
+placeholder="Email address">
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Password">
+
+<div id="loginMessage" class="message"></div>
+
+<button onclick="login()">
+Log In
+</button>
+
+<br><br>
+
+<button class="secondary" onclick="showSignup()">
+Create an account
+</button>
+
+</section>
+
+
+<section class="box auth" id="signup">
+
+<h2>Create Your Account</h2>
+
+<input
+id="signupName"
+type="text"
+placeholder="Your name">
+
+<input
+id="signupEmail"
+type="email"
+placeholder="Email address">
+
+<input
+id="signupPassword"
+type="password"
+placeholder="Password (at least 6 characters)">
+
+<div id="signupMessage" class="message"></div>
+
+<button onclick="signup()">
+Sign Up
+</button>
+
+<br><br>
+
+<button class="secondary" onclick="showLogin()">
+I already have an account
+</button>
+
+</section>
+
 
 <section class="box reader" id="reader">
-<button class="back" onclick="goBack()">← Back</button>
+
+<button class="secondary" onclick="goBack()">
+← Back
+</button>
+
 <h2>The Day Everything Changed</h2>
 
 <p>I thought it was going to be an ordinary day.</p>
-<p>I woke up early, made myself a cup of tea, and stepped outside. The morning was quiet, and for a moment, everything felt peaceful.</p>
+
+<p>
+I woke up early, made myself a cup of tea, and stepped outside.
+The morning was quiet, and for a moment, everything felt peaceful.
+</p>
+
 <p>Then my phone rang.</p>
+
 <p>It was my sister.</p>
+
 <p>Her voice was shaking.</p>
-<p>“Please come home.”</p>
+
+<p><strong>“Please come home.”</strong></p>
+
 <p>I froze. “What happened?”</p>
-<p>She didn't answer immediately. I could hear her crying.</p>
-<p>That was the moment I knew something was wrong.</p>
-<p>I grabbed my bag and rushed out of the house. My heart was beating so hard that I could barely think.</p>
-<p>When I arrived, everyone was standing outside.</p>
+
+<p>
+She didn't answer immediately. I could hear her crying.
+</p>
+
+<p>
+That was the moment I knew something was wrong.
+</p>
+
+<p>
+I grabbed my bag and rushed out of the house.
+My heart was beating so hard that I could barely think.
+</p>
+
+<p>
+When I arrived, everyone was standing outside.
+</p>
+
 <p>Nobody spoke.</p>
-<p>I looked at their faces and suddenly realized that my life was about to change forever.</p>
-<p>Sometimes, life gives you no warning.</p>
-<p>One minute, everything is normal.</p>
-<p>The next minute, you are standing in the middle of a moment you will never forget.</p>
+
+<p>
+I looked at their faces and suddenly realized that my life
+was about to change forever.
+</p>
+
+<p>
+Sometimes, life gives you no warning.
+</p>
+
+<p>
+One minute, everything is normal.
+</p>
+
+<p>
+The next minute, you are standing in the middle of a moment
+you will never forget.
+</p>
+
 </section>
+
 </main>
 
-<footer>© <span id="year"></span> Epshitah Stories</footer>
+
+<footer>
+© 2026 Epshitah Stories
+</footer>
+
 
 <script>
+
+function hideSections(){
+
+document.getElementById("home").style.display="block";
+
+document.getElementById("story").style.display="block";
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("signup").style.display="none";
+
+document.getElementById("reader").style.display="none";
+
+}
+
+
+function showLogin(){
+
+document.getElementById("home").style.display="none";
+
+document.getElementById("story").style.display="none";
+
+document.getElementById("signup").style.display="none";
+
+document.getElementById("reader").style.display="none";
+
+document.getElementById("login").style.display="block";
+
+window.scrollTo(0,0);
+
+}
+
+
+function showSignup(){
+
+document.getElementById("home").style.display="none";
+
+document.getElementById("story").style.display="none";
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("reader").style.display="none";
+
+document.getElementById("signup").style.display="block";
+
+window.scrollTo(0,0);
+
+}
+
+
 function readStory(){
- document.getElementById("catalogue").style.display="none";
- document.getElementById("reader").style.display="block";
- window.scrollTo(0,0);
+
+document.getElementById("home").style.display="none";
+
+document.getElementById("story").style.display="none";
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("signup").style.display="none";
+
+document.getElementById("reader").style.display="block";
+
+window.scrollTo(0,0);
+
 }
+
+
 function goBack(){
- document.getElementById("reader").style.display="none";
- document.getElementById("catalogue").style.display="block";
- window.scrollTo(0,0);
+
+hideSections();
+
+window.scrollTo(0,0);
+
 }
-document.getElementById("year").textContent=new Date().getFullYear();
+
+
+async function signup(){
+
+let name=document.getElementById("signupName").value;
+
+let email=document.getElementById("signupEmail").value;
+
+let password=document.getElementById("signupPassword").value;
+
+let message=document.getElementById("signupMessage");
+
+let response=await fetch("/api/signup",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+name:name,
+email:email,
+password:password
+})
+
+});
+
+let data=await response.json();
+
+message.textContent=data.message;
+
+if(response.ok){
+
+showWelcome(data.user);
+
+setTimeout(goBack,700);
+
+}
+
+}
+
+
+async function login(){
+
+let email=document.getElementById("loginEmail").value;
+
+let password=document.getElementById("loginPassword").value;
+
+let message=document.getElementById("loginMessage");
+
+let response=await fetch("/api/login",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+email:email,
+password:password
+})
+
+});
+
+let data=await response.json();
+
+message.textContent=data.message;
+
+if(response.ok){
+
+showWelcome(data.user);
+
+setTimeout(goBack,700);
+
+}
+
+}
+
+
+async function logout(){
+
+await fetch("/api/logout",{
+method:"POST"
+});
+
+document.getElementById("welcome").textContent="";
+
+document.getElementById("loginBtn").classList.remove("hidden");
+
+document.getElementById("signupBtn").classList.remove("hidden");
+
+document.getElementById("logoutBtn").classList.add("hidden");
+
+hideSections();
+
+}
+
+
+function showWelcome(user){
+
+document.getElementById("welcome").textContent=
+"Welcome, "+user.name+"!";
+
+document.getElementById("loginBtn").classList.add("hidden");
+
+document.getElementById("signupBtn").classList.add("hidden");
+
+document.getElementById("logoutBtn").classList.remove("hidden");
+
+}
+
+
 </script>
+
 </body>
-</html>
+ </html>
