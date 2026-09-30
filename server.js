@@ -10,37 +10,12 @@ const PORT = process.env.PORT || 3000;
 
 app.set("trust proxy", 1);
 
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
   "ralejoemolebatsi189@gmail.com";
 
 const ADMIN_PASSWORD =
   process.env.ADMIN_PASSWORD || "";
-
-
-/* =========================================================
-   OPTIONAL OLD PASSWORD SUPPORT
-========================================================= */
-
-let bcrypt = null;
-
-try {
-  bcrypt = require("bcryptjs");
-} catch (error) {
-  console.log(
-    "bcryptjs not installed. SHA-256 passwords will still work."
-  );
-}
-
-
-/* =========================================================
-   DATABASE
-========================================================= */
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -51,16 +26,12 @@ const pool = new Pool({
       : false
 });
 
-
-/* =========================================================
-   MIDDLEWARE
-========================================================= */
-
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 
 app.use(
   express.urlencoded({
-    extended: true
+    extended: true,
+    limit: "2mb"
   })
 );
 
@@ -74,7 +45,7 @@ app.use(
 
     secret:
       process.env.SESSION_SECRET ||
-      "epshitah-test-secret-change-later",
+      "epshitah-change-this-secret",
 
     resave: false,
 
@@ -83,67 +54,14 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: "lax",
-      secure: true,
+      secure:
+        process.env.NODE_ENV === "production",
+
       maxAge:
         7 * 24 * 60 * 60 * 1000
     }
   })
 );
-
-
-/* =========================================================
-   DATABASE SETUP
-========================================================= */
-
-async function setupDatabase() {
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
-
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS stories (
-      id SERIAL PRIMARY KEY,
-      title TEXT NOT NULL,
-      category TEXT DEFAULT 'STORY',
-      description TEXT DEFAULT '',
-      content TEXT NOT NULL,
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
-
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS saved_stories (
-      id SERIAL PRIMARY KEY,
-
-      user_id INTEGER NOT NULL
-        REFERENCES users(id)
-        ON DELETE CASCADE,
-
-      story_id INTEGER NOT NULL
-        REFERENCES stories(id)
-        ON DELETE CASCADE,
-
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-
-      UNIQUE(user_id, story_id)
-    )
-  `);
-
-
-  console.log(
-    "Database tables are ready."
-  );
-
-}
 
 
 /* =========================================================
@@ -169,78 +87,11 @@ function cleanEmail(email) {
 }
 
 
-async function verifyReaderPassword(
-  password,
-  storedPassword
-) {
-
-  const sha256Password =
-    hashPassword(password);
-
-
-  if (
-    storedPassword ===
-    sha256Password
-  ) {
-
-    return {
-      valid: true,
-      format: "sha256"
-    };
-
-  }
-
-
-  if (
-    bcrypt &&
-    typeof storedPassword === "string" &&
-    storedPassword.startsWith("$2")
-  ) {
-
-    try {
-
-      const valid =
-        await bcrypt.compare(
-          password,
-          storedPassword
-        );
-
-
-      if (valid) {
-
-        return {
-          valid: true,
-          format: "bcrypt"
-        };
-
-      }
-
-    } catch (error) {
-
-      console.error(
-        "bcrypt password check failed:",
-        error
-      );
-
-    }
-
-  }
-
-
-  return {
-    valid: false,
-    format: null
-  };
-
-}
-
-
 async function getCurrentUser(req) {
 
   if (!req.session.userEmail) {
     return null;
   }
-
 
   const result =
     await pool.query(
@@ -248,20 +99,183 @@ async function getCurrentUser(req) {
       SELECT
         id,
         name,
-        email
+        email,
+        created_at AS "createdAt"
+
       FROM users
+
       WHERE email = $1
       `,
       [req.session.userEmail]
     );
 
+  return result.rows[0] || null;
 
-  if (!result.rows.length) {
-    return null;
+}
+
+
+function requireAdmin(req, res, next) {
+
+  if (!req.session.isAdmin) {
+
+    return res.status(401).json({
+      message:
+        "Admin login required."
+    });
+
   }
 
+  next();
 
-  return result.rows[0];
+}
+
+
+/* =========================================================
+   DATABASE SETUP
+========================================================= */
+
+async function setupDatabase() {
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+
+      id SERIAL PRIMARY KEY,
+
+      name TEXT NOT NULL,
+
+      email TEXT UNIQUE NOT NULL,
+
+      password TEXT NOT NULL,
+
+      created_at
+        TIMESTAMPTZ
+        DEFAULT NOW()
+
+    )
+  `);
+
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS stories (
+
+      id SERIAL PRIMARY KEY,
+
+      title TEXT NOT NULL,
+
+      category TEXT
+        DEFAULT 'STORY',
+
+      description TEXT
+        DEFAULT '',
+
+      content TEXT NOT NULL,
+
+      cover_url TEXT
+        DEFAULT '',
+
+      video_url TEXT
+        DEFAULT '',
+
+      created_at
+        TIMESTAMPTZ
+        DEFAULT NOW()
+
+    )
+  `);
+
+
+  /* SAFE MIGRATIONS
+     These do not delete existing stories.
+  */
+
+  await pool.query(`
+    ALTER TABLE stories
+    ADD COLUMN IF NOT EXISTS
+    cover_url TEXT DEFAULT ''
+  `);
+
+
+  await pool.query(`
+    ALTER TABLE stories
+    ADD COLUMN IF NOT EXISTS
+    video_url TEXT DEFAULT ''
+  `);
+
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS saved_stories (
+
+      id SERIAL PRIMARY KEY,
+
+      user_id INTEGER NOT NULL
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+      story_id INTEGER NOT NULL
+        REFERENCES stories(id)
+        ON DELETE CASCADE,
+
+      created_at
+        TIMESTAMPTZ
+        DEFAULT NOW(),
+
+      UNIQUE(user_id, story_id)
+
+    )
+  `);
+
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS author_profiles (
+
+      id INTEGER PRIMARY KEY DEFAULT 1,
+
+      name TEXT
+        DEFAULT 'Epshitah Stories',
+
+      genre TEXT
+        DEFAULT '',
+
+      bio TEXT
+        DEFAULT '',
+
+      photo_url TEXT
+        DEFAULT '',
+
+      updated_at
+        TIMESTAMPTZ
+        DEFAULT NOW()
+
+    )
+  `);
+
+
+  await pool.query(`
+    INSERT INTO author_profiles (id)
+
+    VALUES (1)
+
+    ON CONFLICT (id)
+    DO NOTHING
+  `);
+
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS site_settings (
+
+      setting_key TEXT PRIMARY KEY,
+
+      setting_value TEXT
+        NOT NULL
+        DEFAULT ''
+
+    )
+  `);
+
+
+  console.log(
+    "Database tables and migrations are ready."
+  );
 
 }
 
@@ -277,14 +291,19 @@ app.post(
     try {
 
       const name =
-        String(req.body.name || "")
-          .trim();
+        String(
+          req.body.name || ""
+        ).trim();
 
       const email =
-        cleanEmail(req.body.email);
+        cleanEmail(
+          req.body.email
+        );
 
       const password =
-        String(req.body.password || "");
+        String(
+          req.body.password || ""
+        );
 
 
       if (
@@ -315,7 +334,9 @@ app.post(
         await pool.query(
           `
           SELECT id
+
           FROM users
+
           WHERE email = $1
           `,
           [email]
@@ -343,12 +364,17 @@ app.post(
           )
 
           VALUES
-          ($1, $2, $3)
+          (
+            $1,
+            $2,
+            $3
+          )
 
           RETURNING
             id,
             name,
-            email
+            email,
+            created_at AS "createdAt"
           `,
           [
             name,
@@ -374,7 +400,7 @@ app.post(
 
           return res.status(500).json({
             message:
-              "Account created, but session could not be saved."
+              "Account created, but the session could not be saved."
           });
 
         }
@@ -385,13 +411,7 @@ app.post(
           message:
             "Account created successfully!",
 
-          user: {
-            name:
-              user.name,
-
-            email:
-              user.email
-          }
+          user
 
         });
 
@@ -423,13 +443,20 @@ app.post(
     try {
 
       const email =
-        cleanEmail(req.body.email);
+        cleanEmail(
+          req.body.email
+        );
 
       const password =
-        String(req.body.password || "");
+        String(
+          req.body.password || ""
+        );
 
 
-      if (!email || !password) {
+      if (
+        !email ||
+        !password
+      ) {
 
         return res.status(400).json({
           message:
@@ -446,8 +473,11 @@ app.post(
             id,
             name,
             email,
-            password
+            password,
+            created_at AS "createdAt"
+
           FROM users
+
           WHERE email = $1
           `,
           [email]
@@ -468,50 +498,15 @@ app.post(
         result.rows[0];
 
 
-      const passwordCheck =
-        await verifyReaderPassword(
-          password,
-          user.password
-        );
-
-
-      if (!passwordCheck.valid) {
+      if (
+        user.password !==
+        hashPassword(password)
+      ) {
 
         return res.status(401).json({
           message:
             "Email or password is incorrect."
         });
-
-      }
-
-
-      if (
-        passwordCheck.format ===
-        "bcrypt"
-      ) {
-
-        try {
-
-          await pool.query(
-            `
-            UPDATE users
-            SET password = $1
-            WHERE id = $2
-            `,
-            [
-              hashPassword(password),
-              user.id
-            ]
-          );
-
-        } catch (upgradeError) {
-
-          console.error(
-            "Could not upgrade old password:",
-            upgradeError
-          );
-
-        }
 
       }
 
@@ -524,10 +519,7 @@ app.post(
 
         if (error) {
 
-          console.error(
-            "Reader session error:",
-            error
-          );
+          console.error(error);
 
           return res.status(500).json({
             message:
@@ -537,17 +529,22 @@ app.post(
         }
 
 
-        return res.json({
+        res.json({
 
           message:
             "Logged in successfully!",
 
           user: {
+
             name:
               user.name,
 
             email:
-              user.email
+              user.email,
+
+            createdAt:
+              user.createdAt
+
           }
 
         });
@@ -556,12 +553,9 @@ app.post(
 
     } catch (error) {
 
-      console.error(
-        "Reader login error:",
-        error
-      );
+      console.error(error);
 
-      return res.status(500).json({
+      res.status(500).json({
         message:
           "Could not log in."
       });
@@ -599,13 +593,7 @@ app.get(
 
         loggedIn: true,
 
-        user: {
-          name:
-            user.name,
-
-          email:
-            user.email
-        }
+        user
 
       });
 
@@ -649,6 +637,130 @@ app.post(
 
 
 /* =========================================================
+   STORY SELECT
+========================================================= */
+
+const storySelect = `
+
+  id,
+
+  title,
+
+  category,
+
+  description,
+
+  content,
+
+  cover_url AS "coverUrl",
+
+  video_url AS "videoUrl",
+
+  created_at AS "createdAt"
+
+`;
+
+
+/* =========================================================
+   GET ALL STORIES
+========================================================= */
+
+app.get(
+  "/api/stories",
+  async (req, res) => {
+
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            ${storySelect}
+
+          FROM stories
+
+          ORDER BY id DESC
+          `
+        );
+
+
+      res.json(
+        result.rows
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not load stories."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   GET ONE STORY
+========================================================= */
+
+app.get(
+  "/api/stories/:id",
+  async (req, res) => {
+
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            ${storySelect}
+
+          FROM stories
+
+          WHERE id = $1
+          `,
+          [
+            Number(
+              req.params.id
+            )
+          ]
+        );
+
+
+      if (!result.rows.length) {
+
+        return res.status(404).json({
+          message:
+            "Story not found."
+        });
+
+      }
+
+
+      res.json(
+        result.rows[0]
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not load the story."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
    SAVED STORIES
 ========================================================= */
 
@@ -676,12 +788,7 @@ app.get(
         await pool.query(
           `
           SELECT
-            s.id,
-            s.title,
-            s.category,
-            s.description,
-            s.content,
-            s.created_at AS "createdAt"
+            ${storySelect}
 
           FROM saved_stories ss
 
@@ -690,13 +797,16 @@ app.get(
 
           WHERE ss.user_id = $1
 
-          ORDER BY ss.created_at DESC
+          ORDER BY
+            ss.created_at DESC
           `,
           [user.id]
         );
 
 
-      res.json(result.rows);
+      res.json(
+        result.rows
+      );
 
     } catch (error) {
 
@@ -738,38 +848,9 @@ app.post(
 
 
       const storyId =
-        Number(req.params.storyId);
-
-
-      if (!Number.isInteger(storyId)) {
-
-        return res.status(400).json({
-          message:
-            "Invalid story."
-        });
-
-      }
-
-
-      const story =
-        await pool.query(
-          `
-          SELECT id
-          FROM stories
-          WHERE id = $1
-          `,
-          [storyId]
+        Number(
+          req.params.storyId
         );
-
-
-      if (!story.rows.length) {
-
-        return res.status(404).json({
-          message:
-            "Story not found."
-        });
-
-      }
 
 
       await pool.query(
@@ -781,10 +862,17 @@ app.post(
         )
 
         VALUES
-        ($1, $2)
+        (
+          $1,
+          $2
+        )
 
         ON CONFLICT
-        (user_id, story_id)
+        (
+          user_id,
+          story_id
+        )
+
         DO NOTHING
         `,
         [
@@ -838,10 +926,6 @@ app.delete(
       }
 
 
-      const storyId =
-        Number(req.params.storyId);
-
-
       await pool.query(
         `
         DELETE FROM saved_stories
@@ -852,7 +936,10 @@ app.delete(
         `,
         [
           user.id,
-          storyId
+
+          Number(
+            req.params.storyId
+          )
         ]
       );
 
@@ -886,10 +973,14 @@ app.post(
   (req, res) => {
 
     const email =
-      cleanEmail(req.body.email);
+      cleanEmail(
+        req.body.email
+      );
 
     const password =
-      String(req.body.password || "");
+      String(
+        req.body.password || ""
+      );
 
 
     if (!ADMIN_PASSWORD) {
@@ -903,8 +994,10 @@ app.post(
 
 
     if (
-      email !== cleanEmail(ADMIN_EMAIL) ||
-      password !== ADMIN_PASSWORD
+      email !==
+        cleanEmail(ADMIN_EMAIL) ||
+      password !==
+        ADMIN_PASSWORD
     ) {
 
       return res.status(401).json({
@@ -915,7 +1008,8 @@ app.post(
     }
 
 
-    req.session.isAdmin = true;
+    req.session.isAdmin =
+      true;
 
     req.session.adminEmail =
       ADMIN_EMAIL;
@@ -954,21 +1048,14 @@ app.get(
   "/api/admin/me",
   (req, res) => {
 
-    if (!req.session.isAdmin) {
-
-      return res.json({
-        loggedIn: false
-      });
-
-    }
-
-
     res.json({
 
-      loggedIn: true,
+      loggedIn:
+        !!req.session.isAdmin,
 
       email:
-        req.session.adminEmail
+        req.session.adminEmail ||
+        ""
 
     });
 
@@ -1002,304 +1089,56 @@ app.post(
 
 
 /* =========================================================
-   ADMIN PAGE
-========================================================= */
-
-app.get(
-  "/admin",
-  (req, res) => {
-
-    if (!req.session.isAdmin) {
-
-      return res.status(401).send(`
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Epshitah Stories Admin</title>
-
-<style>
-
-body {
-  margin:0;
-  padding:30px 15px;
-  font-family:Arial,sans-serif;
-  background:#fff8fb;
-}
-
-.box {
-  max-width:450px;
-  margin:40px auto;
-  background:white;
-  padding:25px;
-  border-radius:18px;
-  box-shadow:0 5px 20px #0002;
-}
-
-h1,
-h2 {
-  color:#7b174d;
-}
-
-input {
-  width:100%;
-  box-sizing:border-box;
-  padding:12px;
-  margin:8px 0;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:16px;
-}
-
-button {
-  width:100%;
-  padding:13px;
-  margin-top:10px;
-  border:0;
-  border-radius:10px;
-  background:#8d1f59;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-}
-
-.message {
-  margin:12px 0;
-  font-weight:bold;
-}
-
-a {
-  display:block;
-  margin-top:15px;
-  text-align:center;
-  color:#7b174d;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="box">
-
-<h1>Epshitah Stories</h1>
-
-<h2>Admin Login</h2>
-
-<input
-id="email"
-type="email"
-placeholder="Admin email">
-
-<input
-id="password"
-type="password"
-placeholder="Admin password">
-
-<div
-id="message"
-class="message">
-</div>
-
-<button onclick="login()">
-Log In
-</button>
-
-<a href="/">
-← Back to Epshitah Stories
-</a>
-
-</div>
-
-<script>
-
-async function login() {
-
-  const email =
-    document.getElementById("email").value;
-
-  const password =
-    document.getElementById("password").value;
-
-  const message =
-    document.getElementById("message");
-
-  message.textContent =
-    "Logging in...";
-
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/admin/login",
-        {
-          method:"POST",
-
-          credentials:"same-origin",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              email,
-              password
-            })
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    message.textContent =
-      data.message;
-
-
-    if (response.ok) {
-
-      window.location.href =
-        "/admin";
-
-    }
-
-  } catch (error) {
-
-    console.error(error);
-
-    message.textContent =
-      "Could not connect to the server.";
-
-  }
-
-}
-
-</script>
-
-</body>
-
-</html>
-
-      `);
-
-    }
-
-
-    res.sendFile(
-      path.join(
-        __dirname,
-        "admin.html"
-      )
-    );
-
-  }
-);
-
-
-/* =========================================================
-   GET STORIES
-========================================================= */
-
-app.get(
-  "/api/stories",
-  async (req, res) => {
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            id,
-            title,
-            category,
-            description,
-            content,
-            created_at AS "createdAt"
-
-          FROM stories
-
-          ORDER BY id DESC
-          `
-        );
-
-
-      res.json(result.rows);
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not load stories."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
    ADD STORY
 ========================================================= */
 
 app.post(
   "/api/admin/stories",
+  requireAdmin,
   async (req, res) => {
 
     try {
-
-      if (!req.session.isAdmin) {
-
-        return res.status(401).json({
-          message:
-            "Admin login required."
-        });
-
-      }
-
 
       const title =
         String(
           req.body.title || ""
         ).trim();
 
-
       const category =
         String(
-          req.body.category || ""
+          req.body.category ||
+          "STORY"
         ).trim();
-
 
       const description =
         String(
-          req.body.description || ""
+          req.body.description ||
+          ""
         ).trim();
-
 
       const content =
         String(
-          req.body.content || ""
+          req.body.content ||
+          ""
+        ).trim();
+
+      const coverUrl =
+        String(
+          req.body.coverUrl ||
+          ""
+        ).trim();
+
+      const videoUrl =
+        String(
+          req.body.videoUrl ||
+          ""
         ).trim();
 
 
-      if (!title || !content) {
+      if (
+        !title ||
+        !content
+      ) {
 
         return res.status(400).json({
           message:
@@ -1317,26 +1156,31 @@ app.post(
             title,
             category,
             description,
-            content
+            content,
+            cover_url,
+            video_url
           )
 
           VALUES
-          ($1, $2, $3, $4)
+          (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6
+          )
 
           RETURNING
-            id,
+            ${storySelect}
+          `,
+          [
             title,
             category,
             description,
             content,
-            created_at AS "createdAt"
-          `,
-          [
-            title,
-            category || "STORY",
-            description ||
-              "No description added.",
-            content
+            coverUrl,
+            videoUrl
           ]
         );
 
@@ -1372,63 +1216,61 @@ app.post(
 
 app.put(
   "/api/admin/stories/:id",
+  requireAdmin,
   async (req, res) => {
 
     try {
 
-      if (!req.session.isAdmin) {
-
-        return res.status(401).json({
-          message:
-            "Admin login required."
-        });
-
-      }
-
-
       const id =
-        Number(req.params.id);
-
-
-      if (!Number.isInteger(id)) {
-
-        return res.status(400).json({
-          message:
-            "Invalid story ID."
-        });
-
-      }
-
+        Number(
+          req.params.id
+        );
 
       const title =
         String(
           req.body.title || ""
         ).trim();
 
-
       const category =
         String(
-          req.body.category || ""
+          req.body.category ||
+          "STORY"
         ).trim();
-
 
       const description =
         String(
-          req.body.description || ""
+          req.body.description ||
+          ""
         ).trim();
-
 
       const content =
         String(
-          req.body.content || ""
+          req.body.content ||
+          ""
+        ).trim();
+
+      const coverUrl =
+        String(
+          req.body.coverUrl ||
+          ""
+        ).trim();
+
+      const videoUrl =
+        String(
+          req.body.videoUrl ||
+          ""
         ).trim();
 
 
-      if (!title || !content) {
+      if (
+        !Number.isInteger(id) ||
+        !title ||
+        !content
+      ) {
 
         return res.status(400).json({
           message:
-            "Story title and story content are required."
+            "Story ID, title and content are required."
         });
 
       }
@@ -1443,23 +1285,22 @@ app.put(
             title = $1,
             category = $2,
             description = $3,
-            content = $4
+            content = $4,
+            cover_url = $5,
+            video_url = $6
 
-          WHERE id = $5
+          WHERE id = $7
 
           RETURNING
-            id,
+            ${storySelect}
+          `,
+          [
             title,
             category,
             description,
             content,
-            created_at AS "createdAt"
-          `,
-          [
-            title,
-            category || "STORY",
-            description,
-            content,
+            coverUrl,
+            videoUrl,
             id
           ]
         );
@@ -1487,10 +1328,7 @@ app.put(
 
     } catch (error) {
 
-      console.error(
-        "Edit story error:",
-        error
-      );
+      console.error(error);
 
       res.status(500).json({
         message:
@@ -1509,42 +1347,25 @@ app.put(
 
 app.delete(
   "/api/admin/stories/:id",
+  requireAdmin,
   async (req, res) => {
 
     try {
-
-      if (!req.session.isAdmin) {
-
-        return res.status(401).json({
-          message:
-            "Admin login required."
-        });
-
-      }
-
-
-      const id =
-        Number(req.params.id);
-
-
-      if (!Number.isInteger(id)) {
-
-        return res.status(400).json({
-          message:
-            "Invalid story ID."
-        });
-
-      }
-
 
       const result =
         await pool.query(
           `
           DELETE FROM stories
+
           WHERE id = $1
+
           RETURNING id
           `,
-          [id]
+          [
+            Number(
+              req.params.id
+            )
+          ]
         );
 
 
@@ -1579,11 +1400,445 @@ app.delete(
 
 
 /* =========================================================
+   AUTHOR PROFILE
+========================================================= */
+
+app.get(
+  "/api/admin/profile",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            name,
+            genre,
+            bio,
+            photo_url AS "photoUrl"
+
+          FROM author_profiles
+
+          WHERE id = 1
+          `
+        );
+
+
+      res.json(
+        result.rows[0] || {
+
+          name:
+            "Epshitah Stories",
+
+          genre:
+            "",
+
+          bio:
+            "",
+
+          photoUrl:
+            ""
+
+        }
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not load author profile."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SAVE AUTHOR PROFILE
+========================================================= */
+
+app.put(
+  "/api/admin/profile",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const name =
+        String(
+          req.body.name ||
+          ""
+        ).trim();
+
+      const genre =
+        String(
+          req.body.genre ||
+          ""
+        ).trim();
+
+      const bio =
+        String(
+          req.body.bio ||
+          ""
+        ).trim();
+
+      const photoUrl =
+        String(
+          req.body.photoUrl ||
+          ""
+        ).trim();
+
+
+      await pool.query(
+        `
+        INSERT INTO author_profiles
+        (
+          id,
+          name,
+          genre,
+          bio,
+          photo_url,
+          updated_at
+        )
+
+        VALUES
+        (
+          1,
+          $1,
+          $2,
+          $3,
+          $4,
+          NOW()
+        )
+
+        ON CONFLICT (id)
+
+        DO UPDATE SET
+
+          name =
+            EXCLUDED.name,
+
+          genre =
+            EXCLUDED.genre,
+
+          bio =
+            EXCLUDED.bio,
+
+          photo_url =
+            EXCLUDED.photo_url,
+
+          updated_at =
+            NOW()
+        `,
+        [
+          name ||
+            "Epshitah Stories",
+
+          genre,
+
+          bio,
+
+          photoUrl
+        ]
+      );
+
+
+      res.json({
+        message:
+          "Author profile saved successfully."
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not save author profile."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   PUBLIC AUTHOR PROFILE
+========================================================= */
+
+app.get(
+  "/api/author-profile",
+  async (req, res) => {
+
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            name,
+            genre,
+            bio,
+            photo_url AS "photoUrl"
+
+          FROM author_profiles
+
+          WHERE id = 1
+          `
+        );
+
+
+      res.json(
+        result.rows[0] || {
+
+          name:
+            "Epshitah Stories",
+
+          genre:
+            "",
+
+          bio:
+            "",
+
+          photoUrl:
+            ""
+
+        }
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not load author profile."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   FEATURED STORY
+========================================================= */
+
+app.get(
+  "/api/featured",
+  async (req, res) => {
+
+    try {
+
+      const setting =
+        await pool.query(
+          `
+          SELECT
+            setting_value
+
+          FROM site_settings
+
+          WHERE setting_key =
+            'featured_story_id'
+          `
+        );
+
+
+      const id =
+        setting.rows[0]
+          ?.setting_value;
+
+
+      if (!id) {
+
+        return res.json(null);
+
+      }
+
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            ${storySelect}
+
+          FROM stories
+
+          WHERE id = $1
+          `,
+          [
+            Number(id)
+          ]
+        );
+
+
+      res.json(
+        result.rows[0] || null
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not load featured story."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SET FEATURED STORY
+========================================================= */
+
+app.put(
+  "/api/admin/featured",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const id =
+        req.body.storyId
+          ? String(
+              req.body.storyId
+            )
+          : "";
+
+
+      if (id) {
+
+        const exists =
+          await pool.query(
+            `
+            SELECT id
+
+            FROM stories
+
+            WHERE id = $1
+            `,
+            [
+              Number(id)
+            ]
+          );
+
+
+        if (!exists.rows.length) {
+
+          return res.status(404).json({
+            message:
+              "Story not found."
+          });
+
+        }
+
+      }
+
+
+      await pool.query(
+        `
+        INSERT INTO site_settings
+        (
+          setting_key,
+          setting_value
+        )
+
+        VALUES
+        (
+          'featured_story_id',
+          $1
+        )
+
+        ON CONFLICT
+        (
+          setting_key
+        )
+
+        DO UPDATE SET
+
+          setting_value =
+            EXCLUDED.setting_value
+        `,
+        [id]
+      );
+
+
+      res.json({
+        message:
+          id
+            ? "Featured story updated."
+            : "Featured story cleared."
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not update featured story."
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   PAGES
+========================================================= */
+
+app.get(
+  "/signup",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "signup.html"
+      )
+    );
+
+  }
+);
+
+
+app.get(
+  "/admin",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "admin.html"
+      )
+    );
+
+  }
+);
+
+
+/* =========================================================
    STATIC WEBSITE
 ========================================================= */
 
 app.use(
-  express.static(".")
+  express.static(
+    __dirname
+  )
 );
 
 
