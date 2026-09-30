@@ -2,679 +2,395 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Epshitah Stories</title>
 
-  <meta
-    name="description"
-    content="Epshitah Stories — emotional stories that touch the heart."
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <header class="site-header">
+
+    <a href="/" class="brand">
+      Epshitah <span>Stories</span>
+    </a>
+
+    <nav>
+
+      <a href="#stories">
+        Stories
+      </a>
+
+      <button
+        id="loginBtn"
+        class="outline-btn"
+      >
+        Login
+      </button>
+
+      <button
+        id="logoutBtn"
+        class="outline-btn hidden"
+      >
+        Logout
+      </button>
+
+      <a
+        id="adminLink"
+        class="outline-btn hidden"
+        href="/admin"
+      >
+        Admin
+      </a>
+
+    </nav>
+
+  </header>
+
+
+  <!-- =========================
+       HERO
+  ========================== -->
+
+  <main>
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <p class="eyebrow">
+          EMOTIONAL STORIES THAT TOUCH THE HEART
+        </p>
+
+        <h1>
+          Stories that stay
+          <br>
+          <span>with you.</span>
+        </h1>
+
+        <p class="hero-text">
+          Discover emotional stories, unforgettable
+          characters and journeys written to make
+          you feel something.
+        </p>
+
+        <a
+          href="#stories"
+          class="primary-btn"
+        >
+          Explore Stories
+        </a>
+
+      </div>
+
+
+      <div class="hero-card">
+
+        <div class="book-mark">
+          ✦
+        </div>
+
+        <p>
+          Every story carries
+          a piece of a heart.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         STORIES
+    ========================== -->
+
+    <section
+      id="stories"
+      class="section"
+    >
+
+      <div class="section-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            THE COLLECTION
+          </p>
+
+          <h2>
+            Featured Stories
+          </h2>
+
+        </div>
+
+        <span id="storyCount"></span>
+
+      </div>
+
+
+      <div
+        id="storiesGrid"
+        class="stories-grid"
+      >
+
+        <p class="loading">
+          Loading stories...
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       LOGIN / REGISTER MODAL
+  ========================== -->
+
+  <div
+    id="authModal"
+    class="modal hidden"
   >
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --purple: #7c3aed;
-      --purple-dark: #4c1d95;
-      --purple-light: #a855f7;
-      --pink: #ec4899;
-      --dark: #0b0613;
-      --dark2: #130b1d;
-      --card: #1c1028;
-      --text: #ffffff;
-      --muted: #b9a9c8;
-      --border: rgba(255,255,255,.08);
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(124,58,237,.22), transparent 35%),
-        linear-gradient(180deg, #10071a 0%, #09050d 100%);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* ================= HEADER ================= */
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(11,6,19,.88);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav {
-      max-width: 1200px;
-      margin: auto;
-      padding: 15px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 20px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .logo-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--purple), var(--pink));
-      box-shadow: 0 8px 25px rgba(124,58,237,.35);
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-btn {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.05);
-      color: white;
-      border-radius: 12px;
-      padding: 9px 12px;
-    }
-
-    .nav-btn:hover {
-      background: rgba(124,58,237,.25);
-    }
-
-    .profile-btn {
-      display: none;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--purple-light), var(--pink));
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    /* ================= HERO ================= */
-
-    .hero {
-      max-width: 1200px;
-      margin: auto;
-      padding: 55px 18px 35px;
-    }
-
-    .hero-box {
-      min-height: 390px;
-      border-radius: 28px;
-      padding: 40px 28px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(90deg, rgba(9,5,13,.96), rgba(9,5,13,.65), rgba(9,5,13,.2)),
-        linear-gradient(135deg, #4c1d95, #be185d);
-    }
-
-    .hero-box::before {
-      content: "";
-      position: absolute;
-      width: 350px;
-      height: 350px;
-      right: -100px;
-      top: -100px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.09);
-    }
-
-    .hero-content {
-      position: relative;
-      max-width: 650px;
-      z-index: 2;
-    }
-
-    .eyebrow {
-      color: #d8b4fe;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 13px;
-    }
-
-    .hero h1 {
-      font-size: clamp(38px, 8vw, 68px);
-      line-height: .98;
-      margin-bottom: 18px;
-    }
-
-    .hero p {
-      color: #e9dff0;
-      line-height: 1.7;
-      max-width: 580px;
-      margin-bottom: 25px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .primary-btn,
-    .secondary-btn {
-      border: none;
-      border-radius: 13px;
-      padding: 13px 19px;
-      font-weight: 700;
-    }
-
-    .primary-btn {
-      background: white;
-      color: #4c1d95;
-    }
-
-    .secondary-btn {
-      background: rgba(255,255,255,.12);
-      color: white;
-      border: 1px solid rgba(255,255,255,.15);
-    }
-
-    /* ================= MAIN ================= */
-
-    main {
-      max-width: 1200px;
-      margin: auto;
-      padding: 0 18px 60px;
-    }
-
-    .section {
-      margin-top: 35px;
-    }
-
-    .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 17px;
-    }
-
-    .section-heading h2 {
-      font-size: 23px;
-    }
-
-    .section-heading span {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    /* ================= SEARCH ================= */
-
-    .search-area {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .search-box {
-      position: relative;
-    }
-
-    .search-box input {
-      width: 100%;
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      color: white;
-      padding: 14px 16px;
-      border-radius: 14px;
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: var(--purple-light);
-    }
-
-    .filter {
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      color: white;
-      padding: 0 14px;
-      border-radius: 14px;
-      outline: none;
-    }
-
-    .filter option {
-      background: #1c1028;
-    }
-
-    /* ================= STORY GRID ================= */
-
-    .story-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 17px;
-    }
-
-    .story-card {
-      background: linear-gradient(180deg, #21122e, #170c21);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      transition: transform .2s, border-color .2s;
-    }
-
-    .story-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(168,85,247,.5);
-    }
-
-    .cover {
-      height: 220px;
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(135deg, #4c1d95, #831843);
-      display: grid;
-      place-items: center;
-    }
-
-    .cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .cover-placeholder {
-      font-size: 50px;
-      opacity: .8;
-    }
-
-    .category {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      padding: 6px 9px;
-      border-radius: 8px;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(8px);
-      font-size: 10px;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .story-info {
-      padding: 15px;
-    }
-
-    .story-info h3 {
-      font-size: 17px;
-      margin-bottom: 7px;
-    }
-
-    .story-info p {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      min-height: 60px;
-    }
-
-    .card-bottom {
-      display: flex;
-      gap: 7px;
-      margin-top: 13px;
-    }
-
-    .read-btn,
-    .save-btn {
-      border: none;
-      border-radius: 10px;
-      padding: 9px 10px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .read-btn {
-      flex: 1;
-      background: var(--purple);
-      color: white;
-    }
-
-    .save-btn {
-      background: rgba(255,255,255,.08);
-      color: white;
-      width: 42px;
-    }
-
-    /* ================= FEATURED ================= */
-
-    .featured {
-      display: none;
-      min-height: 300px;
-      border-radius: 22px;
-      overflow: hidden;
-      position: relative;
-      background: linear-gradient(90deg,#31105e,#68134c);
-      margin-top: 10px;
-    }
-
-    .featured.show {
-      display: flex;
-    }
-
-    .featured-image {
-      width: 42%;
-      min-height: 300px;
-      background: #31105e;
-    }
-
-    .featured-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .featured-text {
-      padding: 35px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .featured-text .label {
-      color: #d8b4fe;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 11px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .featured-text h2 {
-      font-size: 32px;
-      margin-bottom: 12px;
-    }
-
-    .featured-text p {
-      color: #ddd0e7;
-      line-height: 1.65;
-      margin-bottom: 18px;
-    }
-
-    /* ================= EMPTY ================= */
-
-    .empty {
-      padding: 45px 20px;
-      text-align: center;
-      color: var(--muted);
-      border: 1px dashed rgba(255,255,255,.12);
-      border-radius: 18px;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 45px;
-      color: var(--muted);
-    }
-
-    /* ================= AUTHOR ================= */
-
-    .author-box {
-      display: flex;
-      gap: 22px;
-      align-items: center;
-      padding: 25px;
-      border-radius: 20px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--border);
-    }
-
-    .author-photo {
-      width: 90px;
-      height: 90px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg,var(--purple),var(--pink));
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .author-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .author-box h3 {
-      margin-bottom: 5px;
-    }
-
-    .author-genre {
-      color: #c084fc;
-      font-size: 12px;
-      margin-bottom: 8px;
-    }
-
-    .author-box p {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    /* ================= FOOTER ================= */
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 30px 18px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    footer strong {
-      color: white;
-    }
-
-    /* ================= MODALS ================= */
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      background: rgba(0,0,0,.78);
-      backdrop-filter: blur(8px);
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-box {
-      width: min(700px,100%);
-      max-height: 90vh;
-      overflow-y: auto;
-      background: #180d22;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: 0 30px 80px rgba(0,0,0,.55);
-    }
-
-    .modal-header {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background: #180d22;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .close {
-      width: 35px;
-      height: 35px;
-      border: none;
-      border-radius: 50%;
-      background: rgba(255,255,255,.08);
-      color: white;
-      font-size: 20px;
-    }
-
-    .modal-content {
-      padding: 20px;
-    }
-
-    .modal-cover {
-      width: 100%;
-      max-height: 320px;
-      object-fit: cover;
-      border-radius: 15px;
-      margin-bottom: 18px;
-    }
-
-    .story-content {
-      color: #e9dff0;
-      line-height: 1.9;
-      font-size: 16px;
-      white-space: pre-wrap;
-    }
-
-    .video-wrap {
-      margin-bottom: 20px;
-    }
-
-    .video-wrap video {
-      width: 100%;
-      border-radius: 14px;
-      background: black;
-    }
-
-    /* ================= FORMS ================= */
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      color: #d8c7e2;
-      font-size: 13px;
-      margin-bottom: 7px;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.05);
-      color: white;
-      outline: none;
-    }
-
-    .form-group input:focus {
-      border-color: var(--purple-light);
-    }
-
-    .full-btn {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 13px;
-      background: var(--purple);
-      color: white;
-      font-weight: 700;
-      margin-top: 5px;
-    }
-
-    .switch-text {
-      text-align: center;
-      color: var(--muted);
-      margin-top: 17px;
-      font-size: 13px;
-    }
-
-    .switch-text button {
-      background: none;
-      border: none;
-      color: #c084fc;
-      font-weight: bold;
-    }
-
-    /* ================= PROFILE ================= */
-
-    .profile-menu {
-      position: fixed;
-      top: 68px;
-      right: 15px;
-      z-index: 300;
-      width: 230px;
-      display: none;
-      background: #1b0e26;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 10px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.45);
-    }
-
-    .profile-menu.show {
-      display: block;
-    }
-
-    .profile-user {
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 5px;
-    }
-
-   
+    <div class="modal-box">
+
+      <button
+        class="close"
+        id="closeModal"
+      >
+        ×
+      </button>
+
+
+      <!-- LOGIN -->
+
+      <div id="loginPanel">
+
+        <p class="eyebrow">
+          WELCOME BACK
+        </p>
+
+        <h2>
+          Log in
+        </h2>
+
+
+        <form id="loginForm">
+
+          <input
+            id="loginEmail"
+            type="email"
+            placeholder="Email address"
+            required
+          >
+
+          <input
+            id="loginPassword"
+            type="password"
+            placeholder="Password"
+            required
+          >
+
+          <button
+            class="primary-btn full"
+            type="submit"
+          >
+            Log in
+          </button>
+
+        </form>
+
+
+        <p
+          id="loginMessage"
+          class="form-message"
+        ></p>
+
+
+        <p class="switch">
+
+          Don't have an account?
+
+          <button
+            id="showRegister"
+            class="text-btn"
+          >
+            Create one
+          </button>
+
+        </p>
+
+      </div>
+
+
+      <!-- REGISTER -->
+
+      <div
+        id="registerPanel"
+        class="hidden"
+      >
+
+        <p class="eyebrow">
+          JOIN EPSHITAH STORIES
+        </p>
+
+        <h2>
+          Create account
+        </h2>
+
+
+        <form id="registerForm">
+
+          <input
+            id="registerName"
+            type="text"
+            placeholder="Your name"
+            required
+          >
+
+          <input
+            id="registerEmail"
+            type="email"
+            placeholder="Email address"
+            required
+          >
+
+          <input
+            id="registerPassword"
+            type="password"
+            placeholder="Password (6+ characters)"
+            minlength="6"
+            required
+          >
+
+          <button
+            class="primary-btn full"
+            type="submit"
+          >
+            Create account
+          </button>
+
+        </form>
+
+
+        <p
+          id="registerMessage"
+          class="form-message"
+        ></p>
+
+
+        <p class="switch">
+
+          Already have an account?
+
+          <button
+            id="showLogin"
+            class="text-btn"
+          >
+            Log in
+          </button>
+
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       STORY READER
+  ========================== -->
+
+  <div
+    id="storyModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-box story-reader">
+
+      <button
+        class="close"
+        id="closeStory"
+      >
+        ×
+      </button>
+
+
+      <p
+        id="readerGenre"
+        class="eyebrow"
+      ></p>
+
+
+      <h2
+        id="readerTitle"
+      ></h2>
+
+
+      <p
+        id="readerDescription"
+        class="reader-description"
+      ></p>
+
+
+      <!-- LOCKED STORY -->
+
+      <div
+        id="lockedBox"
+        class="locked-box hidden"
+      >
+
+        <h3>
+          This story is locked
+        </h3>
+
+        <p id="readerPrice"></p>
+
+        <button
+          id="purchaseBtn"
+          class="primary-btn"
+        >
+          Unlock Story
+        </button>
+
+        <p
+          id="purchaseMessage"
+          class="form-message"
+        ></p>
+
+      </div>
+
+
+      <!-- STORY CONTENT -->
+
+      <article
+        id="readerContent"
+        class="reader-content"
+      ></article>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+  <script src="/script.js"></script>
+
+</body>
+</html>
