@@ -1,16 +1,15 @@
 {
   "name": "epshitah-stories",
-  "version": "2.0.0",
-  "description": "Epshitah Stories - upgraded story platform",
+  "version": "1.0.0",
+  "description": "Epshitah Stories",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
-    "connect-pg-simple": "^10.0.0",
-    "pg": "^8.13.1"
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.8.1"
   }
 }
