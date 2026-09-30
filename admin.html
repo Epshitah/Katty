@@ -3,251 +3,1177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Epshitah Stories — Author Studio</title>
+<title>Epshitah Stories — Admin</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--purple:#5b2a86;--purple2:#7b4ba5;--ink:#2b2033;--muted:#756b7d;--line:#e7dfea;--soft:#f7f2fa;--white:#fff}
-body{font-family:Arial,sans-serif;background:#fbf9fc;color:var(--ink)}
+
+:root{
+  --purple:#5b2a86;
+  --purple2:#7b4ba5;
+  --ink:#2b2033;
+  --muted:#756b7d;
+  --line:#e7dfea;
+  --soft:#f7f2fa;
+  --white:#fff;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#fbf9fc;
+  color:var(--ink);
+}
+
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-.header{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;z-index:20}
-.brand{text-decoration:none;color:var(--ink);font-weight:900;letter-spacing:.8px}.brand span{color:var(--purple)}
-.header-actions{display:flex;gap:10px;align-items:center}.link{border:0;background:none;color:var(--purple);font-weight:700;padding:10px}.logout{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--purple);padding:10px 16px;font-weight:700}
-.page{max-width:1180px;margin:auto;padding:45px 6% 80px}
-.hero{display:flex;justify-content:space-between;gap:25px;align-items:end;margin-bottom:30px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:800;color:var(--purple2);margin-bottom:9px}.hero h1{font-size:clamp(2.3rem,6vw,4.2rem);line-height:.95;letter-spacing:-2px}.hero h1 span{color:var(--purple)}.hero p{max-width:600px;color:var(--muted);line-height:1.6;margin-top:14px}.primary{border:0;background:var(--purple);color:#fff;border-radius:12px;padding:14px 20px;font-weight:800;white-space:nowrap}.primary:hover{background:#4b216f}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:25px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 25px rgba(60,30,80,.04)}.stat small{display:block;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-size:11px;font-weight:800;margin-bottom:7px}.stat strong{font-size:2rem}
-.panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px;margin-bottom:25px;box-shadow:0 8px 25px rgba(60,30,80,.035)}.panel-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px;gap:15px}.panel h2{font-size:1.65rem}.form{display:grid;gap:17px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:17px}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:7px;color:#4b4052}.field input,.field textarea,.field select{width:100%;border:1px solid #ddd4e4;border-radius:12px;padding:13px 14px;background:#fff;color:var(--ink);outline:none}.field textarea{min-height:240px;resize:vertical;line-height:1.7}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--purple2);box-shadow:0 0 0 3px rgba(123,75,165,.1)}
-.cover-note{font-size:11px;color:var(--muted);margin-top:6px}.publish{background:var(--soft);padding:15px;border-radius:14px}.publish label{display:flex;gap:10px;align-items:center;font-weight:800}.publish input{width:18px;height:18px}.publish p{font-size:12px;color:var(--muted);margin:6px 0 0 28px}
-.actions{display:flex;gap:10px;flex-wrap:wrap}.secondary{border:1px solid var(--line);background:#fff;color:var(--purple);border-radius:12px;padding:12px 18px;font-weight:800}.message{min-height:20px;color:var(--purple);font-size:13px;font-weight:700}
-.story-list{display:grid;gap:15px}.story{display:grid;grid-template-columns:130px 1fr;border:1px solid var(--line);border-radius:17px;overflow:hidden;background:#fff}.cover{min-height:170px;background:var(--soft);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:30px}.story-body{padding:19px}.meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}.badge{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;border-radius:999px;padding:6px 9px}.published{background:#eaf7ee;color:#287243}.draft{background:#f0edf2;color:#6d6470}.story h3{font-size:1.35rem;margin-bottom:5px}.genre{color:var(--purple);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}.desc{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:14px}.story-actions{display:flex;gap:8px;flex-wrap:wrap}.small{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px;font-size:12px;font-weight:800}.small:hover{border-color:var(--purple);color:var(--purple)}.danger{color:#9c4141;border-color:#e5cccc;background:#fff8f8}.empty{text-align:center;border:1px dashed var(--line);border-radius:17px;padding:40px;color:var(--muted)}.empty h3{color:var(--ink);margin-bottom:7px}
-.lock{position:fixed;inset:0;background:#fbf9fc;z-index:100;display:flex;align-items:center;justify-content:center;padding:25px;text-align:center}.lock-card{max-width:430px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:35px;box-shadow:0 20px 60px rgba(60,30,80,.08)}.lock-card h2{margin:12px 0 8px}.lock-card p{color:var(--muted);line-height:1.5;margin-bottom:20px}
-@media(max-width:700px){.header{padding:0 5%;height:66px}.header-actions .link{display:none}.page{padding:32px 5% 60px}.hero{align-items:flex-start;flex-direction:column}.hero h1{font-size:2.7rem}.stats{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.panel{padding:20px 16px}.story{grid-template-columns:1fr}.cover{min-height:180px}.story-body{padding:17px}}
+
+.header{
+  height:72px;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 6%;
+}
+
+.brand{
+  text-decoration:none;
+  color:var(--ink);
+  font-weight:900;
+  letter-spacing:.8px;
+}
+
+.brand span{color:var(--purple)}
+
+.logout{
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--purple);
+  padding:10px 16px;
+  font-weight:700;
+}
+
+.page{
+  max-width:1180px;
+  margin:auto;
+  padding:45px 6% 80px;
+}
+
+.hero{
+  display:flex;
+  justify-content:space-between;
+  gap:25px;
+  align-items:end;
+  margin-bottom:30px;
+}
+
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-size:11px;
+  font-weight:800;
+  color:var(--purple2);
+  margin-bottom:9px;
+}
+
+.hero h1{
+  font-size:clamp(2.3rem,6vw,4.2rem);
+  line-height:.95;
+  letter-spacing:-2px;
+}
+
+.hero h1 span{color:var(--purple)}
+
+.hero p{
+  max-width:600px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-top:14px;
+}
+
+.primary{
+  border:0;
+  background:var(--purple);
+  color:#fff;
+  border-radius:12px;
+  padding:14px 20px;
+  font-weight:800;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.stat{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+}
+
+.stat small{
+  display:block;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.stat strong{font-size:2rem}
+
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:26px;
+  margin-bottom:25px;
+}
+
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-bottom:20px;
+}
+
+.panel h2{font-size:1.65rem}
+
+.form{
+  display:grid;
+  gap:17px;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:17px;
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  border:1px solid #ddd4e4;
+  border-radius:12px;
+  padding:13px 14px;
+  background:#fff;
+  color:var(--ink);
+}
+
+.field textarea{
+  min-height:240px;
+  resize:vertical;
+  line-height:1.7;
+}
+
+.publish{
+  background:var(--soft);
+  padding:15px;
+  border-radius:14px;
+}
+
+.publish label{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-weight:800;
+}
+
+.publish input{
+  width:18px;
+  height:18px;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.secondary{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--purple);
+  border-radius:12px;
+  padding:12px 18px;
+  font-weight:800;
+}
+
+.message{
+  min-height:20px;
+  color:var(--purple);
+  font-size:13px;
+  font-weight:700;
+}
+
+.story-list{
+  display:grid;
+  gap:15px;
+}
+
+.story{
+  display:grid;
+  grid-template-columns:130px 1fr;
+  border:1px solid var(--line);
+  border-radius:17px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.cover{
+  min-height:170px;
+  background:var(--soft);
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--purple);
+  font-size:30px;
+}
+
+.story-body{padding:19px}
+
+.badge{
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  border-radius:999px;
+  padding:6px 9px;
+}
+
+.published{
+  background:#eaf7ee;
+  color:#287243;
+}
+
+.draft{
+  background:#f0edf2;
+  color:#6d6470;
+}
+
+.story h3{
+  font-size:1.35rem;
+  margin:8px 0 5px;
+}
+
+.genre{
+  color:var(--purple);
+  font-size:11px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.desc{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+  margin:8px 0 14px;
+}
+
+.story-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.small{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  border-radius:9px;
+  padding:9px 12px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.danger{
+  color:#9c4141;
+  border-color:#e5cccc;
+}
+
+.empty{
+  text-align:center;
+  border:1px dashed var(--line);
+  border-radius:17px;
+  padding:40px;
+  color:var(--muted);
+}
+
+.login-screen{
+  position:fixed;
+  inset:0;
+  background:#fbf9fc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:25px;
+  z-index:100;
+}
+
+.login-card{
+  width:100%;
+  max-width:430px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:35px;
+  box-shadow:0 20px 60px rgba(60,30,80,.08);
+}
+
+.login-card h1{
+  margin-bottom:8px;
+}
+
+.login-card p{
+  color:var(--muted);
+  line-height:1.5;
+  margin-bottom:22px;
+}
+
+.login-card input{
+  width:100%;
+  border:1px solid #ddd4e4;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.login-card button{
+  width:100%;
+}
+
+.login-message{
+  color:#a33;
+  font-size:13px;
+  font-weight:700;
+  min-height:20px;
+  margin:5px 0 12px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+@media(max-width:700px){
+  .hero{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .grid2{
+    grid-template-columns:1fr;
+  }
+
+  .panel{
+    padding:20px 16px;
+  }
+
+  .story{
+    grid-template-columns:1fr;
+  }
+
+  .cover{
+    min-height:180px;
+  }
+}
 </style>
 </head>
+
 <body>
 
-<div id="lock" class="lock">
-  <div class="lock-card">
-    <div class="eyebrow">PRIVATE AUTHOR STUDIO</div>
-    <h2>Checking your access…</h2>
-    <p>This space is only for the Epshitah Stories author account.</p>
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" class="login-screen">
+
+  <div class="login-card">
+
+    <div class="eyebrow">EPSHITAH STORIES</div>
+
+    <h1>Admin Login</h1>
+
+    <p>
+      This private area is only for the Epshitah Stories administrator.
+    </p>
+
+    <form id="adminLoginForm">
+
+      <input
+        id="adminEmail"
+        type="email"
+        placeholder="Admin email"
+        required
+      >
+
+      <input
+        id="adminPassword"
+        type="password"
+        placeholder="Admin password"
+        required
+      >
+
+      <div id="loginMessage" class="login-message"></div>
+
+      <button class="primary" type="submit">
+        Log in to Admin
+      </button>
+
+    </form>
+
   </div>
+
 </div>
 
+
+<!-- ADMIN APP -->
+<div id="adminApp" class="hidden">
+
 <header class="header">
-  <a href="/" class="brand">EPSHITAH <span>STORIES</span></a>
-  <div class="header-actions">
-    <a class="link" href="/">View website</a>
-    <button class="logout" id="logout">Log out</button>
-  </div>
+
+  <a href="/" class="brand">
+    EPSHITAH <span>STORIES</span>
+  </a>
+
+  <button class="logout" id="logout">
+    Log out
+  </button>
+
 </header>
 
+
 <main class="page">
-  <section class="hero">
+
+<section class="hero">
+
+  <div>
+
+    <div class="eyebrow">
+      PRIVATE AUTHOR STUDIO
+    </div>
+
+    <h1>
+      Your stories.<br>
+      <span>Your space.</span>
+    </h1>
+
+    <p>
+      Create, save, edit and publish your stories from your private
+      administrator area.
+    </p>
+
+  </div>
+
+  <button class="primary" id="newStory">
+    + New Story
+  </button>
+
+</section>
+
+
+<section class="stats">
+
+  <div class="stat">
+    <small>Total stories</small>
+    <strong id="total">0</strong>
+  </div>
+
+  <div class="stat">
+    <small>Published</small>
+    <strong id="published">0</strong>
+  </div>
+
+  <div class="stat">
+    <small>Drafts</small>
+    <strong id="drafts">0</strong>
+  </div>
+
+</section>
+
+
+<section class="panel" id="editor">
+
+  <div class="panel-head">
+
     <div>
-      <div class="eyebrow">PRIVATE AUTHOR STUDIO</div>
-      <h1>Your stories.<br><span>Your space.</span></h1>
-      <p>Create, save, edit and publish your stories from one private place. Published stories will appear on the public Epshitah Stories website.</p>
-    </div>
-    <button class="primary" id="newStory">+ New Story</button>
-  </section>
-
-  <section class="stats">
-    <div class="stat"><small>Total stories</small><strong id="total">0</strong></div>
-    <div class="stat"><small>Published</small><strong id="published">0</strong></div>
-    <div class="stat"><small>Drafts</small><strong id="drafts">0</strong></div>
-  </section>
-
-  <section class="panel" id="editor">
-    <div class="panel-head">
-      <div><div class="eyebrow">STORY EDITOR</div><h2 id="editorTitle">Add a new story</h2></div>
+      <div class="eyebrow">STORY EDITOR</div>
+      <h2 id="editorTitle">
+        Add a new story
+      </h2>
     </div>
 
-    <form class="form" id="storyForm">
-      <div class="grid2">
-        <div class="field"><label for="title">Story title</label><input id="title" required placeholder="Enter your story title"></div>
-        <div class="field"><label for="genreInput">Genre</label><select id="genreInput" required>
-          <option value="">Choose a genre</option>
-          <option>Romance</option><option>Heartbreak</option><option>Drama</option><option>Family</option><option>Inspirational</option><option>Mystery</option><option>Comedy</option><option>Tragedy</option><option>Thriller</option><option>Horror</option><option>Suspense</option><option>Fantasy</option><option>Science Fiction</option><option>Historical</option><option>Friendship</option><option>Cultural</option><option>Life Stories</option><option>Adventure</option><option>Motivation</option><option>Faith</option><option>Other</option>
-        </select></div>
+  </div>
+
+
+  <form class="form" id="storyForm">
+
+    <div class="grid2">
+
+      <div class="field">
+
+        <label>Story title</label>
+
+        <input
+          id="title"
+          required
+          placeholder="Enter your story title"
+        >
+
       </div>
 
-      <div class="field"><label for="description">Short description</label><textarea id="description" style="min-height:110px" required placeholder="Give readers a short introduction to your story…"></textarea></div>
 
-      <div class="field"><label for="cover">Cover image URL</label><input id="cover" type="url" placeholder="https://..."><div class="cover-note">For now, paste an image URL. We can add direct image uploads later.</div></div>
+      <div class="field">
 
-      <div class="field"><label for="content">Story</label><textarea id="content" required placeholder="Write your story here.
+        <label>Genre</label>
 
-For chapters, use headings such as:
+        <select id="genreInput" required>
 
-Chapter 1
-The beginning of the story…
+          <option value="">
+            Choose a genre
+          </option>
 
-Chapter 2
-What happened next…"></textarea></div>
+          <option>Romance</option>
+          <option>Heartbreak</option>
+          <option>Drama</option>
+          <option>Family</option>
+          <option>Inspirational</option>
+          <option>Mystery</option>
+          <option>Comedy</option>
+          <option>Tragedy</option>
+          <option>Thriller</option>
+          <option>Horror</option>
+          <option>Suspense</option>
+          <option>Fantasy</option>
+          <option>Historical</option>
+          <option>Friendship</option>
+          <option>Cultural</option>
+          <option>Life Stories</option>
+          <option>Adventure</option>
+          <option>Motivation</option>
+          <option>Faith</option>
+          <option>Other</option>
 
-      <div class="publish">
-        <label><input type="checkbox" id="publishedCheck"> Publish this story</label>
-        <p>Leave this unchecked to save it privately as a draft. Publish it when you are ready.</p>
+        </select>
+
       </div>
 
-      <div class="message" id="message"></div>
-      <div class="actions">
-        <button class="primary" id="save" type="submit">Save Story</button>
-        <button class="secondary" id="cancel" type="button" style="display:none">Cancel Edit</button>
-      </div>
-    </form>
-  </section>
+    </div>
 
-  <section class="panel">
-    <div class="panel-head"><div><div class="eyebrow">LIBRARY</div><h2>My Stories</h2></div></div>
-    <div class="story-list" id="storyList"><div class="empty">Loading your stories…</div></div>
-  </section>
+
+    <div class="field">
+
+      <label>Short description</label>
+
+      <textarea
+        id="description"
+        style="min-height:110px"
+        required
+        placeholder="Give readers a short introduction to your story..."
+      ></textarea>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>Cover image URL</label>
+
+      <input
+        id="cover"
+        type="url"
+        placeholder="https://..."
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>Story</label>
+
+      <textarea
+        id="content"
+        required
+        placeholder="Write your story here..."
+      ></textarea>
+
+    </div>
+
+
+    <div class="publish">
+
+      <label>
+
+        <input
+          type="checkbox"
+          id="publishedCheck"
+        >
+
+        Publish this story
+
+      </label>
+
+    </div>
+
+
+    <div class="message" id="message"></div>
+
+
+    <div class="actions">
+
+      <button
+        class="primary"
+        id="save"
+        type="submit"
+      >
+        Save Story
+      </button>
+
+      <button
+        class="secondary"
+        id="cancel"
+        type="button"
+        style="display:none"
+      >
+        Cancel Edit
+      </button>
+
+    </div>
+
+  </form>
+
+</section>
+
+
+<section class="panel">
+
+  <div class="panel-head">
+
+    <div>
+
+      <div class="eyebrow">
+        LIBRARY
+      </div>
+
+      <h2>
+        My Stories
+      </h2>
+
+    </div>
+
+  </div>
+
+  <div
+    class="story-list"
+    id="storyList"
+  >
+    <div class="empty">
+      Loading your stories...
+    </div>
+  </div>
+
+</section>
+
 </main>
 
+</div>
+
+
 <script>
+
 let stories=[];
 let editingId=null;
 
 const $=id=>document.getElementById(id);
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 
-async function start(){
+const esc=v=>String(v??"")
+.replace(/[&<>"']/g,c=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#039;"
+}[c]));
+
+
+/* ADMIN LOGIN */
+
+$("adminLoginForm").onsubmit=async e=>{
+
+  e.preventDefault();
+
+  const email=$("adminEmail").value.trim();
+  const password=$("adminPassword").value;
+
+  $("loginMessage").textContent="Logging in...";
+
   try{
-    const r=await fetch("/api/me");
+
+    const r=await fetch("/api/admin/login",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        email,
+        password
+      })
+    });
+
     const d=await r.json();
-    if(!r.ok || !d.user || !d.user.isAdmin){
-      window.location.href="/";
-      return;
+
+    if(!r.ok){
+      throw new Error(
+        d.error || "Admin login failed."
+      );
     }
-    $("lock").style.display="none";
+
+    $("adminLogin").classList.add("hidden");
+    $("adminApp").classList.remove("hidden");
+
     await loadStories();
+
   }catch(e){
-    window.location.href="/";
+
+    $("loginMessage").textContent=e.message;
+
   }
-}
+
+};
+
+
+/* LOAD STORIES */
 
 async function loadStories(){
+
   const r=await fetch("/api/admin/stories");
+
   const d=await r.json();
-  if(!r.ok) throw new Error(d.error||"Could not load stories.");
+
+  if(!r.ok){
+    throw new Error(
+      d.error || "Could not load stories."
+    );
+  }
+
   stories=d.stories||[];
+
   updateStats();
   render();
+
 }
+
+
+/* STATS */
 
 function updateStats(){
-  const pub=stories.filter(s=>Number(s.published)===1).length;
+
+  const pub=stories.filter(
+    s=>Number(s.published)===1
+  ).length;
+
   $("total").textContent=stories.length;
   $("published").textContent=pub;
-  $("drafts").textContent=stories.length-pub;
+  $("drafts").textContent=
+    stories.length-pub;
+
 }
+
+
+/* DISPLAY STORIES */
 
 function render(){
+
   const box=$("storyList");
+
   if(!stories.length){
-    box.innerHTML='<div class="empty"><h3>You have not created any stories yet.</h3><p>Your first story can start here.</p></div>';
+
+    box.innerHTML=`
+      <div class="empty">
+        <h3>You have not created any stories yet.</h3>
+        <p>Your first story can start here.</p>
+      </div>
+    `;
+
     return;
   }
+
+
   box.innerHTML=stories.map(s=>{
-    const cover=s.cover?`<img src="${esc(s.cover)}" alt="" style="width:100%;height:100%;object-fit:cover">`:"✦";
-    const pub=Number(s.published)===1;
-    return `<article class="story">
-      <div class="cover">${cover}</div>
-      <div class="story-body">
-        <div class="meta"><span class="badge ${pub?"published":"draft"}">${pub?"Published":"Draft"}</span></div>
-        <div class="genre">${esc(s.genre||"Other")}</div>
-        <h3>${esc(s.title)}</h3>
-        <p class="desc">${esc(s.description||"")}</p>
-        <div class="story-actions">
-          <button class="small" onclick="editStory(${s.id})">Edit</button>
-          <button class="small" onclick="togglePublish(${s.id})">${pub?"Unpublish":"Publish"}</button>
-          <button class="small danger" onclick="deleteStory(${s.id})">Delete</button>
+
+    const cover=s.cover
+      ? `<img src="${esc(s.cover)}"
+          alt=""
+          style="width:100%;height:100%;object-fit:cover">`
+      : "✦";
+
+    const pub=
+      Number(s.published)===1;
+
+    return `
+      <article class="story">
+
+        <div class="cover">
+          ${cover}
         </div>
-      </div>
-    </article>`;
+
+        <div class="story-body">
+
+          <span class="badge ${pub?"published":"draft"}">
+            ${pub?"Published":"Draft"}
+          </span>
+
+          <div class="genre">
+            ${esc(s.genre||"Other")}
+          </div>
+
+          <h3>
+            ${esc(s.title)}
+          </h3>
+
+          <p class="desc">
+            ${esc(s.description||"")}
+          </p>
+
+          <div class="story-actions">
+
+            <button
+              class="small"
+              onclick="editStory(${s.id})"
+            >
+              Edit
+            </button>
+
+            <button
+              class="small"
+              onclick="togglePublish(${s.id})"
+            >
+              ${pub?"Unpublish":"Publish"}
+            </button>
+
+            <button
+              class="small danger"
+              onclick="deleteStory(${s.id})"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+    `;
+
   }).join("");
+
 }
+
+
+/* SAVE */
 
 $("storyForm").onsubmit=async e=>{
+
   e.preventDefault();
+
   const payload={
+
     title:$("title").value.trim(),
+
     genre:$("genreInput").value,
-    description:$("description").value.trim(),
-    content:$("content").value.trim(),
-    cover:$("cover").value.trim(),
-    published:$("publishedCheck").checked
+
+    description:
+      $("description").value.trim(),
+
+    content:
+      $("content").value.trim(),
+
+    cover:
+      $("cover").value.trim(),
+
+    published:
+      $("publishedCheck").checked
+
   };
-  if(!payload.title||!payload.genre||!payload.description||!payload.content){
-    setMessage("Please complete the required fields.");
-    return;
-  }
+
+
   $("save").disabled=true;
-  $("save").textContent=editingId?"Updating…":"Saving…";
+
+  $("save").textContent=
+    editingId
+      ?"Updating..."
+      :"Saving...";
+
+
   try{
-    const r=await fetch(editingId?`/api/admin/stories/${editingId}`:"/api/admin/stories",{
-      method:editingId?"PUT":"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(payload)
-    });
+
+    const r=await fetch(
+      editingId
+        ? `/api/admin/stories/${editingId}`
+        : "/api/admin/stories",
+      {
+        method:
+          editingId
+            ?"PUT"
+            :"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify(payload)
+      }
+    );
+
+
     const d=await r.json();
-    if(!r.ok)throw new Error(d.error||"Could not save story.");
-    setMessage(editingId?"Story updated successfully.":"Story saved successfully.");
+
+
+    if(!r.ok){
+
+      throw new Error(
+        d.error ||
+        "Could not save story."
+      );
+
+    }
+
+
+    setMessage(
+      editingId
+        ?"Story updated successfully."
+        :"Story saved successfully."
+    );
+
+
     resetForm();
+
     await loadStories();
-  }catch(e){setMessage(e.message)}
-  finally{$("save").disabled=false;$("save").textContent="Save Story"}
+
+
+  }catch(e){
+
+    setMessage(e.message);
+
+  }finally{
+
+    $("save").disabled=false;
+
+    $("save").textContent=
+      "Save Story";
+
+  }
+
 };
+
+
+/* EDIT */
 
 window.editStory=id=>{
-  const s=stories.find(x=>Number(x.id)===Number(id)); if(!s)return;
+
+  const s=
+    stories.find(
+      x=>Number(x.id)===Number(id)
+    );
+
+  if(!s)return;
+
   editingId=s.id;
-  $("editorTitle").textContent="Edit story";
+
+  $("editorTitle").textContent=
+    "Edit story";
+
   $("title").value=s.title||"";
-  $("genreInput").value=s.genre||"Other";
-  $("description").value=s.description||"";
-  $("cover").value=s.cover||"";
-  $("content").value=s.content||"";
-  $("publishedCheck").checked=Number(s.published)===1;
-  $("cancel").style.display="inline-block";
-  $("editor").scrollIntoView({behavior:"smooth"});
+
+  $("genreInput").value=
+    s.genre||"Other";
+
+  $("description").value=
+    s.description||"";
+
+  $("cover").value=
+    s.cover||"";
+
+  $("content").value=
+    s.content||"";
+
+  $("publishedCheck").checked=
+    Number(s.published)===1;
+
+  $("cancel").style.display=
+    "inline-block";
+
+  $("editor").scrollIntoView({
+    behavior:"smooth"
+  });
+
 };
+
+
+/* PUBLISH */
 
 window.togglePublish=async id=>{
+
   try{
-    const r=await fetch(`/api/admin/stories/${id}/publish`,{method:"PATCH"});
+
+    const r=await fetch(
+      `/api/admin/stories/${id}/publish`,
+      {
+        method:"PATCH"
+      }
+    );
+
     const d=await r.json();
-    if(!r.ok)throw new Error(d.error||"Could not change publication status.");
+
+    if(!r.ok){
+
+      throw new Error(
+        d.error ||
+        "Could not change publication status."
+      );
+
+    }
+
     await loadStories();
-  }catch(e){setMessage(e.message)}
+
+  }catch(e){
+
+    setMessage(e.message);
+
+  }
+
 };
+
+
+/* DELETE */
 
 window.deleteStory=async id=>{
-  const s=stories.find(x=>Number(x.id)===Number(id));
+
+  const s=
+    stories.find(
+      x=>Number(x.id)===Number(id)
+    );
+
   if(!s)return;
-  if(!confirm(`Delete "${s.title}"? This cannot be undone.`))return;
+
+  if(!confirm(
+    `Delete "${s.title}"? This cannot be undone.`
+  ))return;
+
+
   try{
-    const r=await fetch(`/api/admin/stories/${id}`,{method:"DELETE"});
+
+    const r=await fetch(
+      `/api/admin/stories/${id}`,
+      {
+        method:"DELETE"
+      }
+    );
+
     const d=await r.json();
-    if(!r.ok)throw new Error(d.error||"Could not delete story.");
+
+    if(!r.ok){
+
+      throw new Error(
+        d.error ||
+        "Could not delete story."
+      );
+
+    }
+
     await loadStories();
+
     setMessage("Story deleted.");
-  }catch(e){setMessage(e.message)}
+
+  }catch(e){
+
+    setMessage(e.message);
+
+  }
+
 };
 
-function resetForm(){
-  editingId=null;
-  $("editorTitle").textContent="Add a new story";
-  $("storyForm").reset();
-  $("cancel").style.display="none";
-}
-$("newStory").onclick=()=>{resetForm();$("editor").scrollIntoView({behavior:"smooth"})};
-$("cancel").onclick=resetForm;
-$("logout").onclick=async()=>{await fetch("/api/logout",{method:"POST"});window.location.href="/"};
-function setMessage(t){$("message").textContent=t;setTimeout(()=>{$("message").textContent=""},4000)}
 
-start();
+/* RESET */
+
+function resetForm(){
+
+  editingId=null;
+
+  $("editorTitle").textContent=
+    "Add a new story";
+
+  $("storyForm").reset();
+
+  $("cancel").style.display=
+    "none";
+
+}
+
+
+$("newStory").onclick=()=>{
+
+  resetForm();
+
+  $("editor").scrollIntoView({
+    behavior:"smooth"
+  });
+
+};
+
+
+$("cancel").onclick=
+  resetForm;
+
+
+/* LOGOUT */
+
+$("logout").onclick=async()=>{
+
+  await fetch(
+    "/api/admin/logout",
+    {
+      method:"POST"
+    }
+  );
+
+  window.location.reload();
+
+};
+
+
+/* MESSAGE */
+
+function setMessage(t){
+
+  $("message").textContent=t;
+
+  setTimeout(()=>{
+    $("message").textContent="";
+  },4000);
+
+}
+
 </script>
+
 </body>
 </html>
