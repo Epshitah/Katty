@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "epshitah-secret-key",
+    secret: process.env.SESSION_SECRET || "epshitah-stories-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -60,12 +60,22 @@ app.use(
   })
 );
 
-// Serve website files
-app.use(express.static(path.join(__dirname, "public")));
+// Serve CSS, JavaScript and other files from the root
+app.use(express.static(__dirname));
 
-// ----------------------
+// Home page
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Admin page
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "admin.html"));
+});
+
+// -------------------------
 // REGISTER
-// ----------------------
+// -------------------------
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -77,9 +87,11 @@ app.post("/api/register", async (req, res) => {
       });
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+
     const existingUser = db
       .prepare("SELECT id FROM users WHERE email = ?")
-      .get(email.toLowerCase());
+      .get(cleanEmail);
 
     if (existingUser) {
       return res.status(400).json({
@@ -91,10 +103,11 @@ app.post("/api/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = db
-      .prepare(
-        "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
-      )
-      .run(name, email.toLowerCase(), hashedPassword);
+      .prepare(`
+        INSERT INTO users (name, email, password)
+        VALUES (?, ?, ?)
+      `)
+      .run(name.trim(), cleanEmail, hashedPassword);
 
     req.session.userId = result.lastInsertRowid;
 
@@ -102,19 +115,20 @@ app.post("/api/register", async (req, res) => {
       success: true,
       message: "Account created successfully."
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("REGISTER ERROR:", error);
 
     res.status(500).json({
       success: false,
-      message: "Something went wrong."
+      message: "Something went wrong while creating your account."
     });
   }
 });
 
-// ----------------------
+// -------------------------
 // LOGIN
-// ----------------------
+// -------------------------
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -126,9 +140,11 @@ app.post("/api/login", async (req, res) => {
       });
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+
     const user = db
       .prepare("SELECT * FROM users WHERE email = ?")
-      .get(email.toLowerCase());
+      .get(cleanEmail);
 
     if (!user) {
       return res.status(401).json({
@@ -160,31 +176,20 @@ app.post("/api/login", async (req, res) => {
         email: user.email
       }
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("LOGIN ERROR:", error);
 
     res.status(500).json({
       success: false,
-      message: "Something went wrong."
+      message: "Something went wrong while logging in."
     });
   }
 });
 
-// ----------------------
-// LOGOUT
-// ----------------------
-app.post("/api/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.json({
-      success: true,
-      message: "Logged out."
-    });
-  });
-});
-
-// ----------------------
+// -------------------------
 // CURRENT USER
-// ----------------------
+// -------------------------
 app.get("/api/me", (req, res) => {
   if (!req.session.userId) {
     return res.json({
@@ -193,9 +198,11 @@ app.get("/api/me", (req, res) => {
   }
 
   const user = db
-    .prepare(
-      "SELECT id, name, email FROM users WHERE id = ?"
-    )
+    .prepare(`
+      SELECT id, name, email
+      FROM users
+      WHERE id = ?
+    `)
     .get(req.session.userId);
 
   if (!user) {
@@ -206,46 +213,85 @@ app.get("/api/me", (req, res) => {
 
   res.json({
     loggedIn: true,
-    user
+    user: user
   });
 });
 
-// ----------------------
-// GET STORIES
-// ----------------------
-app.get("/api/stories", (req, res) => {
-  const stories = db
-    .prepare(`
-      SELECT id, title, genre, description, price, created_at
-      FROM stories
-      ORDER BY id DESC
-    `)
-    .all();
+// -------------------------
+// LOGOUT
+// -------------------------
+app.post("/api/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Could not log out."
+      });
+    }
 
-  res.json(stories);
+    res.json({
+      success: true,
+      message: "Logged out successfully."
+    });
+  });
 });
 
-// ----------------------
-// GET ONE STORY
-// ----------------------
-app.get("/api/stories/:id", (req, res) => {
-  const story = db
-    .prepare("SELECT * FROM stories WHERE id = ?")
-    .get(req.params.id);
+// -------------------------
+// GET ALL STORIES
+// -------------------------
+app.get("/api/stories", (req, res) => {
+  try {
+    const stories = db
+      .prepare(`
+        SELECT id, title, genre, description, price, created_at
+        FROM stories
+        ORDER BY id DESC
+      `)
+      .all();
 
-  if (!story) {
-    return res.status(404).json({
+    res.json(stories);
+
+  } catch (error) {
+    console.error("STORIES ERROR:", error);
+
+    res.status(500).json({
       success: false,
-      message: "Story not found."
+      message: "Could not load stories."
     });
   }
-
-  res.json(story);
 });
 
-// ----------------------
+// -------------------------
+// GET ONE STORY
+// -------------------------
+app.get("/api/stories/:id", (req, res) => {
+  try {
+    const story = db
+      .prepare("SELECT * FROM stories WHERE id = ?")
+      .get(req.params.id);
+
+    if (!story) {
+      return res.status(404).json({
+        success: false,
+        message: "Story not found."
+      });
+    }
+
+    res.json(story);
+
+  } catch (error) {
+    console.error("STORY ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not load the story."
+    });
+  }
+});
+
+// -------------------------
 // ADD STORY
-// ----------------------
+// -------------------------
 app.post("/api/stories", (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({
@@ -254,39 +300,60 @@ app.post("/api/stories", (req, res) => {
     });
   }
 
-  const { title, genre, description, content, price } = req.body;
+  try {
+    const {
+      title,
+      genre,
+      description,
+      content,
+      price
+    } = req.body;
 
-  if (!title || !content) {
-    return res.status(400).json({
+    if (!title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and story content are required."
+      });
+    }
+
+    const storyPrice =
+      price !== undefined && price !== ""
+        ? Number(price)
+        : 30;
+
+    const result = db
+      .prepare(`
+        INSERT INTO stories
+        (title, genre, description, content, price)
+        VALUES (?, ?, ?, ?, ?)
+      `)
+      .run(
+        title.trim(),
+        genre || "",
+        description || "",
+        content,
+        storyPrice
+      );
+
+    res.json({
+      success: true,
+      message: "Story saved successfully.",
+      storyId: result.lastInsertRowid
+    });
+
+  } catch (error) {
+    console.error("ADD STORY ERROR:", error);
+
+    res.status(500).json({
       success: false,
-      message: "Title and story content are required."
+      message: "Could not save the story."
     });
   }
-
-  const result = db
-    .prepare(`
-      INSERT INTO stories
-      (title, genre, description, content, price)
-      VALUES (?, ?, ?, ?, ?)
-    `)
-    .run(
-      title,
-      genre || "",
-      description || "",
-      content,
-      price || 30
-    );
-
-  res.json({
-    success: true,
-    message: "Story saved successfully.",
-    storyId: result.lastInsertRowid
-  });
 });
 
-// ----------------------
+// -------------------------
 // DELETE STORY
-// ----------------------
+// -------------------------
 app.delete("/api/stories/:id", (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({
@@ -295,17 +362,28 @@ app.delete("/api/stories/:id", (req, res) => {
     });
   }
 
-  db.prepare("DELETE FROM stories WHERE id = ?").run(req.params.id);
+  try {
+    db.prepare("DELETE FROM stories WHERE id = ?")
+      .run(req.params.id);
 
-  res.json({
-    success: true,
-    message: "Story deleted."
-  });
+    res.json({
+      success: true,
+      message: "Story deleted successfully."
+    });
+
+  } catch (error) {
+    console.error("DELETE STORY ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not delete the story."
+    });
+  }
 });
 
-// ----------------------
+// -------------------------
 // DEMO PURCHASE
-// ----------------------
+// -------------------------
 app.post("/api/purchase", (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({
@@ -314,34 +392,49 @@ app.post("/api/purchase", (req, res) => {
     });
   }
 
-  const { storyId } = req.body;
+  try {
+    const { storyId } = req.body;
 
-  const story = db
-    .prepare("SELECT id FROM stories WHERE id = ?")
-    .get(storyId);
+    const story = db
+      .prepare("SELECT id FROM stories WHERE id = ?")
+      .get(storyId);
 
-  if (!story) {
-    return res.status(404).json({
+    if (!story) {
+      return res.status(404).json({
+        success: false,
+        message: "Story not found."
+      });
+    }
+
+    db.prepare(`
+      INSERT INTO purchases
+      (user_id, story_id, status, provider)
+      VALUES (?, ?, 'paid', 'demo')
+    `).run(
+      req.session.userId,
+      storyId
+    );
+
+    res.json({
+      success: true,
+      message: "Purchase successful."
+    });
+
+  } catch (error) {
+    console.error("PURCHASE ERROR:", error);
+
+    res.status(500).json({
       success: false,
-      message: "Story not found."
+      message: "Could not complete purchase."
     });
   }
-
-  db.prepare(`
-    INSERT INTO purchases
-    (user_id, story_id, status, provider)
-    VALUES (?, ?, 'paid', 'demo')
-  `).run(req.session.userId, storyId);
-
-  res.json({
-    success: true,
-    message: "Purchase successful."
-  });
 });
 
-// ----------------------
+// -------------------------
 // START SERVER
-// ----------------------
+// -------------------------
 app.listen(PORT, () => {
-  console.log(`Epshitah Stories running on port ${PORT}`);
+  console.log(
+    `Epshitah Stories running on port ${PORT}`
+  );
 });
