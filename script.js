@@ -1,1013 +1,653 @@
-let stories = [];
-let savedStoryIds = [];
-let currentStory = null;
-let currentFontSize = 19;
 let currentUser = null;
+let currentStoryId = null;
 
-
-/* =========================
-   START
-========================= */
+const $ = (id) => document.getElementById(id);
 
 document.addEventListener("DOMContentLoaded", () => {
-
-  loadStories();
+  setupEvents();
   checkUser();
-
-  document
-    .getElementById("searchInput")
-    .addEventListener("input", handleSearch);
-
-  document
-    .getElementById("accountBtn")
-    .addEventListener("click", openAccount);
-
-  document
-    .getElementById("promoAccountBtn")
-    .addEventListener("click", openAccount);
-
-  document
-    .getElementById("libraryBtn")
-    .addEventListener("click", openLibrary);
-
-  document
-    .getElementById("accountLibraryBtn")
-    .addEventListener("click", () => {
-      closeModal("authModal");
-      openLibrary();
-    });
-
-  document
-    .getElementById("logoutBtn")
-    .addEventListener("click", logout);
-
-  document
-    .getElementById("loginSubmit")
-    .addEventListener("click", login);
-
-  document
-    .getElementById("signupSubmit")
-    .addEventListener("click", signup);
-
-  document
-    .getElementById("loginTab")
-    .addEventListener("click", showLogin);
-
-  document
-    .getElementById("signupTab")
-    .addEventListener("click", showSignup);
-
-  document
-    .getElementById("closeReader")
-    .addEventListener("click", closeReader);
-
-  document
-    .getElementById("fontDown")
-    .addEventListener("click", decreaseFont);
-
-  document
-    .getElementById("fontUp")
-    .addEventListener("click", increaseFont);
-
-  document
-    .getElementById("saveReaderBtn")
-    .addEventListener("click", saveCurrentStory);
-
-  document
-    .getElementById("browseBtn")
-    .addEventListener("click", () => {
-      document
-        .getElementById("featuredSection")
-        .scrollIntoView();
-    });
-
-
-  document
-    .querySelectorAll(".genre-card")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        const genre = button.dataset.genre;
-
-        filterGenre(genre);
-
-      });
-
-    });
-
-
-  document
-    .querySelectorAll("[data-close]")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-        closeModal(button.dataset.close);
-      });
-
-    });
-
+  loadStories();
 });
 
-
 /* =========================
-   LOAD STORIES
+   EVENTS
 ========================= */
 
-async function loadStories() {
+function setupEvents() {
+  $("loginBtn").addEventListener("click", openLogin);
+  $("logoutBtn").addEventListener("click", logout);
 
-  try {
+  $("closeModal").addEventListener(
+    "click",
+    closeAuth
+  );
 
-    const response = await fetch("/api/stories");
+  $("closeStory").addEventListener(
+    "click",
+    closeStory
+  );
 
-    if (!response.ok) {
-      throw new Error("Could not load stories");
+  $("showRegister").addEventListener(
+    "click",
+    showRegister
+  );
+
+  $("showLogin").addEventListener(
+    "click",
+    showLogin
+  );
+
+  $("loginForm").addEventListener(
+    "submit",
+    login
+  );
+
+  $("registerForm").addEventListener(
+    "submit",
+    register
+  );
+
+  $("purchaseBtn").addEventListener(
+    "click",
+    purchaseStory
+  );
+
+  $("authModal").addEventListener(
+    "click",
+    (event) => {
+      if (event.target === $("authModal")) {
+        closeAuth();
+      }
     }
+  );
 
-    stories = await response.json();
-
-    stories = stories.filter(
-      story =>
-        String(story.title || "").toLowerCase() !==
-        "epshitah 2026"
-    );
-
-    renderFeatured();
-    renderGenres();
-
-    if (currentUser) {
-      loadSavedStories();
+  $("storyModal").addEventListener(
+    "click",
+    (event) => {
+      if (event.target === $("storyModal")) {
+        closeStory();
+      }
     }
-
-  } catch (error) {
-
-    console.error(error);
-
-    document.getElementById("featuredStories").innerHTML =
-      `<div class="empty">Stories could not be loaded.</div>`;
-
-  }
-
+  );
 }
-
-
-/* =========================
-   STORY CARDS
-========================= */
-
-function renderFeatured() {
-
-  const container =
-    document.getElementById("featuredStories");
-
-  if (!stories.length) {
-
-    container.innerHTML =
-      `<div class="empty">No stories have been added yet.</div>`;
-
-    return;
-  }
-
-  container.innerHTML =
-    stories
-      .slice(0, 8)
-      .map(storyCard)
-      .join("");
-
-}
-
-
-function renderGenres() {
-
-  const container =
-    document.getElementById("genreSections");
-
-  const genres = [
-    "Romance",
-    "Drama",
-    "Heartbreak",
-    "Thriller",
-    "Mystery",
-    "Life Stories"
-  ];
-
-  container.innerHTML = "";
-
-  genres.forEach(genre => {
-
-    const matching =
-      stories.filter(story =>
-        normalizeCategory(story.category) ===
-        normalizeCategory(genre)
-      );
-
-    if (!matching.length) return;
-
-    const section =
-      document.createElement("section");
-
-    section.className = "section";
-
-    section.innerHTML = `
-      <div class="section-title">
-        <h2>${escapeHtml(genre)}</h2>
-        <p>Stories in ${escapeHtml(genre)}</p>
-      </div>
-
-      <div class="story-grid">
-        ${matching.map(storyCard).join("")}
-      </div>
-    `;
-
-    container.appendChild(section);
-
-  });
-
-}
-
-
-function storyCard(story) {
-
-  const saved =
-    savedStoryIds.includes(Number(story.id));
-
-  return `
-
-    <div class="story-card">
-
-      <div class="story-cover">
-
-        <span>
-          ${escapeHtml(
-            story.category || "Story"
-          )}
-        </span>
-
-      </div>
-
-      <div class="story-body">
-
-        <h3>
-          ${escapeHtml(story.title)}
-        </h3>
-
-        <p>
-          ${escapeHtml(
-            story.description ||
-            "A story waiting to be discovered."
-          )}
-        </p>
-
-        <div class="story-actions">
-
-          <button
-            class="read-btn"
-            onclick="openStory(${Number(story.id)})"
-          >
-            📖 Read
-          </button>
-
-          <button
-            class="save-btn"
-            onclick="toggleSave(${Number(story.id)})"
-          >
-            ${saved ? "❤️" : "♡"}
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =========================
-   READ STORY
-========================= */
-
-function openStory(id) {
-
-  const story =
-    stories.find(item => Number(item.id) === Number(id));
-
-  if (!story) return;
-
-  currentStory = story;
-
-  document.getElementById("readerCategory").textContent =
-    story.category || "Story";
-
-  document.getElementById("readerTitle").textContent =
-    story.title;
-
-  document.getElementById("readerDescription").textContent =
-    story.description || "";
-
-  document.getElementById("readerContent").textContent =
-    story.content || "";
-
-  updateSaveButton();
-
-  document
-    .getElementById("readerModal")
-    .classList.remove("hidden");
-
-  document.body.style.overflow = "hidden";
-
-  window.scrollTo(0, 0);
-
-}
-
-
-function closeReader() {
-
-  document
-    .getElementById("readerModal")
-    .classList.add("hidden");
-
-  document.body.style.overflow = "";
-
-}
-
-
-/* =========================
-   FONT SIZE
-========================= */
-
-function increaseFont() {
-
-  currentFontSize += 2;
-
-  if (currentFontSize > 28) {
-    currentFontSize = 28;
-  }
-
-  document
-    .getElementById("readerContent")
-    .style.fontSize =
-    currentFontSize + "px";
-
-}
-
-
-function decreaseFont() {
-
-  currentFontSize -= 2;
-
-  if (currentFontSize < 15) {
-    currentFontSize = 15;
-  }
-
-  document
-    .getElementById("readerContent")
-    .style.fontSize =
-    currentFontSize + "px";
-
-}
-
 
 /* =========================
    USER
 ========================= */
 
 async function checkUser() {
-
   try {
+    const response = await fetch("/api/me");
+    const data = await response.json();
 
-    const response =
-      await fetch("/api/me", {
-        credentials: "same-origin"
-      });
+    currentUser = data.user || null;
 
-    const data =
-      await response.json();
-
-    if (data.loggedIn) {
-
-      currentUser = data.user;
-
-      await loadSavedStories();
-
-      updateAccountUI();
-
-    }
-
+    updateHeader();
   } catch (error) {
-
-    console.error(error);
-
+    console.error(
+      "Could not check user:",
+      error
+    );
   }
-
 }
 
+function updateHeader() {
+  const loginBtn = $("loginBtn");
+  const logoutBtn = $("logoutBtn");
+  const adminLink = $("adminLink");
 
-function updateAccountUI() {
+  if (currentUser) {
+    loginBtn.classList.add("hidden");
+    logoutBtn.classList.remove("hidden");
 
-  const accountBtn =
-    document.getElementById("accountBtn");
-
-  const libraryBtn =
-    document.getElementById("libraryBtn");
-
-  accountBtn.textContent =
-    "👤 " + currentUser.name;
-
-  libraryBtn.classList.remove("hidden");
-
-  document
-    .getElementById("accountName")
-    .textContent =
-    currentUser.name;
-
-  document
-    .getElementById("accountEmail")
-    .textContent =
-    currentUser.email;
-
-  document
-    .getElementById("loginForm")
-    .classList.add("hidden");
-
-  document
-    .getElementById("signupForm")
-    .classList.add("hidden");
-
-  document
-    .getElementById("authTabs")
-    .classList.add("hidden");
-
-  document
-    .getElementById("loggedAccount")
-    .classList.remove("hidden");
-
+    if (currentUser.role === "admin") {
+      adminLink.classList.remove("hidden");
+    } else {
+      adminLink.classList.add("hidden");
+    }
+  } else {
+    loginBtn.classList.remove("hidden");
+    logoutBtn.classList.add("hidden");
+    adminLink.classList.add("hidden");
+  }
 }
-
 
 /* =========================
    AUTH MODAL
 ========================= */
 
-function openAccount() {
-
-  document
-    .getElementById("authModal")
-    .classList.remove("hidden");
-
-  if (currentUser) {
-
-    updateAccountUI();
-
-  } else {
-
-    showLogin();
-
-  }
-
+function openLogin() {
+  $("authModal").classList.remove("hidden");
+  showLogin();
 }
 
+function closeAuth() {
+  $("authModal").classList.add("hidden");
+
+  $("loginMessage").textContent = "";
+  $("registerMessage").textContent = "";
+}
 
 function showLogin() {
-
-  document
-    .getElementById("loginForm")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("signupForm")
-    .classList.add("hidden");
-
-  document
-    .getElementById("loggedAccount")
-    .classList.add("hidden");
-
-  document
-    .getElementById("authTabs")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("loginTab")
-    .classList.add("active");
-
-  document
-    .getElementById("signupTab")
-    .classList.remove("active");
-
+  $("loginPanel").classList.remove("hidden");
+  $("registerPanel").classList.add("hidden");
 }
 
-
-function showSignup() {
-
-  document
-    .getElementById("loginForm")
-    .classList.add("hidden");
-
-  document
-    .getElementById("signupForm")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("loggedAccount")
-    .classList.add("hidden");
-
-  document
-    .getElementById("authTabs")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("signupTab")
-    .classList.add("active");
-
-  document
-    .getElementById("loginTab")
-    .classList.remove("active");
-
+function showRegister() {
+  $("loginPanel").classList.add("hidden");
+  $("registerPanel").classList.remove("hidden");
 }
 
+/* =========================
+   LOGIN
+========================= */
 
-async function login() {
+async function login(event) {
+  event.preventDefault();
 
   const email =
-    document.getElementById("loginEmail").value.trim();
+    $("loginEmail").value.trim();
 
   const password =
-    document.getElementById("loginPassword").value;
+    $("loginPassword").value;
 
-  const message =
-    document.getElementById("loginMessage");
-
-  message.textContent = "Logging in...";
+  $("loginMessage").textContent =
+    "Logging in...";
 
   try {
-
-    const response =
-      await fetch("/api/login", {
-
+    const response = await fetch(
+      "/api/login",
+      {
         method: "POST",
-
-        credentials: "same-origin",
-
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type":
+            "application/json"
         },
-
         body: JSON.stringify({
           email,
           password
         })
-
-      });
+      }
+    );
 
     const data =
       await response.json();
 
     if (!response.ok) {
-
-      message.textContent =
-        data.message || "Login failed.";
+      $("loginMessage").textContent =
+        data.message ||
+        "Login failed.";
 
       return;
     }
 
     currentUser = data.user;
 
-    await loadSavedStories();
+    updateHeader();
+    closeAuth();
 
-    updateAccountUI();
+    $("loginForm").reset();
 
-    message.textContent = "";
-
+    if (currentStoryId) {
+      openStory(currentStoryId);
+    }
   } catch (error) {
+    console.error(error);
 
-    message.textContent =
-      "Could not connect to the server.";
-
+    $("loginMessage").textContent =
+      "Something went wrong. Please try again.";
   }
-
 }
 
+/* =========================
+   REGISTER
+========================= */
 
-async function signup() {
+async function register(event) {
+  event.preventDefault();
 
   const name =
-    document.getElementById("signupName").value.trim();
+    $("registerName").value.trim();
 
   const email =
-    document.getElementById("signupEmail").value.trim();
+    $("registerEmail").value.trim();
 
   const password =
-    document.getElementById("signupPassword").value;
+    $("registerPassword").value;
 
-  const message =
-    document.getElementById("signupMessage");
-
-  message.textContent =
+  $("registerMessage").textContent =
     "Creating your account...";
 
   try {
-
-    const response =
-      await fetch("/api/signup", {
-
+    const response = await fetch(
+      "/api/register",
+      {
         method: "POST",
-
-        credentials: "same-origin",
-
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type":
+            "application/json"
         },
-
         body: JSON.stringify({
           name,
           email,
           password
         })
-
-      });
+      }
+    );
 
     const data =
       await response.json();
 
     if (!response.ok) {
-
-      message.textContent =
-        data.message || "Could not create account.";
+      $("registerMessage").textContent =
+        data.message ||
+        "Could not create account.";
 
       return;
     }
 
     currentUser = data.user;
 
-    await loadSavedStories();
+    updateHeader();
+    closeAuth();
 
-    updateAccountUI();
+    $("registerForm").reset();
 
-    message.textContent = "";
-
+    alert(
+      "Welcome to Epshitah Stories, " +
+        currentUser.name +
+        "!"
+    );
   } catch (error) {
-
-    message.textContent =
-      "Could not connect to the server.";
-
-  }
-
-}
-
-
-async function logout() {
-
-  await fetch("/api/logout", {
-    method: "POST",
-    credentials: "same-origin"
-  });
-
-  currentUser = null;
-  savedStoryIds = [];
-
-  document
-    .getElementById("libraryBtn")
-    .classList.add("hidden");
-
-  document
-    .getElementById("accountBtn")
-    .textContent =
-    "👤 Log In";
-
-  closeModal("authModal");
-
-  renderFeatured();
-  renderGenres();
-
-}
-
-
-/* =========================
-   SAVED STORIES
-========================= */
-
-async function loadSavedStories() {
-
-  if (!currentUser) return;
-
-  try {
-
-    const response =
-      await fetch("/api/saved-stories", {
-        credentials: "same-origin"
-      });
-
-    if (!response.ok) return;
-
-    const data =
-      await response.json();
-
-    savedStoryIds =
-      data.map(story => Number(story.id));
-
-    renderFeatured();
-    renderGenres();
-
-  } catch (error) {
-
     console.error(error);
 
+    $("registerMessage").textContent =
+      "Something went wrong. Please try again.";
   }
-
 }
 
+/* =========================
+   LOGOUT
+========================= */
 
-async function toggleSave(id) {
-
-  if (!currentUser) {
-
-    openAccount();
-
-    return;
+async function logout() {
+  try {
+    await fetch(
+      "/api/logout",
+      {
+        method: "POST"
+      }
+    );
+  } catch (error) {
+    console.error(error);
   }
 
-  const saved =
-    savedStoryIds.includes(Number(id));
+  currentUser = null;
+
+  updateHeader();
+
+  closeStory();
+
+  alert("You have been logged out.");
+}
+
+/* =========================
+   STORIES
+========================= */
+
+async function loadStories() {
+  const grid =
+    $("storiesGrid");
 
   try {
-
     const response =
-      await fetch(
-        "/api/saved-stories/" + id,
-        {
-          method: saved ? "DELETE" : "POST",
-          credentials: "same-origin"
-        }
-      );
+      await fetch("/api/stories");
 
     if (!response.ok) {
+      throw new Error(
+        "Failed to load stories."
+      );
+    }
 
-      const data = await response.json();
+    const stories =
+      await response.json();
 
-      alert(data.message || "Could not save story.");
+    $("storyCount").textContent =
+      `${stories.length} ${
+        stories.length === 1
+          ? "story"
+          : "stories"
+      }`;
+
+    if (!stories.length) {
+      grid.innerHTML = `
+        <div class="empty">
+          <h3>No stories yet</h3>
+          <p>
+            New stories will appear here soon.
+          </p>
+        </div>
+      `;
 
       return;
     }
 
-    if (saved) {
+    grid.innerHTML =
+      stories.map(
+        story => storyCard(story)
+      ).join("");
 
-      savedStoryIds =
-        savedStoryIds.filter(
-          storyId => storyId !== Number(id)
+    document
+      .querySelectorAll(".read-btn")
+      .forEach(button => {
+        button.addEventListener(
+          "click",
+          () => {
+            openStory(
+              button.dataset.id
+            );
+          }
         );
-
-    } else {
-
-      savedStoryIds.push(Number(id));
-
-    }
-
-    renderFeatured();
-    renderGenres();
-
-    updateSaveButton();
-
+      });
   } catch (error) {
+    console.error(error);
 
-    alert("Could not connect to the server.");
-
-  }
-
-}
-
-
-async function saveCurrentStory() {
-
-  if (!currentStory) return;
-
-  await toggleSave(currentStory.id);
-
-}
-
-
-function updateSaveButton() {
-
-  if (!currentStory) return;
-
-  const button =
-    document.getElementById("saveReaderBtn");
-
-  const saved =
-    savedStoryIds.includes(
-      Number(currentStory.id)
-    );
-
-  button.textContent =
-    saved ? "❤️ Saved" : "♡ Save";
-
-}
-
-
-/* =========================
-   LIBRARY
-========================= */
-
-async function openLibrary() {
-
-  if (!currentUser) {
-
-    openAccount();
-
-    return;
-  }
-
-  await loadSavedStories();
-
-  const container =
-    document.getElementById("libraryStories");
-
-  const saved =
-    stories.filter(story =>
-      savedStoryIds.includes(Number(story.id))
-    );
-
-  if (!saved.length) {
-
-    container.innerHTML = `
+    grid.innerHTML = `
       <div class="empty">
-        <p>Your library is empty.</p>
-        <p>Tap ♡ on a story to save it here.</p>
+        <h3>Stories could not be loaded</h3>
+        <p>
+          Please refresh the page and try again.
+        </p>
       </div>
     `;
+  }
+}
 
-  } else {
+function storyCard(story) {
+  const price =
+    Number(story.price);
 
-    container.innerHTML =
-      saved.map(story => `
+  const priceText =
+    price > 0
+      ? `M ${price.toFixed(2)}`
+      : "Free";
 
-        <div class="library-story">
+  const cover =
+    story.cover_url
+      ? `
+        <img
+          src="${escapeHtml(
+            story.cover_url
+          )}"
+          alt="${escapeHtml(
+            story.title
+          )}"
+        >
+      `
+      : `
+        <div class="story-cover-placeholder">
+          ✦
+        </div>
+      `;
 
-          <div>
+  return `
+    <article class="story-card">
 
-            <h3>
-              ${escapeHtml(story.title)}
-            </h3>
+      <div class="story-cover">
+        ${cover}
+      </div>
 
-            <small>
-              ${escapeHtml(
-                story.category || "Story"
-              )}
-            </small>
+      <div class="story-info">
 
-          </div>
+        <div class="story-genre">
+          ${escapeHtml(
+            story.genre
+          )}
+        </div>
+
+        <h3>
+          ${escapeHtml(
+            story.title
+          )}
+        </h3>
+
+        <p>
+          ${escapeHtml(
+            story.description
+          )}
+        </p>
+
+        <div class="story-bottom">
+
+          <span class="story-price">
+            ${priceText}
+          </span>
 
           <button
-            class="library-open"
-            onclick="openStory(${Number(story.id)}); closeModal('libraryModal');"
+            class="read-btn"
+            data-id="${story.id}"
           >
-            Read
+            Read Story
           </button>
 
         </div>
 
-      `).join("");
+      </div>
 
-  }
+    </article>
+  `;
+}
 
-  document
-    .getElementById("libraryModal")
+/* =========================
+   OPEN STORY
+========================= */
+
+async function openStory(id) {
+  currentStoryId = id;
+
+  $("storyModal")
     .classList.remove("hidden");
 
-}
+  $("readerTitle").textContent =
+    "Loading...";
 
+  $("readerGenre").textContent = "";
 
-/* =========================
-   SEARCH
-========================= */
+  $("readerDescription")
+    .textContent = "";
 
-function handleSearch(event) {
+  $("readerContent")
+    .innerHTML = "";
 
-  const query =
-    event.target.value.trim().toLowerCase();
-
-  const resultsSection =
-    document.getElementById("searchResultsSection");
-
-  if (!query) {
-
-    resultsSection.classList.add("hidden");
-
-    return;
-
-  }
-
-  const results =
-    stories.filter(story => {
-
-      return (
-
-        String(story.title || "")
-          .toLowerCase()
-          .includes(query)
-
-        ||
-
-        String(story.category || "")
-          .toLowerCase()
-          .includes(query)
-
-        ||
-
-        String(story.description || "")
-          .toLowerCase()
-          .includes(query)
-
-      );
-
-    });
-
-  resultsSection.classList.remove("hidden");
-
-  document
-    .getElementById("searchResultText")
-    .textContent =
-    results.length +
-    " story" +
-    (results.length === 1 ? "" : "ies") +
-    " found.";
-
-  document
-    .getElementById("searchResults")
-    .innerHTML =
-    results.length
-      ? results.map(storyCard).join("")
-      : `<div class="empty">No stories found.</div>`;
-
-}
-
-
-function filterGenre(genre) {
-
-  const matching =
-    stories.filter(story =>
-      normalizeCategory(story.category) ===
-      normalizeCategory(genre)
-    );
-
-  const section =
-    document.getElementById("searchResultsSection");
-
-  section.classList.remove("hidden");
-
-  document
-    .getElementById("searchResultText")
-    .textContent =
-    matching.length +
-    " " +
-    genre +
-    " stor" +
-    (matching.length === 1 ? "y" : "ies");
-
-  document
-    .getElementById("searchResults")
-    .innerHTML =
-    matching.length
-      ? matching.map(storyCard).join("")
-      : `<div class="empty">No ${escapeHtml(genre)} stories yet.</div>`;
-
-  section.scrollIntoView({
-    behavior: "smooth"
-  });
-
-}
-
-
-/* =========================
-   HELPERS
-========================= */
-
-function normalizeCategory(value) {
-
-  return String(value || "")
-    .trim()
-    .toLowerCase();
-
-}
-
-
-function escapeHtml(value) {
-
-  return String(value || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-function closeModal(id) {
-
-  document
-    .getElementById(id)
+  $("lockedBox")
     .classList.add("hidden");
 
+  try {
+    const response =
+      await fetch(
+        `/api/stories/${id}`
+      );
+
+    const story =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        story.message ||
+        "Story not found."
+      );
+    }
+
+    $("readerGenre").textContent =
+      story.genre;
+
+    $("readerTitle").textContent =
+      story.title;
+
+    $("readerDescription")
+      .textContent =
+      story.description;
+
+    if (story.unlocked) {
+      $("lockedBox")
+        .classList.add("hidden");
+
+      $("readerContent")
+        .innerHTML =
+        formatStory(
+          story.content
+        );
+    } else {
+      $("readerContent")
+        .innerHTML = "";
+
+      $("lockedBox")
+        .classList.remove("hidden");
+
+      $("readerPrice").textContent =
+        `Unlock this story for M ${Number(
+          story.price
+        ).toFixed(2)}.`;
+
+      $("purchaseMessage")
+        .textContent = "";
+    }
+  } catch (error) {
+    console.error(error);
+
+    $("readerTitle").textContent =
+      "Could not open story";
+
+    $("readerContent").textContent =
+      error.message;
+  }
+}
+
+/* =========================
+   CLOSE STORY
+========================= */
+
+function closeStory() {
+  $("storyModal")
+    .classList.add("hidden");
+
+  currentStoryId = null;
+}
+
+/* =========================
+   PURCHASE
+========================= */
+
+async function purchaseStory() {
+  if (!currentStoryId) {
+    return;
+  }
+
+  if (!currentUser) {
+    closeStory();
+    openLogin();
+
+    $("loginMessage").textContent =
+      "Please log in to unlock this story.";
+
+    return;
+  }
+
+  const button =
+    $("purchaseBtn");
+
+  button.disabled = true;
+  button.textContent =
+    "Processing...";
+
+  $("purchaseMessage")
+    .textContent =
+    "Demo payment is being processed...";
+
+  try {
+    const response =
+      await fetch(
+        `/api/stories/${currentStoryId}/purchase-demo`,
+        {
+          method: "POST"
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+        "Purchase failed."
+      );
+    }
+
+    $("purchaseMessage")
+      .textContent =
+      "Story unlocked!";
+
+    await openStory(
+      currentStoryId
+    );
+  } catch (error) {
+    console.error(error);
+
+    $("purchaseMessage")
+      .textContent =
+      error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent =
+      "Unlock Story";
+  }
+}
+
+/* =========================
+   STORY FORMAT
+========================= */
+
+function formatStory(content) {
+  if (!content) {
+    return "";
+  }
+
+  return escapeHtml(content)
+    .split(/\n\s*\n/)
+    .map(
+      paragraph =>
+        `<p>${paragraph.replace(
+          /\n/g,
+          "<br>"
+        )}</p>`
+    )
+    .join("");
+}
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }
