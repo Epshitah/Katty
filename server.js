@@ -1,1096 +1,566 @@
 const express = require("express");
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
+const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
 const path = require("path");
-const crypto = require("crypto");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
-app.set("trust proxy", 1);
-
-const ADMIN_EMAIL =
-  process.env.ADMIN_EMAIL ||
-  "ralejoemolebatsi189@gmail.com";
-
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD || "";
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL is missing.");
+  process.exit(1);
+}
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? { rejectUnauthorized: false }
-      : false
+  ssl: process.env.NODE_ENV === "production"
+    ? { rejectUnauthorized: false }
+    : false
 });
 
-app.use(express.json({ limit: "2mb" }));
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
 
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "2mb"
-  })
-);
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
     store: new pgSession({
-      pool: pool,
+      pool,
       tableName: "user_sessions",
       createTableIfMissing: true
     }),
-
     secret:
       process.env.SESSION_SECRET ||
-      "epshitah-change-this-secret",
-
+      "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET",
     resave: false,
-
     saveUninitialized: false,
-
     cookie: {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      secure:
-        process.env.NODE_ENV === "production",
-
-      maxAge:
-        7 * 24 * 60 * 60 * 1000
+      maxAge: 1000 * 60 * 60 * 24 * 7
     }
   })
 );
 
+app.use(express.static(path.join(__dirname, "public")));
 
-/* =========================================================
-   HELPERS
-========================================================= */
+/* =========================
+   DATABASE
+========================= */
 
-function hashPassword(password) {
-
-  return crypto
-    .createHash("sha256")
-    .update(password)
-    .digest("hex");
-
-}
-
-
-function cleanEmail(email) {
-
-  return String(email || "")
-    .trim()
-    .toLowerCase();
-
-}
-
-
-async function getCurrentUser(req) {
-
-  if (!req.session.userEmail) {
-    return null;
-  }
-
-  const result =
-    await pool.query(
-      `
-      SELECT
-        id,
-        name,
-        email,
-        created_at AS "createdAt"
-
-      FROM users
-
-      WHERE email = $1
-      `,
-      [req.session.userEmail]
+async function initDatabase() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(120) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      role VARCHAR(20) NOT NULL DEFAULT 'reader',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
-  return result.rows[0] || null;
+    CREATE TABLE IF NOT EXISTS stories (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      genre VARCHAR(100) NOT NULL,
+      description TEXT NOT NULL,
+      content TEXT NOT NULL,
+      price NUMERIC(10,2) NOT NULL DEFAULT 0,
+      cover_url TEXT DEFAULT '',
+      is_published BOOLEAN NOT NULL DEFAULT false,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
+    CREATE TABLE IF NOT EXISTS purchases (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      story_id INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
+      amount NUMERIC(10,2) NOT NULL,
+      provider VARCHAR(50) NOT NULL DEFAULT 'demo',
+      status VARCHAR(30) NOT NULL DEFAULT 'paid',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(user_id, story_id)
+    );
+  `);
+
+  /*
+    If the email below already exists, make that account admin.
+  */
+  if (ADMIN_EMAIL) {
+    await pool.query(
+      `
+      UPDATE users
+      SET role = 'admin'
+      WHERE LOWER(email) = LOWER($1)
+      `,
+      [ADMIN_EMAIL]
+    );
+  }
 }
 
+/* =========================
+   HELPERS
+========================= */
 
-function requireAdmin(req, res, next) {
+function publicUser(user) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role
+  };
+}
 
-  if (!req.session.isAdmin) {
-
+function requireLogin(req, res, next) {
+  if (!req.session.user) {
     return res.status(401).json({
-      message:
-        "Admin login required."
+      message: "Please log in first."
     });
-
   }
 
   next();
-
 }
 
+function requireAdmin(req, res, next) {
+  if (
+    !req.session.user ||
+    req.session.user.role !== "admin"
+  ) {
+    return res.status(403).json({
+      message: "Admin access required."
+    });
+  }
 
-/* =========================================================
-   DATABASE SETUP
-========================================================= */
-
-async function setupDatabase() {
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
-
-      id SERIAL PRIMARY KEY,
-
-      name TEXT NOT NULL,
-
-      email TEXT UNIQUE NOT NULL,
-
-      password TEXT NOT NULL,
-
-      created_at
-        TIMESTAMPTZ
-        DEFAULT NOW()
-
-    )
-  `);
-
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS stories (
-
-      id SERIAL PRIMARY KEY,
-
-      title TEXT NOT NULL,
-
-      category TEXT
-        DEFAULT 'STORY',
-
-      description TEXT
-        DEFAULT '',
-
-      content TEXT NOT NULL,
-
-      cover_url TEXT
-        DEFAULT '',
-
-      video_url TEXT
-        DEFAULT '',
-
-      created_at
-        TIMESTAMPTZ
-        DEFAULT NOW()
-
-    )
-  `);
-
-
-  /* SAFE MIGRATIONS
-     These do not delete existing stories.
-  */
-
-  await pool.query(`
-    ALTER TABLE stories
-    ADD COLUMN IF NOT EXISTS
-    cover_url TEXT DEFAULT ''
-  `);
-
-
-  await pool.query(`
-    ALTER TABLE stories
-    ADD COLUMN IF NOT EXISTS
-    video_url TEXT DEFAULT ''
-  `);
-
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS saved_stories (
-
-      id SERIAL PRIMARY KEY,
-
-      user_id INTEGER NOT NULL
-        REFERENCES users(id)
-        ON DELETE CASCADE,
-
-      story_id INTEGER NOT NULL
-        REFERENCES stories(id)
-        ON DELETE CASCADE,
-
-      created_at
-        TIMESTAMPTZ
-        DEFAULT NOW(),
-
-      UNIQUE(user_id, story_id)
-
-    )
-  `);
-
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS author_profiles (
-
-      id INTEGER PRIMARY KEY DEFAULT 1,
-
-      name TEXT
-        DEFAULT 'Epshitah Stories',
-
-      genre TEXT
-        DEFAULT '',
-
-      bio TEXT
-        DEFAULT '',
-
-      photo_url TEXT
-        DEFAULT '',
-
-      updated_at
-        TIMESTAMPTZ
-        DEFAULT NOW()
-
-    )
-  `);
-
-
-  await pool.query(`
-    INSERT INTO author_profiles (id)
-
-    VALUES (1)
-
-    ON CONFLICT (id)
-    DO NOTHING
-  `);
-
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS site_settings (
-
-      setting_key TEXT PRIMARY KEY,
-
-      setting_value TEXT
-        NOT NULL
-        DEFAULT ''
-
-    )
-  `);
-
-
-  console.log(
-    "Database tables and migrations are ready."
-  );
-
+  next();
 }
 
+/* =========================
+   HEALTH CHECK
+========================= */
 
-/* =========================================================
-   READER SIGN UP
-========================================================= */
+app.get("/api/health", async (req, res) => {
+  try {
+    await pool.query("SELECT 1");
 
-app.post(
-  "/api/signup",
-  async (req, res) => {
+    res.json({
+      ok: true,
+      message: "Epshitah Stories server is working."
+    });
+  } catch (error) {
+    console.error(error);
 
-    try {
+    res.status(500).json({
+      ok: false,
+      message: "Database connection failed."
+    });
+  }
+});
 
-      const name =
-        String(
-          req.body.name || ""
-        ).trim();
+/* =========================
+   REGISTER
+========================= */
 
-      const email =
-        cleanEmail(
-          req.body.email
-        );
+app.post("/api/register", async (req, res) => {
+  try {
+    const name = String(req.body.name || "").trim();
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
 
-      const password =
-        String(
-          req.body.password || ""
-        );
+    const password = String(req.body.password || "");
 
+    if (!name || !email || password.length < 6) {
+      return res.status(400).json({
+        message:
+          "Enter your name, a valid email and a password of at least 6 characters."
+      });
+    }
 
-      if (
-        !name ||
-        !email ||
-        !password
-      ) {
+    const existing = await pool.query(
+      `
+      SELECT id
+      FROM users
+      WHERE LOWER(email) = LOWER($1)
+      `,
+      [email]
+    );
 
-        return res.status(400).json({
-          message:
-            "Please fill in all fields."
-        });
+    if (existing.rowCount) {
+      return res.status(409).json({
+        message:
+          "An account with that email already exists."
+      });
+    }
 
-      }
+    const role =
+      ADMIN_EMAIL && email === ADMIN_EMAIL
+        ? "admin"
+        : "reader";
 
+    const passwordHash = await bcrypt.hash(
+      password,
+      12
+    );
 
-      if (password.length < 6) {
+    const result = await pool.query(
+      `
+      INSERT INTO users
+      (name, email, password_hash, role)
+      VALUES ($1, $2, $3, $4)
+      RETURNING id, name, email, role
+      `,
+      [
+        name,
+        email,
+        passwordHash,
+        role
+      ]
+    );
 
-        return res.status(400).json({
-          message:
-            "Password must be at least 6 characters."
-        });
+    req.session.user = publicUser(
+      result.rows[0]
+    );
 
-      }
+    res.status(201).json({
+      message: "Account created successfully.",
+      user: req.session.user
+    });
 
+  } catch (error) {
+    console.error(error);
 
-      const existing =
+    res.status(500).json({
+      message: "Could not create account."
+    });
+  }
+});
+
+/* =========================
+   LOGIN
+========================= */
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+
+    const password = String(req.body.password || "");
+
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM users
+      WHERE LOWER(email) = LOWER($1)
+      `,
+      [email]
+    );
+
+    if (!result.rowCount) {
+      return res.status(401).json({
+        message: "Incorrect email or password."
+      });
+    }
+
+    const user = result.rows[0];
+
+    const validPassword =
+      await bcrypt.compare(
+        password,
+        user.password_hash
+      );
+
+    if (!validPassword) {
+      return res.status(401).json({
+        message: "Incorrect email or password."
+      });
+    }
+
+    /*
+      Make sure the configured owner email
+      remains an admin.
+    */
+
+    if (
+      ADMIN_EMAIL &&
+      email === ADMIN_EMAIL &&
+      user.role !== "admin"
+    ) {
+      await pool.query(
+        `
+        UPDATE users
+        SET role = 'admin'
+        WHERE id = $1
+        `,
+        [user.id]
+      );
+
+      user.role = "admin";
+    }
+
+    req.session.user =
+      publicUser(user);
+
+    res.json({
+      message: "Logged in successfully.",
+      user: req.session.user
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Could not log in."
+    });
+  }
+});
+
+/* =========================
+   LOGOUT
+========================= */
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({
+      message: "Logged out."
+    });
+  });
+});
+
+/* =========================
+   CURRENT USER
+========================= */
+
+app.get("/api/me", (req, res) => {
+  res.json({
+    user: req.session.user || null
+  });
+});
+
+/* =========================
+   PUBLIC STORIES
+========================= */
+
+app.get("/api/stories", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        id,
+        title,
+        genre,
+        description,
+        content,
+        price,
+        cover_url,
+        is_published,
+        created_at,
+        updated_at
+      FROM stories
+      WHERE is_published = true
+      ORDER BY created_at DESC
+    `);
+
+    const stories = result.rows.map(
+      story => ({
+        ...story,
+
+        /*
+          Paid story content is not sent
+          to the public until unlocked.
+        */
+        content:
+          Number(story.price) > 0
+            ? undefined
+            : story.content
+      })
+    );
+
+    res.json(stories);
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Could not load stories."
+    });
+  }
+});
+
+/* =========================
+   SINGLE STORY
+========================= */
+
+app.get("/api/stories/:id", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM stories
+      WHERE id = $1
+      AND is_published = true
+      `,
+      [req.params.id]
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).json({
+        message: "Story not found."
+      });
+    }
+
+    const story = result.rows[0];
+
+    let unlocked =
+      Number(story.price) <= 0;
+
+    if (req.session.user) {
+      const purchase =
         await pool.query(
           `
           SELECT id
-
-          FROM users
-
-          WHERE email = $1
-          `,
-          [email]
-        );
-
-
-      if (existing.rows.length) {
-
-        return res.status(400).json({
-          message:
-            "An account with this email already exists."
-        });
-
-      }
-
-
-      const result =
-        await pool.query(
-          `
-          INSERT INTO users
-          (
-            name,
-            email,
-            password
-          )
-
-          VALUES
-          (
-            $1,
-            $2,
-            $3
-          )
-
-          RETURNING
-            id,
-            name,
-            email,
-            created_at AS "createdAt"
+          FROM purchases
+          WHERE user_id = $1
+          AND story_id = $2
+          AND status = 'paid'
           `,
           [
-            name,
-            email,
-            hashPassword(password)
+            req.session.user.id,
+            story.id
           ]
         );
 
-
-      const user =
-        result.rows[0];
-
-
-      req.session.userEmail =
-        user.email;
-
-
-      req.session.save(error => {
-
-        if (error) {
-
-          console.error(error);
-
-          return res.status(500).json({
-            message:
-              "Account created, but the session could not be saved."
-          });
-
-        }
-
-
-        res.json({
-
-          message:
-            "Account created successfully!",
-
-          user
-
-        });
-
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not create the account."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   READER LOGIN
-========================================================= */
-
-app.post(
-  "/api/login",
-  async (req, res) => {
-
-    try {
-
-      const email =
-        cleanEmail(
-          req.body.email
-        );
-
-      const password =
-        String(
-          req.body.password || ""
-        );
-
-
-      if (
-        !email ||
-        !password
-      ) {
-
-        return res.status(400).json({
-          message:
-            "Please enter your email and password."
-        });
-
+      if (purchase.rowCount) {
+        unlocked = true;
       }
-
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            id,
-            name,
-            email,
-            password,
-            created_at AS "createdAt"
-
-          FROM users
-
-          WHERE email = $1
-          `,
-          [email]
-        );
-
-
-      if (!result.rows.length) {
-
-        return res.status(401).json({
-          message:
-            "Email or password is incorrect."
-        });
-
-      }
-
-
-      const user =
-        result.rows[0];
-
-
-      if (
-        user.password !==
-        hashPassword(password)
-      ) {
-
-        return res.status(401).json({
-          message:
-            "Email or password is incorrect."
-        });
-
-      }
-
-
-      req.session.userEmail =
-        user.email;
-
-
-      req.session.save(error => {
-
-        if (error) {
-
-          console.error(error);
-
-          return res.status(500).json({
-            message:
-              "Login worked, but the session could not be saved."
-          });
-
-        }
-
-
-        res.json({
-
-          message:
-            "Logged in successfully!",
-
-          user: {
-
-            name:
-              user.name,
-
-            email:
-              user.email,
-
-            createdAt:
-              user.createdAt
-
-          }
-
-        });
-
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not log in."
-      });
-
     }
-
-  }
-);
-
-
-/* =========================================================
-   CURRENT READER
-========================================================= */
-
-app.get(
-  "/api/me",
-  async (req, res) => {
-
-    try {
-
-      const user =
-        await getCurrentUser(req);
-
-
-      if (!user) {
-
-        return res.json({
-          loggedIn: false
-        });
-
-      }
-
-
-      res.json({
-
-        loggedIn: true,
-
-        user
-
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        loggedIn: false
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   READER LOGOUT
-========================================================= */
-
-app.post(
-  "/api/logout",
-  (req, res) => {
-
-    req.session.destroy(() => {
-
-      res.clearCookie(
-        "connect.sid"
-      );
-
-      res.json({
-        message:
-          "Logged out successfully."
-      });
-
-    });
-
-  }
-);
-
-
-/* =========================================================
-   STORY SELECT
-========================================================= */
-
-const storySelect = `
-
-  id,
-
-  title,
-
-  category,
-
-  description,
-
-  content,
-
-  cover_url AS "coverUrl",
-
-  video_url AS "videoUrl",
-
-  created_at AS "createdAt"
-
-`;
-
-
-/* =========================================================
-   GET ALL STORIES
-========================================================= */
-
-app.get(
-  "/api/stories",
-  async (req, res) => {
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            ${storySelect}
-
-          FROM stories
-
-          ORDER BY id DESC
-          `
-        );
-
-
-      res.json(
-        result.rows
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not load stories."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   GET ONE STORY
-========================================================= */
-
-app.get(
-  "/api/stories/:id",
-  async (req, res) => {
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            ${storySelect}
-
-          FROM stories
-
-          WHERE id = $1
-          `,
-          [
-            Number(
-              req.params.id
-            )
-          ]
-        );
-
-
-      if (!result.rows.length) {
-
-        return res.status(404).json({
-          message:
-            "Story not found."
-        });
-
-      }
-
-
-      res.json(
-        result.rows[0]
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not load the story."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   SAVED STORIES
-========================================================= */
-
-app.get(
-  "/api/saved-stories",
-  async (req, res) => {
-
-    try {
-
-      const user =
-        await getCurrentUser(req);
-
-
-      if (!user) {
-
-        return res.status(401).json({
-          message:
-            "Please log in first."
-        });
-
-      }
-
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            ${storySelect}
-
-          FROM saved_stories ss
-
-          JOIN stories s
-          ON s.id = ss.story_id
-
-          WHERE ss.user_id = $1
-
-          ORDER BY
-            ss.created_at DESC
-          `,
-          [user.id]
-        );
-
-
-      res.json(
-        result.rows
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not load your library."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   SAVE STORY
-========================================================= */
-
-app.post(
-  "/api/saved-stories/:storyId",
-  async (req, res) => {
-
-    try {
-
-      const user =
-        await getCurrentUser(req);
-
-
-      if (!user) {
-
-        return res.status(401).json({
-          message:
-            "Please log in to save stories."
-        });
-
-      }
-
-
-      const storyId =
-        Number(
-          req.params.storyId
-        );
-
-
-      await pool.query(
-        `
-        INSERT INTO saved_stories
-        (
-          user_id,
-          story_id
-        )
-
-        VALUES
-        (
-          $1,
-          $2
-        )
-
-        ON CONFLICT
-        (
-          user_id,
-          story_id
-        )
-
-        DO NOTHING
-        `,
-        [
-          user.id,
-          storyId
-        ]
-      );
-
-
-      res.json({
-        message:
-          "Story saved to your library."
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not save the story."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   REMOVE SAVED STORY
-========================================================= */
-
-app.delete(
-  "/api/saved-stories/:storyId",
-  async (req, res) => {
-
-    try {
-
-      const user =
-        await getCurrentUser(req);
-
-
-      if (!user) {
-
-        return res.status(401).json({
-          message:
-            "Please log in first."
-        });
-
-      }
-
-
-      await pool.query(
-        `
-        DELETE FROM saved_stories
-
-        WHERE user_id = $1
-
-        AND story_id = $2
-        `,
-        [
-          user.id,
-
-          Number(
-            req.params.storyId
-          )
-        ]
-      );
-
-
-      res.json({
-        message:
-          "Story removed from your library."
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not remove the story."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-app.post(
-  "/api/admin/login",
-  (req, res) => {
-
-    const email =
-      cleanEmail(
-        req.body.email
-      );
-
-    const password =
-      String(
-        req.body.password || ""
-      );
-
-
-    if (!ADMIN_PASSWORD) {
-
-      return res.status(500).json({
-        message:
-          "Admin password has not been configured on the server."
-      });
-
-    }
-
-
-    if (
-      email !==
-        cleanEmail(ADMIN_EMAIL) ||
-      password !==
-        ADMIN_PASSWORD
-    ) {
-
-      return res.status(401).json({
-        message:
-          "Admin email or password is incorrect."
-      });
-
-    }
-
-
-    req.session.isAdmin =
-      true;
-
-    req.session.adminEmail =
-      ADMIN_EMAIL;
-
-
-    req.session.save(error => {
-
-      if (error) {
-
-        console.error(error);
-
-        return res.status(500).json({
-          message:
-            "Admin login worked, but the session could not be saved."
-        });
-
-      }
-
-
-      res.json({
-        message:
-          "Admin login successful."
-      });
-
-    });
-
-  }
-);
-
-
-/* =========================================================
-   CHECK ADMIN
-========================================================= */
-
-app.get(
-  "/api/admin/me",
-  (req, res) => {
 
     res.json({
-
-      loggedIn:
-        !!req.session.isAdmin,
-
-      email:
-        req.session.adminEmail ||
-        ""
-
+      id: story.id,
+      title: story.title,
+      genre: story.genre,
+      description: story.description,
+      price: story.price,
+      cover_url: story.cover_url,
+      is_published: story.is_published,
+      unlocked,
+      content:
+        unlocked
+          ? story.content
+          : null
     });
 
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Could not load story."
+    });
   }
-);
+});
 
-
-/* =========================================================
-   ADMIN LOGOUT
-========================================================= */
+/* =========================
+   DEMO PURCHASE
+========================= */
 
 app.post(
-  "/api/admin/logout",
-  (req, res) => {
+  "/api/stories/:id/purchase-demo",
+  requireLogin,
+  async (req, res) => {
 
-    req.session.destroy(() => {
+    try {
+      const result =
+        await pool.query(
+          `
+          SELECT id, price
+          FROM stories
+          WHERE id = $1
+          AND is_published = true
+          `,
+          [req.params.id]
+        );
 
-      res.clearCookie(
-        "connect.sid"
+      if (!result.rowCount) {
+        return res.status(404).json({
+          message: "Story not found."
+        });
+      }
+
+      const story = result.rows[0];
+
+      await pool.query(
+        `
+        INSERT INTO purchases
+        (user_id, story_id, amount, provider, status)
+        VALUES ($1, $2, $3, 'demo', 'paid')
+
+        ON CONFLICT (user_id, story_id)
+
+        DO UPDATE SET
+          status = 'paid'
+        `,
+        [
+          req.session.user.id,
+          story.id,
+          story.price
+        ]
       );
 
       res.json({
         message:
-          "Admin logged out."
+          "Demo purchase completed.",
+        storyId: story.id
       });
 
-    });
+    } catch (error) {
+      console.error(error);
 
+      res.status(500).json({
+        message: "Purchase failed."
+      });
+    }
   }
 );
 
+/* =========================
+   ADMIN — VIEW STORIES
+========================= */
 
-/* =========================================================
-   ADD STORY
-========================================================= */
+app.get(
+  "/api/admin/stories",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+      const result =
+        await pool.query(
+          `
+          SELECT *
+          FROM stories
+          ORDER BY created_at DESC
+          `
+        );
+
+      res.json(result.rows);
+
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Could not load admin stories."
+      });
+    }
+  }
+);
+
+/* =========================
+   ADMIN — ADD STORY
+========================= */
 
 app.post(
   "/api/admin/stories",
@@ -1098,55 +568,27 @@ app.post(
   async (req, res) => {
 
     try {
-
-      const title =
-        String(
-          req.body.title || ""
-        ).trim();
-
-      const category =
-        String(
-          req.body.category ||
-          "STORY"
-        ).trim();
-
-      const description =
-        String(
-          req.body.description ||
-          ""
-        ).trim();
-
-      const content =
-        String(
-          req.body.content ||
-          ""
-        ).trim();
-
-      const coverUrl =
-        String(
-          req.body.coverUrl ||
-          ""
-        ).trim();
-
-      const videoUrl =
-        String(
-          req.body.videoUrl ||
-          ""
-        ).trim();
-
+      const {
+        title,
+        genre,
+        description,
+        content,
+        price = 0,
+        cover_url = "",
+        is_published = false
+      } = req.body;
 
       if (
         !title ||
+        !genre ||
+        !description ||
         !content
       ) {
-
         return res.status(400).json({
           message:
-            "Story title and story content are required."
+            "Please complete all required story fields."
         });
-
       }
-
 
       const result =
         await pool.query(
@@ -1154,65 +596,48 @@ app.post(
           INSERT INTO stories
           (
             title,
-            category,
+            genre,
             description,
             content,
+            price,
             cover_url,
-            video_url
+            is_published
           )
 
           VALUES
-          (
-            $1,
-            $2,
-            $3,
-            $4,
-            $5,
-            $6
-          )
+          ($1, $2, $3, $4, $5, $6, $7)
 
-          RETURNING
-            ${storySelect}
+          RETURNING *
           `,
           [
-            title,
-            category,
-            description,
-            content,
-            coverUrl,
-            videoUrl
+            String(title).trim(),
+            String(genre).trim(),
+            String(description).trim(),
+            String(content),
+            Number(price) || 0,
+            String(cover_url || "").trim(),
+            Boolean(is_published)
           ]
         );
 
-
-      res.json({
-
-        message:
-          "Story saved successfully!",
-
-        story:
-          result.rows[0]
-
-      });
+      res.status(201).json(
+        result.rows[0]
+      );
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
         message:
-          "Could not save the story."
+          "Could not save story."
       });
-
     }
-
   }
 );
 
-
-/* =========================================================
-   EDIT STORY
-========================================================= */
+/* =========================
+   ADMIN — EDIT STORY
+========================= */
 
 app.put(
   "/api/admin/stories/:id",
@@ -1220,61 +645,15 @@ app.put(
   async (req, res) => {
 
     try {
-
-      const id =
-        Number(
-          req.params.id
-        );
-
-      const title =
-        String(
-          req.body.title || ""
-        ).trim();
-
-      const category =
-        String(
-          req.body.category ||
-          "STORY"
-        ).trim();
-
-      const description =
-        String(
-          req.body.description ||
-          ""
-        ).trim();
-
-      const content =
-        String(
-          req.body.content ||
-          ""
-        ).trim();
-
-      const coverUrl =
-        String(
-          req.body.coverUrl ||
-          ""
-        ).trim();
-
-      const videoUrl =
-        String(
-          req.body.videoUrl ||
-          ""
-        ).trim();
-
-
-      if (
-        !Number.isInteger(id) ||
-        !title ||
-        !content
-      ) {
-
-        return res.status(400).json({
-          message:
-            "Story ID, title and content are required."
-        });
-
-      }
-
+      const {
+        title,
+        genre,
+        description,
+        content,
+        price = 0,
+        cover_url = "",
+        is_published = false
+      } = req.body;
 
       const result =
         await pool.query(
@@ -1283,67 +662,52 @@ app.put(
 
           SET
             title = $1,
-            category = $2,
+            genre = $2,
             description = $3,
             content = $4,
-            cover_url = $5,
-            video_url = $6
+            price = $5,
+            cover_url = $6,
+            is_published = $7,
+            updated_at = CURRENT_TIMESTAMP
 
-          WHERE id = $7
+          WHERE id = $8
 
-          RETURNING
-            ${storySelect}
+          RETURNING *
           `,
           [
-            title,
-            category,
-            description,
-            content,
-            coverUrl,
-            videoUrl,
-            id
+            String(title).trim(),
+            String(genre).trim(),
+            String(description).trim(),
+            String(content),
+            Number(price) || 0,
+            String(cover_url || "").trim(),
+            Boolean(is_published),
+            req.params.id
           ]
         );
 
-
-      if (!result.rows.length) {
-
+      if (!result.rowCount) {
         return res.status(404).json({
-          message:
-            "Story not found."
+          message: "Story not found."
         });
-
       }
 
-
-      res.json({
-
-        message:
-          "Story updated successfully!",
-
-        story:
-          result.rows[0]
-
-      });
+      res.json(result.rows[0]);
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
         message:
-          "Could not update the story."
+          "Could not update story."
       });
-
     }
-
   }
 );
 
-
-/* =========================================================
-   DELETE STORY
-========================================================= */
+/* =========================
+   ADMIN — DELETE STORY
+========================= */
 
 app.delete(
   "/api/admin/stories/:id",
@@ -1351,531 +715,88 @@ app.delete(
   async (req, res) => {
 
     try {
-
       const result =
         await pool.query(
           `
           DELETE FROM stories
-
           WHERE id = $1
-
           RETURNING id
           `,
-          [
-            Number(
-              req.params.id
-            )
-          ]
+          [req.params.id]
         );
 
-
-      if (!result.rows.length) {
-
+      if (!result.rowCount) {
         return res.status(404).json({
-          message:
-            "Story not found."
+          message: "Story not found."
         });
-
       }
 
-
       res.json({
-        message:
-          "Story deleted permanently."
+        message: "Story deleted."
       });
 
     } catch (error) {
-
       console.error(error);
 
       res.status(500).json({
         message:
-          "Could not delete the story."
+          "Could not delete story."
       });
-
     }
-
   }
 );
 
-
-/* =========================================================
-   AUTHOR PROFILE
-========================================================= */
-
-app.get(
-  "/api/admin/profile",
-  requireAdmin,
-  async (req, res) => {
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            name,
-            genre,
-            bio,
-            photo_url AS "photoUrl"
-
-          FROM author_profiles
-
-          WHERE id = 1
-          `
-        );
-
-
-      res.json(
-        result.rows[0] || {
-
-          name:
-            "Epshitah Stories",
-
-          genre:
-            "",
-
-          bio:
-            "",
-
-          photoUrl:
-            ""
-
-        }
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not load author profile."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   SAVE AUTHOR PROFILE
-========================================================= */
-
-app.put(
-  "/api/admin/profile",
-  requireAdmin,
-  async (req, res) => {
-
-    try {
-
-      const name =
-        String(
-          req.body.name ||
-          ""
-        ).trim();
-
-      const genre =
-        String(
-          req.body.genre ||
-          ""
-        ).trim();
-
-      const bio =
-        String(
-          req.body.bio ||
-          ""
-        ).trim();
-
-      const photoUrl =
-        String(
-          req.body.photoUrl ||
-          ""
-        ).trim();
-
-
-      await pool.query(
-        `
-        INSERT INTO author_profiles
-        (
-          id,
-          name,
-          genre,
-          bio,
-          photo_url,
-          updated_at
-        )
-
-        VALUES
-        (
-          1,
-          $1,
-          $2,
-          $3,
-          $4,
-          NOW()
-        )
-
-        ON CONFLICT (id)
-
-        DO UPDATE SET
-
-          name =
-            EXCLUDED.name,
-
-          genre =
-            EXCLUDED.genre,
-
-          bio =
-            EXCLUDED.bio,
-
-          photo_url =
-            EXCLUDED.photo_url,
-
-          updated_at =
-            NOW()
-        `,
-        [
-          name ||
-            "Epshitah Stories",
-
-          genre,
-
-          bio,
-
-          photoUrl
-        ]
-      );
-
-
-      res.json({
-        message:
-          "Author profile saved successfully."
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not save author profile."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   PUBLIC AUTHOR PROFILE
-========================================================= */
-
-app.get(
-  "/api/author-profile",
-  async (req, res) => {
-
-    try {
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            name,
-            genre,
-            bio,
-            photo_url AS "photoUrl"
-
-          FROM author_profiles
-
-          WHERE id = 1
-          `
-        );
-
-
-      res.json(
-        result.rows[0] || {
-
-          name:
-            "Epshitah Stories",
-
-          genre:
-            "",
-
-          bio:
-            "",
-
-          photoUrl:
-            ""
-
-        }
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not load author profile."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   FEATURED STORY
-========================================================= */
-
-app.get(
-  "/api/featured",
-  async (req, res) => {
-
-    try {
-
-      const setting =
-        await pool.query(
-          `
-          SELECT
-            setting_value
-
-          FROM site_settings
-
-          WHERE setting_key =
-            'featured_story_id'
-          `
-        );
-
-
-      const id =
-        setting.rows[0]
-          ?.setting_value;
-
-
-      if (!id) {
-
-        return res.json(null);
-
-      }
-
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            ${storySelect}
-
-          FROM stories
-
-          WHERE id = $1
-          `,
-          [
-            Number(id)
-          ]
-        );
-
-
-      res.json(
-        result.rows[0] || null
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not load featured story."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   SET FEATURED STORY
-========================================================= */
-
-app.put(
-  "/api/admin/featured",
-  requireAdmin,
-  async (req, res) => {
-
-    try {
-
-      const id =
-        req.body.storyId
-          ? String(
-              req.body.storyId
-            )
-          : "";
-
-
-      if (id) {
-
-        const exists =
-          await pool.query(
-            `
-            SELECT id
-
-            FROM stories
-
-            WHERE id = $1
-            `,
-            [
-              Number(id)
-            ]
-          );
-
-
-        if (!exists.rows.length) {
-
-          return res.status(404).json({
-            message:
-              "Story not found."
-          });
-
-        }
-
-      }
-
-
-      await pool.query(
-        `
-        INSERT INTO site_settings
-        (
-          setting_key,
-          setting_value
-        )
-
-        VALUES
-        (
-          'featured_story_id',
-          $1
-        )
-
-        ON CONFLICT
-        (
-          setting_key
-        )
-
-        DO UPDATE SET
-
-          setting_value =
-            EXCLUDED.setting_value
-        `,
-        [id]
-      );
-
-
-      res.json({
-        message:
-          id
-            ? "Featured story updated."
-            : "Featured story cleared."
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        message:
-          "Could not update featured story."
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   PAGES
-========================================================= */
-
-app.get(
-  "/signup",
-  (req, res) => {
-
-    res.sendFile(
-      path.join(
-        __dirname,
-        "signup.html"
-      )
-    );
-
-  }
-);
-
-
-app.get(
-  "/admin",
-  (req, res) => {
-
-    res.sendFile(
-      path.join(
-        __dirname,
-        "admin.html"
-      )
-    );
-
-  }
-);
-
-
-/* =========================================================
-   STATIC WEBSITE
-========================================================= */
-
-app.use(
-  express.static(
-    __dirname
-  )
-);
-
-
-/* =========================================================
+/* =========================
+   ADMIN PAGE
+========================= */
+
+app.get("/admin", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "admin.html"
+    )
+  );
+});
+
+/* =========================
+   PUBLIC WEBSITE
+========================= */
+
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "index.html"
+    )
+  );
+});
+
+/* =========================
    START SERVER
-========================================================= */
+========================= */
 
-async function startServer() {
-
-  try {
-
-    await setupDatabase();
-
+initDatabase()
+  .then(() => {
 
     app.listen(
       PORT,
       () => {
-
         console.log(
           `Epshitah Stories running on port ${PORT}`
         );
-
       }
     );
 
-  } catch (error) {
+  })
+  .catch(error => {
 
     console.error(
-      "Could not start server:",
+      "Database initialization failed:",
       error
     );
 
     process.exit(1);
-
-  }
-
-}
-
-
-startServer();
+  });
