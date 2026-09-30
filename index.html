@@ -1,1962 +1,680 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Epshitah Stories</title><meta name="description"
-content="Epshitah Stories — Emotional stories that touch the heart.">
-
-<style>
-
-:root{
---purple:#7b174d;
---purple-dark:#4d1032;
---purple-light:#b62d72;
---pink:#f8e4ee;
---soft:#fcf8fb;
---white:#fff;
---text:#241a20;
---muted:#777;
---border:#eadfe5;
---shadow:0 10px 30px rgba(75,16,50,.10);
-}
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-html{
-scroll-behavior:smooth;
-}
-
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:var(--soft);
-color:var(--text);
-line-height:1.6;
-}
-
-/* HEADER */
-
-.header{
-position:sticky;
-top:0;
-z-index:1000;
-background:rgba(255,255,255,.97);
-backdrop-filter:blur(10px);
-border-bottom:1px solid var(--border);
-}
-
-.nav{
-max-width:1200px;
-margin:auto;
-height:70px;
-padding:0 20px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-}
-
-.logo{
-text-decoration:none;
-color:var(--purple);
-font-size:23px;
-font-weight:800;
-}
-
-.logo span{
-color:var(--purple-light);
-}
-
-.nav-links{
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.nav-links a,
-.nav-links button{
-border:0;
-background:transparent;
-text-decoration:none;
-color:var(--text);
-padding:9px 12px;
-border-radius:8px;
-font-weight:600;
-cursor:pointer;
-}
-
-.nav-links a:hover,
-.nav-links button:hover{
-background:var(--pink);
-color:var(--purple);
-}
-
-.login-btn{
-background:var(--purple)!important;
-color:#fff!important;
-padding:10px 17px!important;
-}
-
-.user-area{
-display:none;
-align-items:center;
-gap:7px;
-}
-
-.user-area.show{
-display:flex;
-}
-
-.user-name{
-color:var(--purple);
-font-size:13px;
-font-weight:700;
-}
-
-.profile-btn{
-background:var(--pink)!important;
-color:var(--purple)!important;
-}
-
-.logout-btn{
-border:1px solid var(--border)!important;
-background:#fff!important;
-color:var(--purple)!important;
-}
-
-/* HERO */
-
-.hero{
-max-width:1200px;
-margin:25px auto 0;
-padding:0 20px;
-}
-
-.hero-inner{
-min-height:440px;
-border-radius:25px;
-overflow:hidden;
-position:relative;
-display:flex;
-align-items:center;
-background:
-radial-gradient(circle at 80% 20%,rgba(255,255,255,.16),transparent 30%),
-linear-gradient(135deg,var(--purple-dark),var(--purple),var(--purple-light));
-box-shadow:var(--shadow);
-}
-
-.hero-decoration{
-position:absolute;
-width:340px;
-height:340px;
-border-radius:50%;
-right:-110px;
-bottom:-130px;
-background:rgba(255,255,255,.09);
-}
-
-.hero-decoration.two{
-width:210px;
-height:210px;
-right:120px;
-top:-120px;
-}
-
-.hero-content{
-position:relative;
-z-index:2;
-color:#fff;
-max-width:700px;
-padding:60px;
-}
-
-.hero-kicker{
-display:inline-block;
-padding:7px 12px;
-border-radius:20px;
-background:rgba(255,255,255,.14);
-font-size:12px;
-font-weight:700;
-margin-bottom:18px;
-}
-
-.hero h1{
-font-size:48px;
-line-height:1.08;
-letter-spacing:-1.5px;
-margin-bottom:18px;
-}
-
-.hero p{
-font-size:17px;
-max-width:580px;
-color:rgba(255,255,255,.9);
-margin-bottom:25px;
-}
-
-.hero-actions{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-}
-
-.hero-primary,
-.hero-secondary{
-padding:13px 20px;
-border-radius:10px;
-font-weight:800;
-cursor:pointer;
-}
-
-.hero-primary{
-border:0;
-background:#fff;
-color:var(--purple);
-}
-
-.hero-secondary{
-border:1px solid rgba(255,255,255,.35);
-background:rgba(255,255,255,.08);
-color:#fff;
-}
-
-/* MAIN */
-
-.container{
-max-width:1200px;
-margin:auto;
-padding:45px 20px;
-}
-
-.section{
-margin-bottom:50px;
-}
-
-.section-heading{
-display:flex;
-align-items:end;
-justify-content:space-between;
-margin-bottom:20px;
-}
-
-.section-heading h2{
-font-size:26px;
-color:var(--purple-dark);
-}
-
-.section-heading p{
-color:var(--muted);
-font-size:14px;
-}
-
-/* SEARCH */
-
-.search-area{
-background:#fff;
-border:1px solid var(--border);
-border-radius:17px;
-padding:18px;
-box-shadow:var(--shadow);
-}
-
-.search-wrap{
-display:flex;
-gap:10px;
-}
-
-.search-wrap input{
-flex:1;
-min-width:0;
-padding:14px 16px;
-border:1px solid var(--border);
-border-radius:10px;
-outline:none;
-font-size:15px;
-}
-
-.search-wrap button{
-border:0;
-background:var(--purple);
-color:#fff;
-border-radius:10px;
-padding:0 20px;
-font-weight:700;
-}
-
-.genre-list{
-display:flex;
-gap:9px;
-flex-wrap:wrap;
-margin-top:15px;
-}
-
-.genre-btn{
-border:1px solid var(--border);
-background:#fff;
-color:var(--purple);
-padding:8px 13px;
-border-radius:20px;
-cursor:pointer;
-font-size:13px;
-font-weight:600;
-}
-
-.genre-btn.active{
-background:var(--purple);
-color:#fff;
-}
-
-/* STORIES */
-
-.story-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:20px;
-}
-
-.story-card{
-background:#fff;
-border:1px solid var(--border);
-border-radius:17px;
-overflow:hidden;
-box-shadow:var(--shadow);
-transition:.2s;
-}
-
-.story-card:hover{
-transform:translateY(-3px);
-}
-
-.cover{
-height:230px;
-background:linear-gradient(135deg,var(--purple),var(--purple-light));
-display:flex;
-align-items:center;
-justify-content:center;
-color:#fff;
-padding:25px;
-text-align:center;
-}
-
-.cover-placeholder{
-font-size:42px;
-opacity:.9;
-}
-
-.cover-title{
-font-size:22px;
-font-weight:800;
-line-height:1.2;
-}
-
-.story-info{
-padding:18px;
-}
-
-.genre-tag{
-display:inline-block;
-background:var(--pink);
-color:var(--purple);
-border-radius:20px;
-padding:5px 9px;
-font-size:11px;
-font-weight:700;
-margin-bottom:9px;
-}
-
-.story-info h3{
-font-size:19px;
-margin-bottom:7px;
-}
-
-.story-info p{
-color:var(--muted);
-font-size:13px;
-line-height:1.55;
-display:-webkit-box;
--webkit-line-clamp:3;
--webkit-box-orient:vertical;
-overflow:hidden;
-}
-
-.read-btn{
-width:100%;
-margin-top:15px;
-border:0;
-background:var(--purple);
-color:white;
-padding:11px;
-border-radius:9px;
-font-weight:700;
-cursor:pointer;
-}
-
-.empty{
-grid-column:1/-1;
-text-align:center;
-padding:55px 20px;
-background:#fff;
-border:1px dashed var(--border);
-border-radius:15px;
-color:var(--muted);
-}
-
-.empty strong{
-display:block;
-color:var(--purple);
-font-size:19px;
-margin-bottom:6px;
-}
-
-/* VIDEO */
-
-.video-section{
-background:linear-gradient(135deg,#fff,#f9edf4);
-border:1px solid var(--border);
-border-radius:20px;
-padding:28px;
-}
-
-.video-empty{
-text-align:center;
-padding:35px 15px;
-color:var(--muted);
-}
-
-.video-icon{
-font-size:40px;
-margin-bottom:8px;
-}
-
-/* ABOUT */
-
-.about{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:25px;
-}
-
-.about-card{
-background:#fff;
-border:1px solid var(--border);
-border-radius:17px;
-padding:28px;
-box-shadow:var(--shadow);
-}
-
-.about-card h3{
-color:var(--purple);
-margin-bottom:10px;
-}
-
-.about-card p{
-color:var(--muted);
-}
-
-/* FOOTER */
-
-.footer{
-background:var(--purple-dark);
-color:#fff;
-margin-top:20px;
-}
-
-.footer-inner{
-max-width:1200px;
-margin:auto;
-padding:35px 20px;
-display:flex;
-justify-content:space-between;
-gap:20px;
-flex-wrap:wrap;
-}
-
-.footer-brand{
-font-size:21px;
-font-weight:800;
-}
-
-.footer p{
-color:rgba(255,255,255,.7);
-font-size:13px;
-margin-top:5px;
-}
-
-/* MODALS */
-
-.modal,
-.auth-panel{
-position:fixed;
-inset:0;
-background:rgba(20,10,16,.72);
-z-index:3000;
-display:none;
-align-items:center;
-justify-content:center;
-padding:15px;
-}
-
-.modal.show,
-.auth-panel.show{
-display:flex;
-}
-
-.modal-box,
-.auth-box,
-.profile-box{
-background:#fff;
-width:100%;
-max-width:760px;
-max-height:92vh;
-overflow:auto;
-border-radius:20px;
-position:relative;
-}
-
-.auth-box{
-max-width:430px;
-padding:28px;
-}
-
-.profile-box{
-max-width:500px;
-padding:30px;
-}
-
-.close{
-position:absolute;
-top:15px;
-right:15px;
-width:35px;
-height:35px;
-border:0;
-border-radius:50%;
-background:var(--pink);
-color:var(--purple);
-font-size:22px;
-cursor:pointer;
-z-index:5;
-}
-
-.modal-head{
-padding:24px 25px 18px;
-border-bottom:1px solid var(--border);
-}
-
-.modal-head h2{
-color:var(--purple-dark);
-padding-right:40px;
-}
-
-.modal-body{
-padding:25px;
-}
-
-.modal-description{
-color:var(--muted);
-margin-bottom:20px;
-}
-
-.full-story{
-white-space:pre-wrap;
-line-height:1.9;
-font-size:16px;
-}
-
-/* AUTH */
-
-.auth-box h2,
-.profile-box h2{
-color:var(--purple);
-margin-bottom:6px;
-}
-
-.auth-subtitle{
-color:var(--muted);
-font-size:13px;
-margin-bottom:20px;
-}
-
-.auth-box label{
-display:block;
-font-weight:700;
-font-size:13px;
-margin:13px 0 7px;
-}
-
-.auth-box input{
-width:100%;
-padding:12px;
-border:1px solid var(--border);
-border-radius:9px;
-outline:none;
-font-size:15px;
-}
-
-.auth-submit{
-width:100%;
-border:0;
-background:var(--purple);
-color:#fff;
-padding:13px;
-border-radius:9px;
-font-weight:700;
-margin-top:18px;
-cursor:pointer;
-}
-
-.auth-message{
-display:none;
-margin-top:12px;
-padding:10px;
-border-radius:8px;
-font-size:13px;
-background:#fdebec;
-color:#9b1c2e;
-}
-
-.auth-message.show{
-display:block;
-}
-
-.auth-switch{
-margin-top:17px;
-text-align:center;
-color:var(--muted);
-font-size:13px;
-}
-
-.auth-switch button{
-border:0;
-background:none;
-color:var(--purple);
-font-weight:700;
-cursor:pointer;
-}
-
-/* PROFILE */
-
-.profile-header{
-text-align:center;
-padding:10px 0 25px;
-border-bottom:1px solid var(--border);
-}
-
-.profile-avatar{
-width:75px;
-height:75px;
-margin:0 auto 12px;
-border-radius:50%;
-background:linear-gradient(135deg,var(--purple),var(--purple-light));
-color:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:30px;
-font-weight:800;
-}
-
-.profile-name{
-font-size:22px;
-font-weight:800;
-color:var(--purple-dark);
-}
-
-.profile-email{
-color:var(--muted);
-font-size:14px;
-}
-
-.profile-section{
-margin-top:25px;
-}
-
-.profile-section h3{
-color:var(--purple-dark);
-margin-bottom:12px;
-}
-
-.profile-info{
-background:var(--soft);
-border:1px solid var(--border);
-border-radius:12px;
-padding:15px;
-}
-
-.profile-row{
-display:flex;
-justify-content:space-between;
-gap:15px;
-padding:9px 0;
-border-bottom:1px solid var(--border);
-}
-
-.profile-row:last-child{
-border-bottom:0;
-}
-
-.profile-row span:first-child{
-color:var(--muted);
-font-size:13px;
-}
-
-.profile-row span:last-child{
-font-weight:700;
-color:var(--text);
-text-align:right;
-}
-
-.saved-list{
-display:grid;
-gap:10px;
-}
-
-.saved-item{
-border:1px solid var(--border);
-border-radius:12px;
-padding:14px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-background:#fff;
-}
-
-.saved-item-title{
-font-weight:700;
-color:var(--purple-dark);
-}
-
-.saved-item-category{
-font-size:12px;
-color:var(--muted);
-}
-
-.saved-read{
-border:0;
-background:var(--purple);
-color:#fff;
-padding:8px 12px;
-border-radius:8px;
-font-weight:700;
-cursor:pointer;
-}
-
-.profile-empty{
-text-align:center;
-padding:20px;
-background:var(--soft);
-border-radius:12px;
-color:var(--muted);
-font-size:14px;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:900px){
-
-.story-grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-.hero h1{
-font-size:40px;
-}
-
-}
-
-@media(max-width:650px){
-
-.nav{
-height:62px;
-}
-
-.logo{
-font-size:20px;
-}
-
-.nav-links a{
-display:none;
-}
-
-.user-name{
-display:none;
-}
-
-.hero{
-margin-top:15px;
-padding:0 12px;
-}
-
-.hero-inner{
-min-height:430px;
-border-radius:19px;
-}
-
-.hero-content{
-padding:35px 25px;
-}
-
-.hero h1{
-font-size:34px;
-}
-
-.hero p{
-font-size:15px;
-}
-
-.container{
-padding:32px 14px;
-}
-
-.section-heading{
-display:block;
-}
-
-.section-heading h2{
-font-size:23px;
-}
-
-.story-grid{
-grid-template-columns:1fr;
-}
-
-.about{
-grid-template-columns:1fr;
-}
-
-.search-wrap{
-flex-direction:column;
-}
-
-.search-wrap button{
-padding:12px;
-}
-
-.cover{
-height:250px;
-}
-
-.footer-inner{
-display:block;
-}
-
-.footer-inner>div{
-margin-bottom:15px;
-}
-
-.profile-box{
-padding:22px;
-}
-
-.profile-row{
-display:block;
-}
-
-.profile-row span:last-child{
-display:block;
-text-align:left;
-margin-top:3px;
-}
-
-.saved-item{
-align-items:flex-start;
-flex-direction:column;
-}
-
-.saved-read{
-width:100%;
-}
-}
-
-</style></head><body><header class="header"><nav class="nav"><a href="#" class="logo"
-onclick="goHome();return false;">
-Epshitah <span>Stories</span>
-</a>
-
-<div class="nav-links"><a href="#stories">Stories</a>
-<a href="#about">About</a>
-
-<div class="user-area" id="userArea"><span class="user-name" id="userName"></span>
-
-<button class="profile-btn"
-onclick="openProfile()">
-Profile
-</button>
-
-<button class="logout-btn"
-onclick="logout()">
-Log Out
-</button>
-
-</div><button
-class="login-btn"
-id="loginButton"
-onclick="openLogin()">
-Sign In
-</button>
-
-</div></nav></header><section class="hero"><div class="hero-inner"><div class="hero-decoration"></div>
-<div class="hero-decoration two"></div><div class="hero-content"><span class="hero-kicker">
-EMOTIONAL STORIES THAT TOUCH THE HEART
-</span><h1>
-Every story deserves
-to be heard.
-</h1><p>
-Welcome to Epshitah Stories — a place for stories
-of love, pain, hope, family, heartbreak and life.
-Read stories that stay with you long after the last page.
-</p><div class="hero-actions"><button
-class="hero-primary"
-onclick="document.getElementById('stories').scrollIntoView()">
-Explore Stories
-</button>
-
-<button
-class="hero-secondary"
-onclick="document.getElementById('about').scrollIntoView()">
-About Epshitah
-</button>
-
-</div></div>
-</div>
-</section><main class="container"><section class="section"><div class="search-area"><div class="search-wrap"><input
-id="searchInput"
-type="search"
-placeholder="Search stories..."
-oninput="filterStories()">
-
-<button onclick="filterStories()">
-Search
-</button></div><div
-class="genre-list"
-id="genreList">
-</div></div></section><section
-class="section"
-id="stories"><div class="section-heading"><div><h2>Latest Stories</h2><p>
-Discover stories written to make you feel.
-</p></div></div><div
-class="story-grid"
-id="storyGrid"><div class="empty"><strong>
-Loading stories...
-</strong>Please wait while we bring the stories to you.
-
-</div></div></section><section class="section"><div class="section-heading"><div><h2>Story Videos</h2><p>
-Watch stories come alive.
-</p></div></div><div class="video-section"><div class="video-empty"><div class="video-icon">
-🎬
-</div><strong>
-Story videos are coming soon.
-</strong><p>
-Videos will appear here when they are added
-to Epshitah Stories.
-</p></div></div></section><section
-class="section"
-id="about"><div class="section-heading"><div><h2>About Epshitah Stories</h2><p>
-Stories with heart.
-</p></div></div><div class="about"><div class="about-card"><h3>Our Stories</h3><p>
-Epshitah Stories is a home for emotional and
-meaningful stories. From romance and family
-to difficult experiences and inspiring journeys,
-every story has something to say.
-</p></div><div class="about-card"><h3>Why We Tell Them</h3><p>
-Sometimes a story helps someone realise they
-are not alone. Sometimes it gives someone hope.
-And sometimes it simply gives a voice to something
-that was difficult to say.
-</p></div></div></section></main><footer class="footer"><div class="footer-inner"><div><div class="footer-brand">
-Epshitah Stories
-</div><p>
-Emotional stories that touch the heart.
-</p></div><div><p>
-© <span id="year"></span>
-Epshitah Stories. All rights reserved.
-</p></div></div></footer><!-- STORY MODAL --><div
-class="modal"
-id="storyModal"
-onclick="closeStoryOutside(event)"><div class="modal-box"><button
-class="close"
-onclick="closeStory()">
-×
-</button>
-
-<div class="modal-head"><span
-class="genre-tag"
-id="modalGenre">
-</span>
-
-<h2 id="modalTitle"></h2></div><div class="modal-body"><p
-class="modal-description"
-id="modalDescription">
-</p><div
-class="full-story"
-id="modalStory">
-</div></div></div></div><!-- LOGIN --><div
-class="auth-panel"
-id="loginPanel"
-onclick="closeAuthOutside(event)"><div class="auth-box"><button
-class="close"
-onclick="closeLogin()">
-×
-</button>
-
-<h2>
-Welcome Back
-</h2><p class="auth-subtitle">
-Sign in to continue reading and saving your stories.
-</p><form onsubmit="login(event)"><label>Email</label>
-
-<input
-id="loginEmail"
-type="email"
-required
-autocomplete="email"
-placeholder="Enter your email">
-
-<label>Password</label>
-
-<input
-id="loginPassword"
-type="password"
-required
-autocomplete="current-password"
-placeholder="Enter your password">
-
-<button
-class="auth-submit"
-type="submit">
-Sign In
-</button>
-
-</form><div
-class="auth-message"
-id="loginMessage">
-</div><div class="auth-switch">Don't have an account?
-
-<button
-type="button"
-onclick="openSignup()">
-Create one
-</button>
-
-</div></div></div><!-- SIGN UP --><div
-class="auth-panel"
-id="signupPanel"
-onclick="closeAuthOutside(event)"><div class="auth-box"><button
-class="close"
-onclick="closeSignup()">
-×
-</button>
-
-<h2>
-Create Your Account
-</h2><p class="auth-subtitle">
-Join Epshitah Stories and start reading.
-</p><form onsubmit="signup(event)"><label>Name</label>
-
-<input
-id="signupName"
-type="text"
-required
-autocomplete="name"
-placeholder="Enter your name">
-
-<label>Email</label>
-
-<input
-id="signupEmail"
-type="email"
-required
-autocomplete="email"
-placeholder="Enter your email">
-
-<label>Password</label>
-
-<input
-id="signupPassword"
-type="password"
-required
-autocomplete="new-password"
-placeholder="Create a password">
-
-<button
-class="auth-submit"
-type="submit">
-Create Account
-</button>
-
-</form><div
-class="auth-message"
-id="signupMessage">
-</div><div class="auth-switch">Already have an account?
-
-<button
-type="button"
-onclick="openLogin()">
-Sign In
-</button>
-
-</div></div></div><!-- PROFILE --><div
-class="auth-panel"
-id="profilePanel"
-onclick="closeAuthOutside(event)"><div class="profile-box"><button
-class="close"
-onclick="closeProfile()">
-×
-</button>
-
-<div class="profile-header"><div
-class="profile-avatar"
-id="profileAvatar">
-E
-</div><div
-class="profile-name"
-id="profileName">
-Reader
-</div><div
-class="profile-email"
-id="profileEmail">
-</div></div><div class="profile-section"><h3>
-My Account
-</h3><div class="profile-info"><div class="profile-row"><span>
-Name
-</span><span id="profileNameRow">
-</span></div><div class="profile-row"><span>
-Email
-</span><span id="profileEmailRow">
-</span></div></div></div><div class="profile-section"><h3>
-My Saved Stories
-</h3><div
-class="saved-list"
-id="savedList"><div class="profile-empty">
-Loading saved stories...
-</div></div></div></div></div><script>
-
-let allStories=[];
-let selectedGenre='';
-let currentReader=null;
-
-
-/* STORIES */
-
-async function loadStories(){
-
-const grid=document.getElementById('storyGrid');
-
-try{
-
-const response=await fetch('/api/stories');
-
-if(!response.ok){
-throw new Error('Could not load stories');
-}
-
-allStories=await response.json();
-
-buildGenres();
-renderStories(allStories);
-
-}catch(error){
-
-console.error(error);
-
-grid.innerHTML=`
-<div class="empty">
-<strong>Stories couldn't be loaded.</strong>
-Please refresh the page and try again.
-</div>
-`;
-
-}
-
-}
-
-
-function buildGenres(){
-
-const container=document.getElementById('genreList');
-
-const genres=[
-...new Set(
-allStories
-.map(story=>story.category)
-.filter(Boolean)
-)
-].sort();
-
-container.innerHTML='';
-
-if(!genres.length)return;
-
-const allButton=document.createElement('button');
-
-allButton.className='genre-btn active';
-allButton.textContent='All Stories';
-
-allButton.onclick=()=>{
-
-selectedGenre='';
-updateGenreButtons();
-filterStories();
-
-};
-
-container.appendChild(allButton);
-
-genres.forEach(genre=>{
-
-const button=document.createElement('button');
-
-button.className='genre-btn';
-button.textContent=genre;
-
-button.onclick=()=>{
-
-selectedGenre=genre;
-updateGenreButtons();
-filterStories();
-
-};
-
-container.appendChild(button);
-
-});
-
-}
-
-
-function updateGenreButtons(){
-
-document
-.querySelectorAll('.genre-btn')
-.forEach(button=>{
-
-button.classList.remove('active');
-
-if(
-selectedGenre==='' &&
-button.textContent==='All Stories'
-){
-button.classList.add('active');
-}
-
-if(
-selectedGenre &&
-button.textContent===selectedGenre
-){
-button.classList.add('active');
-}
-
-});
-
-}
-
-
-function filterStories(){
-
-const search=document
-.getElementById('searchInput')
-.value
-.trim()
-.toLowerCase();
-
-const filtered=allStories.filter(story=>{
-
-const title=(story.title||'').toLowerCase();
-const description=(story.description||'').toLowerCase();
-const category=(story.category||'').toLowerCase();
-
-const matchesSearch=
-!search ||
-title.includes(search) ||
-description.includes(search) ||
-category.includes(search);
-
-const matchesGenre=
-!selectedGenre ||
-story.category===selectedGenre;
-
-return matchesSearch && matchesGenre;
-
-});
-
-renderStories(filtered);
-
-}
-
-
-function renderStories(stories){
-
-const grid=document.getElementById('storyGrid');
-
-if(!stories.length){
-
-grid.innerHTML=`
-<div class="empty">
-<strong>No stories found.</strong>
-Try another search or genre.
-</div>
-`;
-
-return;
-
-}
-
-grid.innerHTML=stories.map(story=>{
-
-const safeTitle=escapeHtml(
-story.title||'Untitled Story'
-);
-
-const safeCategory=escapeHtml(
-story.category||'Story'
-);
-
-const safeDescription=escapeHtml(
-story.description||
-'A story waiting to be discovered.'
-);
-
-return`
-
-<article class="story-card">
-
-<div class="cover">
-
-<div>
-
-<div class="cover-placeholder">
-♡
-</div>
-
-<div class="cover-title">
-${safeTitle}
-</div>
-
-</div>
-
-</div>
-
-<div class="story-info">
-
-<span class="genre-tag">
-${safeCategory}
-</span>
-
-<h3>
-${safeTitle}
-</h3>
-
-<p>
-${safeDescription}
-</p>
-
-<button
-class="read-btn"
-onclick="openStory(${story.id})">
-Read Story
-</button>
-
-</div>
-
-</article>
-
-`;
-
-}).join('');
-
-}
-
-
-/* STORY READER */
-
-function openStory(id){
-
-const story=allStories.find(
-item=>item.id==id
-);
-
-if(!story)return;
-
-document.getElementById('modalTitle').textContent=
-story.title||'Untitled Story';
-
-document.getElementById('modalGenre').textContent=
-story.category||'Story';
-
-document.getElementById('modalDescription').textContent=
-story.description||'';
-
-document.getElementById('modalStory').textContent=
-story.content||'';
-
-document
-.getElementById('storyModal')
-.classList.add('show');
-
-document.body.style.overflow='hidden';
-
-}
-
-
-function closeStory(){
-
-document
-.getElementById('storyModal')
-.classList.remove('show');
-
-document.body.style.overflow='';
-
-}
-
-
-function closeStoryOutside(event){
-
-if(event.target.id==='storyModal'){
-closeStory();
-}
-
-}
-
-
-/* LOGIN */
-
-function openLogin(){
-
-document
-.getElementById('signupPanel')
-.classList.remove('show');
-
-document
-.getElementById('profilePanel')
-.classList.remove('show');
-
-document
-.getElementById('loginPanel')
-.classList.add('show');
-
-document.body.style.overflow='hidden';
-
-}
-
-
-function closeLogin(){
-
-document
-.getElementById('loginPanel')
-.classList.remove('show');
-
-document.body.style.overflow='';
-
-}
-
-
-async function login(event){
-
-event.preventDefault();
-
-const email=document
-.getElementById('loginEmail')
-.value
-.trim();
-
-const password=document
-.getElementById('loginPassword')
-.value;
-
-const message=document
-.getElementById('loginMessage');
-
-message.className='auth-message';
-
-try{
-
-const response=await fetch('/api/login',{
-method:'POST',
-headers:{
-'Content-Type':'application/json'
-},
-body:JSON.stringify({
-email,
-password
-})
-});
-
-let data={};
-
-try{
-data=await response.json();
-}catch(e){}
-
-if(!response.ok){
-
-message.textContent=
-data.message||
-data.error||
-'Email or password is incorrect.';
-
-message.classList.add('show');
-
-return;
-
-}
-
-closeLogin();
-
-await checkReader();
-
-window.location.reload();
-
-}catch(error){
-
-console.error(error);
-
-message.textContent=
-'Something went wrong. Please try again.';
-
-message.classList.add('show');
-
-}
-
-}
-
-
-/* SIGNUP */
-
-function openSignup(){
-
-document
-.getElementById('loginPanel')
-.classList.remove('show');
-
-document
-.getElementById('profilePanel')
-.classList.remove('show');
-
-document
-.getElementById('signupPanel')
-.classList.add('show');
-
-document.body.style.overflow='hidden';
-
-}
-
-
-function closeSignup(){
-
-document
-.getElementById('signupPanel')
-.classList.remove('show');
-
-document.body.style.overflow='';
-
-}
-
-
-async function signup(event){
-
-event.preventDefault();
-
-const name=document
-.getElementById('signupName')
-.value
-.trim();
-
-const email=document
-.getElementById('signupEmail')
-.value
-.trim();
-
-const password=document
-.getElementById('signupPassword')
-.value;
-
-const message=document
-.getElementById('signupMessage');
-
-message.className='auth-message';
-
-try{
-
-const response=await fetch('/api/signup',{
-method:'POST',
-headers:{
-'Content-Type':'application/json'
-},
-body:JSON.stringify({
-name,
-email,
-password
-})
-});
-
-let data={};
-
-try{
-data=await response.json();
-}catch(e){}
-
-if(!response.ok){
-
-message.textContent=
-data.message||
-data.error||
-'Unable to create the account.';
-
-message.classList.add('show');
-
-return;
-
-}
-
-closeSignup();
-
-await checkReader();
-
-window.location.reload();
-
-}catch(error){
-
-console.error(error);
-
-message.textContent=
-'Something went wrong. Please try again.';
-
-message.classList.add('show');
-
-}
-
-}
-
-
-/* READER SESSION */
-
-async function checkReader(){
-
-try{
-
-const response=await fetch('/api/me');
-
-if(!response.ok){
-
-showLoggedOut();
-return null;
-
-}
-
-const data=await response.json();
-
-const user=
-data.user||
-data.reader||
-data;
-
-if(user && (user.name||user.email)){
-
-currentReader=user;
-
-showLoggedIn(user);
-
-return user;
-
-}
-
-showLoggedOut();
-
-return null;
-
-}catch(error){
-
-console.error(error);
-
-showLoggedOut();
-
-return null;
-
-}
-
-}
-
-
-function showLoggedIn(user){
-
-document
-.getElementById('loginButton')
-.style.display='none';
-
-document
-.getElementById('userArea')
-.classList.add('show');
-
-document
-.getElementById('userName')
-.textContent=
-'Hi, '+(user.name||user.email);
-
-}
-
-
-function showLoggedOut(){
-
-currentReader=null;
-
-document
-.getElementById('loginButton')
-.style.display='block';
-
-document
-.getElementById('userArea')
-.classList.remove('show');
-
-}
-
-
-/* PROFILE */
-
-async function openProfile(){
-
-if(!currentReader){
-
-const user=await checkReader();
-
-if(!user){
-
-openLogin();
-return;
-
-}
-
-}
-
-fillProfile(currentReader);
-
-document
-.getElementById('profilePanel')
-.classList.add('show');
-
-document.body.style.overflow='hidden';
-
-loadSavedStories();
-
-}
-
-
-function closeProfile(){
-
-document
-.getElementById('profilePanel')
-.classList.remove('show');
-
-document.body.style.overflow='';
-
-}
-
-
-function fillProfile(user){
-
-const name=user.name||'Reader';
-const email=user.email||'';
-
-document
-.getElementById('profileName')
-.textContent=name;
-
-document
-.getElementById('profileEmail')
-.textContent=email;
-
-document
-.getElementById('profileNameRow')
-.textContent=name;
-
-document
-.getElementById('profileEmailRow')
-.textContent=email;
-
-document
-.getElementById('profileAvatar')
-.textContent=
-name.charAt(0).toUpperCase();
-
-}
-
-
-/* SAVED STORIES */
-
-async function loadSavedStories(){
-
-const container=
-document.getElementById('savedList');
-
-container.innerHTML=`
-<div class="profile-empty">
-Loading saved stories...
-</div>
-`;
-
-try{
-
-const response=
-await fetch('/api/saved');
-
-if(!response.ok){
-
-container.innerHTML=`
-<div class="profile-empty">
-You have no saved stories yet.
-</div>
-`;
-
-return;
-
-}
-
-const saved=await response.json();
-
-if(!Array.isArray(saved)||!saved.length){
-
-container.innerHTML=`
-<div class="profile-empty">
-You have no saved stories yet.
-</div>
-`;
-
-return;
-
-}
-
-container.innerHTML=saved.map(item=>{
-
-const story=item.story||item;
-
-const title=
-escapeHtml(story.title||'Saved Story');
-
-const category=
-escapeHtml(story.category||'Story');
-
-return`
-
-<div class="saved-item">
-
-<div>
-
-<div class="saved-item-title">
-${title}
-</div>
-
-<div class="saved-item-category">
-${category}
-</div>
-
-</div>
-
-<button
-class="saved-read"
-onclick="closeProfile();openStory(${story.id})">
-Read
-</button>
-
-</div>
-
-`;
-
-}).join('');
-
-}catch(error){
-
-console.error(error);
-
-container.innerHTML=`
-<div class="profile-empty">
-Your saved stories will appear here.
-</div>
-`;
-
-}
-
-}
-
-
-/* LOGOUT */
-
-async function logout(){
-
-try{
-
-await fetch('/api/logout',{
-method:'POST'
-});
-
-}catch(error){
-
-console.error(error);
-
-}
-
-showLoggedOut();
-
-window.location.reload();
-
-}
-
-
-/* AUTH OUTSIDE CLICK */
-
-function closeAuthOutside(event){
-
-if(event.target.id==='loginPanel'){
-closeLogin();
-}
-
-if(event.target.id==='signupPanel'){
-closeSignup();
-}
-
-if(event.target.id==='profilePanel'){
-closeProfile();
-}
-
-}
-
-
-/* HOME */
-
-function goHome(){
-
-window.scrollTo({
-top:0,
-behavior:'smooth'
-});
-
-}
-
-
-/* ESCAPE */
-
-function escapeHtml(value){
-
-return String(value??'')
-.replace(/&/g,'&amp;')
-.replace(/</g,'&lt;')
-.replace(/>/g,'&gt;')
-.replace(/"/g,'&quot;')
-.replace(/'/g,'&#039;');
-
-}
-
-
-/* YEAR */
-
-document.getElementById('year').textContent=
-new Date().getFullYear();
-
-
-/* START */
-
-loadStories();
-checkReader();
-
-</script></body>
-</html>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Epshitah Stories</title>
+
+  <meta
+    name="description"
+    content="Epshitah Stories — emotional stories that touch the heart."
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --purple: #7c3aed;
+      --purple-dark: #4c1d95;
+      --purple-light: #a855f7;
+      --pink: #ec4899;
+      --dark: #0b0613;
+      --dark2: #130b1d;
+      --card: #1c1028;
+      --text: #ffffff;
+      --muted: #b9a9c8;
+      --border: rgba(255,255,255,.08);
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(124,58,237,.22), transparent 35%),
+        linear-gradient(180deg, #10071a 0%, #09050d 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ================= HEADER ================= */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11,6,19,.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: auto;
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 8px 25px rgba(124,58,237,.35);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color: white;
+      border-radius: 12px;
+      padding: 9px 12px;
+    }
+
+    .nav-btn:hover {
+      background: rgba(124,58,237,.25);
+    }
+
+    .profile-btn {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--purple-light), var(--pink));
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    /* ================= HERO ================= */
+
+    .hero {
+      max-width: 1200px;
+      margin: auto;
+      padding: 55px 18px 35px;
+    }
+
+    .hero-box {
+      min-height: 390px;
+      border-radius: 28px;
+      padding: 40px 28px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(9,5,13,.96), rgba(9,5,13,.65), rgba(9,5,13,.2)),
+        linear-gradient(135deg, #4c1d95, #be185d);
+    }
+
+    .hero-box::before {
+      content: "";
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      right: -100px;
+      top: -100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.09);
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 650px;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      color: #d8b4fe;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 13px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 8vw, 68px);
+      line-height: .98;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      color: #e9dff0;
+      line-height: 1.7;
+      max-width: 580px;
+      margin-bottom: 25px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border: none;
+      border-radius: 13px;
+      padding: 13px 19px;
+      font-weight: 700;
+    }
+
+    .primary-btn {
+      background: white;
+      color: #4c1d95;
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+
+    /* ================= MAIN ================= */
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 18px 60px;
+    }
+
+    .section {
+      margin-top: 35px;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 17px;
+    }
+
+    .section-heading h2 {
+      font-size: 23px;
+    }
+
+    .section-heading span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* ================= SEARCH ================= */
+
+    .search-area {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: white;
+      padding: 14px 16px;
+      border-radius: 14px;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--purple-light);
+    }
+
+    .filter {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: white;
+      padding: 0 14px;
+      border-radius: 14px;
+      outline: none;
+    }
+
+    .filter option {
+      background: #1c1028;
+    }
+
+    /* ================= STORY GRID ================= */
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 17px;
+    }
+
+    .story-card {
+      background: linear-gradient(180deg, #21122e, #170c21);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+
+    .story-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(168,85,247,.5);
+    }
+
+    .cover {
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, #4c1d95, #831843);
+      display: grid;
+      place-items: center;
+    }
+
+    .cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cover-placeholder {
+      font-size: 50px;
+      opacity: .8;
+    }
+
+    .category {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .story-info {
+      padding: 15px;
+    }
+
+    .story-info h3 {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
+
+    .story-info p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 60px;
+    }
+
+    .card-bottom {
+      display: flex;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .read-btn,
+    .save-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .read-btn {
+      flex: 1;
+      background: var(--purple);
+      color: white;
+    }
+
+    .save-btn {
+      background: rgba(255,255,255,.08);
+      color: white;
+      width: 42px;
+    }
+
+    /* ================= FEATURED ================= */
+
+    .featured {
+      display: none;
+      min-height: 300px;
+      border-radius: 22px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(90deg,#31105e,#68134c);
+      margin-top: 10px;
+    }
+
+    .featured.show {
+      display: flex;
+    }
+
+    .featured-image {
+      width: 42%;
+      min-height: 300px;
+      background: #31105e;
+    }
+
+    .featured-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .featured-text {
+      padding: 35px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .featured-text .label {
+      color: #d8b4fe;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .featured-text h2 {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .featured-text p {
+      color: #ddd0e7;
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    /* ================= EMPTY ================= */
+
+    .empty {
+      padding: 45px 20px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(255,255,255,.12);
+      border-radius: 18px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 45px;
+      color: var(--muted);
+    }
+
+    /* ================= AUTHOR ================= */
+
+    .author-box {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      padding: 25px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+    }
+
+    .author-photo {
+      width: 90px;
+      height: 90px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg,var(--purple),var(--pink));
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .author-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .author-box h3 {
+      margin-bottom: 5px;
+    }
+
+    .author-genre {
+      color: #c084fc;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .author-box p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ================= FOOTER ================= */
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer strong {
+      color: white;
+    }
+
+    /* ================= MODALS ================= */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(700px,100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #180d22;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #180d22;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .close {
+      width: 35px;
+      height: 35px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      color: white;
+      font-size: 20px;
+    }
+
+    .modal-content {
+      padding: 20px;
+    }
+
+    .modal-cover {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 18px;
+    }
+
+    .story-content {
+      color: #e9dff0;
+      line-height: 1.9;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+
+    .video-wrap {
+      margin-bottom: 20px;
+    }
+
+    .video-wrap video {
+      width: 100%;
+      border-radius: 14px;
+      background: black;
+    }
+
+    /* ================= FORMS ================= */
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #d8c7e2;
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color: white;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: var(--purple-light);
+    }
+
+    .full-btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      background: var(--purple);
+      color: white;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    .switch-text {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 17px;
+      font-size: 13px;
+    }
+
+    .switch-text button {
+      background: none;
+      border: none;
+      color: #c084fc;
+      font-weight: bold;
+    }
+
+    /* ================= PROFILE ================= */
+
+    .profile-menu {
+      position: fixed;
+      top: 68px;
+      right: 15px;
+      z-index: 300;
+      width: 230px;
+      display: none;
+      background: #1b0e26;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.45);
+    }
+
+    .profile-menu.show {
+      display: block;
+    }
+
+    .profile-user {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 5px;
+    }
+
+   
