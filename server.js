@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
 
 const app = express();
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3000;
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "ralejoemolebatsi189@gmail.com").trim().toLowerCase();
 
