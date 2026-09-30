@@ -1,1 +1,43 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Epshitah Stories</title><link rel="stylesheet" href="/style.css"></head><body><nav class="nav"><a class="brand" href="/">Epshitah Stories</a><div class="navlinks"><a href="#stories">Stories</a><a href="#genres">Genres</a><a href="#videos">Videos</a><a href="/admin">Author Studio</a><button id="authBtn">Log in</button><button id="logoutBtn" style="display:none">Log out</button></div></nav><header class="hero"><div class="hero-inner"><h1>Stories that touch the heart.</h1><p>Welcome to Epshitah Stories — a home for emotional stories, unforgettable characters and voices worth hearing.</p><div class="actions"><a class="btn" href="#stories">Explore Stories</a><button class="btn primary" id="heroLogin">Create account / Log in</button></div></div></header><main><section class="section" id="stories"><h2>Stories</h2><div class="toolbar"><input id="search" class="input search" placeholder="Search stories..."></div><div id="genres" class="chips"></div><div id="storiesGrid" class="grid"></div></section><section class="section" id="videos"><h2>Videos</h2><div id="videosGrid" class="grid"></div></section></main><footer class="footer">© Epshitah Stories · Emotional stories that touch the heart.</footer><div id="authModal" class="modal"><div class="modal-box"><button class="close" data-close="authModal">Close</button><h2 id="authTitle">Log in</h2><form id="authForm" class="form"><input class="input" id="authName" placeholder="Your name" style="display:none"><input class="input" id="authEmail" type="email" placeholder="Email" required><input class="input" id="authPassword" type="password" placeholder="Password" required><button class="btn dark" id="authSubmit">Log in</button></form><p id="authSwitch">Don't have an account? <button class="chip" type="button">Sign up</button></p></div></div><div id="readerModal" class="modal"><div class="modal-box"><button class="close" data-close="readerModal">Close</button><div id="reader"></div></div></div><div id="toast" class="toast"></div><script src="/script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Epshitah Stories</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="nav">
+<a class="brand" href="#">EPSHITAH <span>STORIES</span></a>
+<nav><a href="#" id="login">Log in</a><a class="signup" href="#" id="signup">Sign up</a></nav>
+</div></header>
+
+<section class="hero">
+<div class="hero-inner">
+<p class="eyebrow">WELCOME TO EPSHITAH STORIES</p>
+<h1>Stories that touch the heart<br>and stay with you.</h1>
+<p>Discover emotional stories, unforgettable characters and beautiful journeys. Find a story that speaks to you.</p>
+<div class="search"><span>⌕</span><input id="search" placeholder="Search for a story..."></div>
+</div>
+</section>
+
+<section class="section">
+<div class="heading"><div><p class="eyebrow">EXPLORE</p><h2>Browse by Genre</h2></div><button id="all">View all</button></div>
+<div class="genres" id="genres"></div>
+</section>
+
+<section class="section stories">
+<div class="heading"><div><p class="eyebrow">READ SOMETHING SPECIAL</p><h2>Featured Stories</h2></div></div>
+<div class="cards" id="stories"></div>
+<p class="empty" id="empty" hidden>No stories match your search.</p>
+</section>
+
+<section class="section videos" id="videos" hidden>
+<div class="heading"><div><p class="eyebrow">WATCH</p><h2>Stories in Video</h2></div></div>
+<div class="cards" id="videoCards"></div>
+</section>
+
+<footer><div class="foot"><div><strong>EPSHITAH STORIES</strong><p>Emotional stories that touch the heart.</p></div><p>© <span id="year"></span> Epshitah Stories</p></div></footer>
+<script src="script.js"></script>
+</body>
+</html>
